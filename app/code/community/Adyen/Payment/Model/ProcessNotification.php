@@ -326,6 +326,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             $refusalReasonRaw = (isset($additionalData['refusalReasonRaw'])) ? $additionalData['refusalReasonRaw'] : "";
             $acquirerReference = (isset($additionalData['acquirerReference'])) ? $additionalData['acquirerReference'] : "";
             $authCode = (isset($additionalData['authCode'])) ? $additionalData['authCode'] : "";
+            $cardBin = (isset($additionalData['cardBin'])) ? $additionalData['cardBin'] : "";
         }
 
         // if there is no server communication setup try to get last4 digits from reason field
@@ -361,6 +362,9 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         }
         if(isset($authCode) && $authCode != "") {
             $paymentObj->setAdyenAuthCode($authCode);
+        }
+        if(isset($cardBin) && $cardBin != "") {
+            $paymentObj->setAdyenCardBin($cardBin);
         }
     }
 
@@ -506,6 +510,8 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                 break;
             case Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT:
 
+                $this->_debugData[$this->_count]['process recurring contract start'] = 'Processing Recurring Contract notification';
+
                 // get payment object
                 $payment = $order->getPayment();
 
@@ -517,6 +523,8 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
 
                 if ($agreement && $agreement->getAgreementId() > 0 && $agreement->isValid()) {
 
+                    $this->_debugData[$this->_count]['process recurring contract exists'] = 'Billing agreement for recurring contract already exists so update it';
+
                     $agreement->addOrderRelation($order);
                     $agreement->setStatus($agreement::STATUS_ACTIVE);
                     $agreement->setIsObjectChanged(true);
@@ -524,6 +532,9 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                     $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.', $agreement->getReferenceId());
 
                 } else {
+
+                    $this->_debugData[$this->_count]['process recurring contract new'] = 'Create a new billing agreement for this recurring contract';
+
                     // set billing agreement data
                     $payment->setBillingAgreementData(array(
                         'billing_agreement_id'  => $recurringDetailReference,
@@ -535,56 +546,76 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                     $agreement->setStoreId($order->getStoreId());
                     $agreement->importOrderPayment($payment);
 
-                    $listRecurringContracts = Mage::getSingleton('adyen/api')->listRecurringContracts($agreement->getCustomerReference(), $agreement->getStoreId());
+                    $customerReference = $agreement->getCustomerReference();
 
-                    $contractDetail = null;
-                    // get currenct Contract details and get list of all current ones
-                    $recurringReferencesList = array();
-                    foreach ($listRecurringContracts as $rc) {
-                        $recurringReferencesList[] = $rc['recurringDetailReference'];
-                        if (isset($rc['recurringDetailReference']) && $rc['recurringDetailReference'] == $recurringDetailReference) {
-                            $contractDetail = $rc;
-                        }
-                    }
+                    if($customerReference) {
 
-                    if($contractDetail != null) {
-                        // update status of the agreements in magento
-                        $billingAgreements = Mage::getResourceModel('adyen/billing_agreement_collection')
-                            ->addFieldToFilter('customer_id', $agreement->getCustomerReference());
+                        $this->_debugData[$this->_count]['process recurring contract customerref'] = 'There is a custumor reference';
 
-                        foreach($billingAgreements as $billingAgreement) {
-                            if(!in_array($billingAgreement->getReferenceId(), $recurringReferencesList)) {
-                                $billingAgreement->setStatus(Adyen_Payment_Model_Billing_Agreement::STATUS_CANCELED);
-                                $billingAgreement->save();
-                            } else {
-                                $billingAgreement->setStatus(Adyen_Payment_Model_Billing_Agreement::STATUS_ACTIVE);
-                                $billingAgreement->save();
+                        $listRecurringContracts = Mage::getSingleton('adyen/api')->listRecurringContracts($agreement->getCustomerReference(), $agreement->getStoreId());
+
+                        $contractDetail = null;
+                        // get currenct Contract details and get list of all current ones
+                        $recurringReferencesList = array();
+                        foreach ($listRecurringContracts as $rc) {
+                            $recurringReferencesList[] = $rc['recurringDetailReference'];
+                            if (isset($rc['recurringDetailReference']) && $rc['recurringDetailReference'] == $recurringDetailReference) {
+                                $contractDetail = $rc;
                             }
                         }
 
-                        $agreement->parseRecurringContractData($contractDetail);
+                        if($contractDetail != null) {
 
-                        if ($agreement->isValid()) {
-                            $message = Mage::helper('adyen')->__('Created billing agreement #%s.', $agreement->getReferenceId());
+                            $this->_debugData[$this->_count]['process recurring contract contractdetail'] = 'There is a contractDetail result';
 
-                            // save into sales_billing_agreement_order
-                            $agreement->addOrderRelation($order);
+                            // update status of the agreements in magento
+                            $billingAgreements = Mage::getResourceModel('adyen/billing_agreement_collection')
+                                ->addFieldToFilter('customer_id', $agreement->getCustomerReference());
 
-                            // add to order to save agreement
-                            $order->addRelatedObject($agreement);
+                            foreach($billingAgreements as $billingAgreement) {
+                                if(!in_array($billingAgreement->getReferenceId(), $recurringReferencesList)) {
+                                    $billingAgreement->setStatus(Adyen_Payment_Model_Billing_Agreement::STATUS_CANCELED);
+                                    $billingAgreement->save();
+                                } else {
+                                    $billingAgreement->setStatus(Adyen_Payment_Model_Billing_Agreement::STATUS_ACTIVE);
+                                    $billingAgreement->save();
+                                }
+                            }
+
+                            $this->_debugData[$this->_count]['process recurring contract existing updated'] = 'The existing billing agreements are updated';
+
+                            $agreement->parseRecurringContractData($contractDetail);
+
+                            if ($agreement->isValid()) {
+
+                                $this->_debugData[$this->_count]['process recurring contract billing agreement'] = 'The billing agreements is valid';
+                                $message = Mage::helper('adyen')->__('Created billing agreement #%s.', $agreement->getReferenceId());
+
+                                // save into sales_billing_agreement_order
+                                $agreement->addOrderRelation($order);
+
+                                // add to order to save agreement
+                                $order->addRelatedObject($agreement);
+                            } else {
+                                $this->_debugData[$this->_count]['process recurring contract billing agreement'] = 'The billing agreements is not valid';
+                                $message = Mage::helper('adyen')->__('Failed to create billing agreement for this order.');
+                            }
                         } else {
-                            $message = Mage::helper('adyen')->__('Failed to create billing agreement for this order.');
+                            $this->_debugData[$this->_count]['_processNotification error'] = 'Failed to create billing agreement for this order (listRecurringCall did not contain contract)';
+                            $this->_debugData[$this->_count]['_processNotification ref'] = sprintf('recurringDetailReference in notification is %s', $recurringDetailReference) ;
+                            $this->_debugData[$this->_count]['_processNotification customer ref'] = sprintf('CustomerReference is: %s and storeId is %s', $agreement->getCustomerReference(), $agreement->getStoreId());
+                            $this->_debugData[$this->_count]['_processNotification customer result'] = $listRecurringContracts;
+                            $message = Mage::helper('adyen')->__('Failed to create billing agreement for this order (listRecurringCall did not contain contract)');
                         }
                     } else {
-                        $this->_debugData[$this->_count]['_processNotification error'] = 'Failed to create billing agreement for this order (listRecurringCall did not contain contract)';
-                        $this->_debugData[$this->_count]['_processNotification ref'] = printf('recurringDetailReference in notification is %s', $recurringDetailReference) ;
-                        $this->_debugData[$this->_count]['_processNotification customer ref'] = printf('CustomerReference is: %s and storeId is %s', $agreement->getCustomerReference(), $agreement->getStoreId());
-                        $this->_debugData[$this->_count]['_processNotification customer result'] = $listRecurringContracts;
-                        $message = Mage::helper('adyen')->__('Failed to create billing agreement for this order (listRecurringCall did not contain contract)');
+                        $this->_debugData[$this->_count]['_processNotification error'] = 'merchantReference is empty, probably checked out as quest we can\'t save billing agreemnents for quest checkout';
                     }
                 }
-                $comment = $order->addStatusHistoryComment($message);
-                $order->addRelatedObject($comment);
+
+                if($message) {
+                    $comment = $order->addStatusHistoryComment($message);
+                    $order->addRelatedObject($comment);
+                }
                 break;
             default:
                 $this->_debugData[$this->_count]['_processNotification info'] = sprintf('This notification event: %s is not supported so will be ignored', $this->_eventCode);
@@ -639,7 +670,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
     {
         $this->_debugData[$this->_count]['_refundOrder'] = 'Refunding the order';
 
-        // Don't create a credit memo if refund is initialize in Magento because in this case the credit memo already exits
+        // Don't create a credit memo if refund is initialize in Magento because in this case the credit memo already exists
         $result = Mage::getModel('adyen/event')
             ->getEvent($this->_pspReference, '[refund-received]');
         if (!empty($result)) {
@@ -1087,9 +1118,8 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             if($virtual_status != "") {
                 $status = $virtual_status;
 
-                // set the state to complete
-                $order->setState(Mage_Sales_Model_Order::STATE_COMPLETE);
-
+                // set the state to complete (this is not possible because Magento is blocking this will result in: The Order State COMPLETE must not be set manually
+//                $order->setState(Mage_Sales_Model_Order::STATE_COMPLETE);
             }
         }
 
@@ -1219,16 +1249,20 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         // If notification is pending status and pending status is set add the status change to the comment history
         if($this->_eventCode == Adyen_Payment_Model_Event::ADYEN_EVENT_PENDING)
         {
-            $pendingStatus = $this->_getConfigData('pending_status', 'adyen_abstract', $order->getStoreId());
-            if($pendingStatus != "") {
-                $order->addStatusHistoryComment($comment, $pendingStatus);
-                /**
-                 * save order needed for old magento version so that status is not reverted to state NEW
-                 */
-                $order->save();
+            if ($order->isCanceled() || $order->getState() === Mage_Sales_Model_Order::STATE_HOLDED) {
+                $this->_debugData[$this->_count]['_addStatusHistoryComment'] = 'Did not change status because order is already canceled or on hold.';
+            } else {
+                $pendingStatus = $this->_getConfigData('pending_status', 'adyen_abstract', $order->getStoreId());
+                if($pendingStatus != "") {
+                    $order->addStatusHistoryComment($comment, $pendingStatus);
+                    /**
+                     * save order needed for old magento version so that status is not reverted to state NEW
+                     */
+                    $order->save();
 
-                $this->_debugData[$this->_count]['_addStatusHistoryComment'] = 'Created comment history for this notification with status change to: ' . $pendingStatus;
-                return;
+                    $this->_debugData[$this->_count]['_addStatusHistoryComment'] = 'Created comment history for this notification with status change to: ' . $pendingStatus;
+                    return;
+                }
             }
         }
 
@@ -1350,7 +1384,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             ->addFieldToFilter('attempt', array('lteq' => '4'))
             ->addFieldToFilter('created_at', array(
                 'from' => strtotime('-1 day', time()),
-                'to' => strtotime('-5 minutes', time()),
+                'to' => strtotime('-1 minutes', time()),
                 'datetime' => true))
             ->addOrder('created_at', 'asc');
 

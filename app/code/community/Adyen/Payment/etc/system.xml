@@ -59,9 +59,9 @@
                                 <li><a target="_blank" href="https://www.adyen.com/home/payment-services/plug-ins/magento#form"><strong>Sign</strong> up for a test account</a></li>
                                 <li>The latest version of the <a target="_blank" href="https://github.com/adyenpayments/magento/releases">Adyen Magento module is also available through GitHub</a>.</li>
                             </ul>
-                            <p>In the test modus you need to use test cards. <a target="_blank" href="http://adyen.com/test-card-numbers">Test cards can be found here</a>
-                            <p>In the test environment you can test with refused cards, for more information <a target="_blank" href="https://docs.adyen.com/display/TD/Error+code+testing">click here</a></p>
-                            <p>You can find this in the Adyen backoffice. The Adyen backoffice can be found on <a target="_blank" href="https://ca-test.adyen.com">https://ca-test.adyen.com</a> for test or <a target="_blank" href="https://ca-live.adyen.com">https://ca-live.adyen.com</a> for live.</p>
+                            <p>In the test modus you nee to use test cards. <a target="_blank" href="http://adyen.com/test-card-numbers">Test cards can be found here</a>
+                            <p>In the test envirenment you can test with refused cards for more information <a target="_blank" href="https://docs.adyen.com/display/TD/Error+code+testing">click here</a></p>
+                            <p>You can find this in the Adyen back-office. The Adyen back-office can be found on <a target="_blank" href="https://ca-test.adyen.com">https://ca-test.adyen.com</a> for test or <a target="_blank" href="https://ca-live.adyen.com">https://ca-live.adyen.com</a> for live.</p>
                             <p>If you have any further questions, please visit the <a target="_blank" href="http://www.adyen.com">Adyen.com</a> website or email <a href="mailto:magento@adyen.com">magento@adyen.com</a>.</p>
                             ]]>
                             </comment>
@@ -841,6 +841,8 @@
                     <frontend_type>text</frontend_type>
                     <comment><![CDATA[
                                 During checkout shoppers can choose to have their payment details remembered and stored for trusted websites in Adyen’s highly secure platform. Adyen takes care of this process for its customers. Shoppers can then select in the Magento checkout the saved card and checkout with ‘OneClick’.
+                                <br />
+                                <b>Make sure you have turned on RECURRING_CONTRACT notification on your merchantAccount. If you want to add this or if you are not sure, just send us an <a href="mailto:magento@adyen.com">email</a>.</b>
                             ]]></comment>
                     <sort_order>320</sort_order>
                     <show_in_default>1</show_in_default>
@@ -885,7 +887,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <tooltip>With ONECLICK the shopper needs to fill in their security code for credit cards. For RECURRING, this is not needed. If you want to use RECURRING make sure you have Agreement Type set to RECURRING or ONECLICK,RECURRING</tooltip>
+                            <tooltip>With ONECLICK the shopper needs to fill in their security code for credit cards. For RECURRING, this is not needed. If you want to use RECURRING make sure you have Agreement Type set to RECURRING or ONECLICK,RECURRING. In the Backend always recurring is used because OneClick could trigger 3D secure.</tooltip>
                         </recurring_payment_type>
                     </fields>
                 </adyen_oneclick>
@@ -1008,16 +1010,6 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </return_url_in_request>
-                                <fee translate="label">
-                                    <label>Fee</label>
-                                    <tooltip>If you want to charge an extra fee for certain payment methods, set that fee here. Do not set any extra fees in the skin in the Adyen Customer Area.</tooltip>
-                                    <frontend_model>adyen/adminhtml_system_config_hppPaymentMethodFee</frontend_model>
-                                    <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
-                                    <config_path>payment/adyen_hpp/fee</config_path>
-                                    <sort_order>140</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <tooltip><![CDATA[]]></tooltip>
-                                </fee>
                             </fields>
                         </adyen_hpp_advanced>
                     </fields>
@@ -1042,15 +1034,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </show_ideal_logos>
-                        <fee translate="label">
-                            <label>Fee</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>38</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-number</validate>
-                        </fee>
                         <autoselect_stored_ideal_bank>
                             <label>Auto select Ideal bank</label>
                             <tooltip>If you have problems that the wrong ideal bank is selected turn this option off. This is a common problem in the onestepcheckout module</tooltip>
@@ -1145,15 +1128,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </shoppertype>
-                        <fee translate="label">
-                            <label>Fee</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>39</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-number</validate>
-                        </fee>
                         <different_address_disable>
                             <label>Disable on different billing and delivery addresses</label>
                             <tooltip>Klarna will probably reject payments which have differing billing and delivery addresses. Setting this to 'Yes' will disable this payment method when that is the case.</tooltip>
@@ -1497,16 +1471,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </express_checkout>
-                        <express_checkout_redirect_connect>
-                            <label>Redirect direct</label>
-                            <tooltip>Redirect directly to the Adyen app to do the PIN payment. This is not supported for all browsers if you have problems set this setting to false</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>38</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </express_checkout_redirect_connect>
                         <express_checkout_kiosk_mode>
                             <label>Kiosk mode</label>
                             <tooltip>If you turn kiosk modus on it will not auto-complete the customers based on the filled in email address</tooltip>

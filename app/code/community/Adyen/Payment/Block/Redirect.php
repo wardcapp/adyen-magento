@@ -121,61 +121,14 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
 
             $html .= '<script type="text/javascript">
     				//<![CDATA[
-    				function checkStatus() {
-	    				$.ajax({
-						    url: "'. $this->getUrl('adyen/process/getOrderStatus', array('_secure'=>true)) . '",
-						    type: "POST",
-						    data: "merchantReference='.$adyFields['merchantReference'] .'",
-						    asynchronous: false,
-						    success: function(data) {
-						    	if(data == "true") {
-						    		// redirect to success page
-						    		window.location.href = "'. Mage::getBaseUrl()."adyen/process/successPosRedirect" . '";
-						    	} else {
-						    		window.location.href = "'. Mage::getBaseUrl()."adyen/process/cancel" . '";
-						    	}
-						    }
-						});
-					}';
+    				';
 
-            $expressCheckoutRedirectConnect = $this->_getConfigData("express_checkout_redirect_connect", "adyen_pos", null);
-
-            if($expressCheckoutRedirectConnect) {
-
-                if($iPod || $iPhone || $iPad) {
-                    $html .= 'document.getElementById(\'launchlink\').click();';
-                    $html .= 'setTimeout("checkStatus()", 5000);';
-                } else {
-                    // android
-                    $html .= 'var isActive;
-                    window.onfocus = function () {
-                      isActive = true;
-                    };
-
-                    window.onblur = function () {
-                      isActive = false;
-                    };
-
-                    // test
-                    setTimeout(function () {
-                        checkStatus();
-                    }, 1000);';
-                    $html .= 'url = document.getElementById(\'launchlink\').href;';
-                    $html .= 'window.location = url;';
-                }
+            if($iPod || $iPhone || $iPad) {
+                $html .= 'document.getElementById(\'launchlink\').click();';
             } else {
-
-                $html .= '  var eventName = "visibilitychange";
-                            document.addEventListener(eventName,visibilityChanged,false);
-                            function visibilityChanged() {
-                                if (document.hidden || document.mozHidden || document.msHidden || document.webkitHidden)
-                                {
-                                    //Page got hidden; Adyen App called and transaction on terminal triggered
-                                } else {
-                                    //The page is showing again; Cash Register regained control from Adyen App
-                                    checkStatus();
-                                }
-                            }';
+                // android
+                $html .= 'url = document.getElementById(\'launchlink\').href;';
+                $html .= 'window.location = url;';
             }
 
             $html .= '
@@ -183,18 +136,16 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
                         </script>
                     </div>';
         } else {
-            $form = new Varien_Data_Form();
-            $form->setAction($payment->getFormUrl())
-                ->setId($payment->getCode())
-                ->setName($payment->getFormName())
-                ->setMethod('POST')
-                ->setUseContainer(true);
+
+            // do not use Magento form because this generate a form_key input field
+            $html .= '<form name="adyenForm" id="' . $payment->getCode() . '" action="' . $payment->getFormUrl() . '" method="post">';
+
             foreach ($payment->getFormFields() as $field => $value) {
-                $form->addField($field, 'hidden', array('name' => $field, 'value' => $value));
+                $html .= '<input type="hidden" name="' .htmlspecialchars($field,   ENT_COMPAT | ENT_HTML401 ,'UTF-8').
+                    '" value="' .htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 ,'UTF-8') . '" />';
             }
 
-            $html.= $this->__(' ');
-            $html.= $form->toHtml();
+            $html .= '</form>';
 
             if($payment->getCode() == "adyen_hpp_c_cash" && $cashDrawer) {
 

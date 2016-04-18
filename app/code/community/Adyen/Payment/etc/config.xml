@@ -29,7 +29,7 @@
 <config>
     <modules>
         <Adyen_Payment>
-            <version>2.5.4</version>
+            <version>2.6.0</version>
         </Adyen_Payment>
     </modules>
     <global>
@@ -99,16 +99,8 @@
             <adyen>
                 <class>Adyen_Payment_Block</class>
             </adyen>
-            <adminhtml>
-                <rewrite>
-                    <sales_order_totals>Adyen_Payment_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
-                    <sales_order_invoice_totals>Adyen_Payment_Block_Adminhtml_Sales_Order_Invoice_Totals</sales_order_invoice_totals>
-                    <sales_order_creditmemo_totals>Adyen_Payment_Block_Adminhtml_Sales_Order_Creditmemo_Totals</sales_order_creditmemo_totals>
-                </rewrite>
-            </adminhtml>
             <sales>
                 <rewrite>
-                    <order_totals>Adyen_Payment_Block_Sales_Order_Totals</order_totals>
                     <adminhtml_billing_agreement_grid>Adyen_Payment_Block_Adminhtml_Sales_Billing_Agreement_Grid</adminhtml_billing_agreement_grid>
                 </rewrite>
             </sales>
@@ -118,67 +110,6 @@
                 <adyen>Adyen</adyen>
             </groups>
         </payment>
-        <fieldsets>
-            <sales_convert_quote_address>
-                <payment_fee_amount><to_order>*</to_order></payment_fee_amount>
-                <base_payment_fee_amount><to_order>*</to_order></base_payment_fee_amount>
-                <payment_installment_fee_amount><to_order>*</to_order></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_order>*</to_order></base_payment_installment_fee_amount>
-            </sales_convert_quote_address>
-            <sales_convert_order>
-                <payment_fee_amount><to_invoice>*</to_invoice></payment_fee_amount>
-                <base_payment_fee_amount><to_invoice>*</to_invoice></base_payment_fee_amount>
-                <payment_installment_fee_amount><to_invoice>*</to_invoice></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_invoice>*</to_invoice></base_payment_installment_fee_amount>
-                <payment_fee_amount><to_cm>*</to_cm></payment_fee_amount>
-                <base_payment_fee_amount><to_cm>*</to_cm></base_payment_fee_amount>
-                <payment_installment_fee_amount><to_invoice>*</to_invoice></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_invoice>*</to_invoice></base_payment_installment_fee_amount>
-                <payment_installment_fee_amount><to_cm>*</to_cm></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_cm>*</to_cm></base_payment_installment_fee_amount>
-            </sales_convert_order>
-        </fieldsets>
-        <sales>
-            <quote>
-                <totals>
-                    <payment_fee>
-                        <class>adyen/sales_quote_address_total_paymentFee</class>
-                        <after>subtotal,discount</after>
-                        <before>grand_total,tax</before>
-                    </payment_fee>
-                    <payment_installment_fee>
-                        <class>adyen/sales_quote_address_total_paymentInstallmentFee</class>
-                        <after>grand_total</after>
-                    </payment_installment_fee>
-                </totals>
-            </quote>
-            <order_invoice>
-                <totals>
-                    <payment_fee>
-                        <class>adyen/total_paymentFee_invoice</class>
-                        <after>subtotal,discount</after>
-                        <before>grand_total,tax</before>
-                    </payment_fee>
-                    <payment_installment_fee>
-                        <class>adyen/total_paymentInstallmentFee_invoice</class>
-                        <after>grand_total</after>
-                    </payment_installment_fee>
-                </totals>
-            </order_invoice>
-            <order_creditmemo>
-                <totals>
-                    <payment_fee>
-                        <class>adyen/total_paymentFee_creditmemo</class>
-                        <after>subtotal,discount</after>
-                        <before>grand_total,tax</before>
-                    </payment_fee>
-                    <payment_installment_fee>
-                        <class>adyen/total_paymentInstallmentFee_creditmemo</class>
-                        <after>grand_total</after>
-                    </payment_installment_fee>
-                </totals>
-            </order_creditmemo>
-        </sales>
         <events>
             <controller_action_predispatch>
                 <observers>
@@ -200,6 +131,62 @@
                     </adyen_payment_capture_invoice_on_shipment>
                 </observers>
             </sales_order_shipment_save_after>
+            <custom_quote_process>
+                <observers>
+                    <adyen_payment_reactivate_quote>
+                        <class>adyen/observer</class>
+                        <method>reactivateQuote</method>
+                    </adyen_payment_reactivate_quote>
+                </observers>
+            </custom_quote_process>
+            <!--<controller_front_init_before>-->
+            <!--<observers>-->
+            <!--<adyen_payment_load_classes>-->
+            <!--<class>adyen/observer</class>-->
+            <!--<method>controllerFrontInitBefore</method>-->
+            <!--</adyen_payment_load_classes>-->
+            <!--</observers>-->
+            <!--</controller_front_init_before>-->
+            <core_collection_abstract_load_before>
+                <observers>
+                    <adyen_payment_autoloader>
+                        <class>adyen/observer</class>
+                        <method>addAutoloader</method>
+                    </adyen_payment_autoloader>
+                </observers>
+            </core_collection_abstract_load_before>
+            <resource_get_tablename>
+                <observers>
+                    <adyen_payment_autoloader>
+                        <class>adyen/observer</class>
+                        <method>addAutoloader</method>
+                    </adyen_payment_autoloader>
+                </observers>
+            </resource_get_tablename>
+            <add_spl_autoloader>
+                <observers>
+                    <adyen_payment_autoloader>
+                        <class>adyen/observer</class>
+                        <method>addAutoloader</method>
+                    </adyen_payment_autoloader>
+                </observers>
+            </add_spl_autoloader>
+            <adyen_payment_hpp_fields>
+                <observers>
+                    <adyen_payment_overrule_hpp_fields>
+                        <class>adyen/observer</class>
+                        <method>overruleHppFields</method>
+                    </adyen_payment_overrule_hpp_fields>
+                </observers>
+            </adyen_payment_hpp_fields>
+            <adyen_payment_card_payment_request>
+                <observers>
+                    <adyen_payment_card_payment_request>
+                        <class>adyen/observer</class>
+                        <method>overruleCardPaymentRequest</method>
+                    </adyen_payment_card_payment_request>
+                </observers>
+            </adyen_payment_card_payment_request>
         </events>
     </global>
 
@@ -341,7 +328,6 @@
                 <enable_scanner>0</enable_scanner>
                 <submit_scanner>0</submit_scanner>
                 <express_checkout>0</express_checkout>
-                <express_checkout_redirect_connect>1</express_checkout_redirect_connect>
                 <express_checkout_kiosk_mode>0</express_checkout_kiosk_mode>
                 <express_checkout_recurring>1</express_checkout_recurring>
                 <create_shipment>0</create_shipment>
@@ -581,12 +567,6 @@
                 </recurringtypes>
             </payment>
         </adyen>
-        <sales>
-            <totals_sort>
-                <payment_fee>15</payment_fee>
-                <payment_installment_fee>16</payment_installment_fee>
-            </totals_sort>
-        </sales>
     </default>
     <crontab>
         <jobs>
