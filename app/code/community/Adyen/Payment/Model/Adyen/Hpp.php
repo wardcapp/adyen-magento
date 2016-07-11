@@ -113,15 +113,6 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
     public function validate()
     {
         parent::validate();
-        $info    = $this->getInfoInstance();
-        $hppType = $info->getCcType();
-        // validate if the ideal bank is chosen
-        if ($hppType == "ideal") {
-            if ($info->getPoNumber() == "") {
-                // hpp type is empty throw error
-                Mage::throwException(Mage::helper('adyen')->__('You chose an invalid bank'));
-            }
-        }
     }
 
 
@@ -279,7 +270,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         }
 
         // get extra fields
-        $adyFields = Mage::getModel('adyen/adyen_openinvoice')->getOptionalFormFields($adyFields, $this->_order);
+        $adyFields = Mage::getModel('adyen/adyen_openinvoice')->getOptionalFormFields($adyFields, $this->_order, false);
 
         // For IDEAL add isuerId into request so bank selection is skipped
         if (strpos($this->getInfoInstance()->getCcType(), "ideal") !== false) {
@@ -441,8 +432,13 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
     public function isAvailable($quote = null)
     {
         $isAvailable = parent::isAvailable();
-
-        $disableZeroTotal = Mage::getStoreConfig('payment/adyen_hpp/disable_zero_total', $quote->getStoreId());
+        
+        if (!is_null($quote)) {
+            $disableZeroTotal = Mage::getStoreConfig('payment/adyen_hpp/disable_zero_total', $quote->getStoreId());
+        } else {
+            $disableZeroTotal = Mage::getStoreConfig('payment/adyen_hpp/disable_zero_total');
+        }
+        
         if (!is_null($quote) && $quote->getGrandTotal() <= 0 && $disableZeroTotal) {
             return false;
         }
