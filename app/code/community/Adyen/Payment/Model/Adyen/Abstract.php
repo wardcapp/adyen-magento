@@ -127,7 +127,9 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
 
 
         // check if payment was a split payment
-        $orderPaymentCollection = Mage::getModel('adyen/order_payment')->getCollection();
+        $orderPaymentCollection = Mage::getModel('adyen/order_payment')
+            ->getCollection()
+            ->addFieldToFilter('payment_id', $payment->getId());
 
         if($grandTotal == $amount) {
 
@@ -172,20 +174,24 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                     if($amount > 0) {
                         if($ratio) {
                             // refund based on ratio calculate refund amount
-                            $amount = $ratio * ($splitPayment->getAmount() - $splitPayment->getRefundedAmount());
+                            $amount = $ratio * ($splitPayment->getAmount() - $splitPayment->getTotalRefunded());
                             $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $amount, $splitPayment->getPspreference());
                         } else {
                             // total authorised amount of the split payment
-                            $splitPaymentAmount = $splitPayment->getAmount() - $splitPayment->getRefundedAmount();
+                            $splitPaymentAmount = $splitPayment->getAmount() - $splitPayment->getTotalRefunded();
+
+                            // if rest amount is zero go to next payment
+                            if (!$splitPaymentAmount > 0) {
+                                continue;
+                            }
 
                             // if refunded amount is greather then split payment amount do a full refund
                             if($amount >= $splitPaymentAmount) {
                                 $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $splitPaymentAmount, $splitPayment->getPspreference());
-                                // update amount with rest of the available amount
                             } else {
                                 $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $amount, $splitPayment->getPspreference());
                             }
-                            // update the rest amount
+                            // update amount with rest of the available amount
                             $amount = $amount - $splitPaymentAmount;
                         }
                     }
