@@ -88,6 +88,14 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             return;
         }
 
+        $this->_declareCommonVariables($params);
+        $isInvalidKcp = $this->_isInvalidKcp($this->_paymentMethod, $this->_value);
+        if($isInvalidKcp) {
+            $this->_debugData['processResponse info'] = 'Skip notification for KCP and 0 amount';
+            $this->_debug($storeId);
+            return;
+        }
+
         // check if notification is not duplicate
         if(!$this->_isDuplicate($params)) {
 
@@ -103,6 +111,22 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             $this->_debugData['processResponse info'] = 'Skipping duplicate notification';
         }
         $this->_debug($storeId);
+    }
+
+    /*
+     * Returns true if the payment method is KCP and the amount is 0
+     */
+    protected function _isInvalidKcp($paymentMethod, $amountValue)
+    {
+        if($paymentMethod == Adyen_Payment_Model_Adyen_Hpp::KCP_CREDITCARD
+            || $paymentMethod == Adyen_Payment_Model_Adyen_Hpp::KCP_BANKTRANSFER)
+        {
+            if($amountValue == 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -227,7 +251,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         Mage::dispatchEvent('adyen_payment_process_notifications_after', array('order' => $order, 'adyen_response' => $params));
     }
 
-    protected function _declareVariables($order, $params)
+    protected function _declareCommonVariables($params)
     {
         //  declare the common parameters
         $this->_pspReference = trim($params->getData('pspReference'));
@@ -244,7 +268,11 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         } elseif(is_object($valueArray)) {
             $this->_value = $valueArray->value; // for soap
         }
+    }
 
+    protected function _declareVariables($order, $params)
+    {
+        $this->_declareCommonVariables($params);
 
         // reset values because data can not be present in notification
         $this->_boletoOriginalAmount = null;
@@ -1420,9 +1448,6 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
      * @param $params
      */
     protected function _addNotificationToQueue($params) {
-
-        $eventCode = trim($params->getData('eventCode'));
-        $success = (trim($params->getData('success')) == 'true' || trim($params->getData('success')) == '1') ? true : false;
         $pspReference = $params->getData('pspReference');
         if(is_numeric($pspReference)) {
             $this->_debugData['AddNotificationToQueue Step1'] = 'Going to add notification to queue';
