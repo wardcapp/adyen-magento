@@ -128,20 +128,18 @@ $_recurringDetails = $this->getRecurringDetails();
                         var cseUpdateOneClick_<?php echo $_code ?> = function() {
 
                             try {
-                                if (payment.currentMethod && payment.currentMethod == '<?php echo $_code ?>') {
-                                    // get closest form element
-                                    var elementOneClick = $('payment_form_<?php echo $_code ?>');
-                                    var cse_form_oneclick =  elementOneClick.match('form') ? elementOneClick : elementOneClick.up('form');
-                                    // add this field to option
-                                    cse_options_oneclick_<?php echo $_code ?>.fieldNameAttribute = "data-encrypted-name-oneclick-<?php echo $_code ?>";
+                                // get closest form element
+                                var elementOneClick = $('payment_form_<?php echo $_code ?>');
+                                var cse_form_oneclick =  elementOneClick.match('form') ? elementOneClick : elementOneClick.up('form');
+                                // add this field to option
+                                cse_options_oneclick_<?php echo $_code ?>.fieldNameAttribute = "data-encrypted-name-oneclick-<?php echo $_code ?>";
 
-                                    // do not validate because number does not exists for oneclick
-                                    cse_options_oneclick_<?php echo $_code ?>.enableValidations = false;
+                                // do not validate because number does not exists for oneclick
+                                cse_options_oneclick_<?php echo $_code ?>.enableValidations = false;
 
-                                    var cseFormOneClick = adyen.encrypt.createEncryptedForm(cse_form_oneclick, cse_key_oneclick, cse_options_oneclick_<?php echo $_code ?>);
-                                    // encrypt data directly because submit button is not always on the page
-                                    cseFormOneClick.createEncryptedField(cseFormOneClick.encrypt());
-                                }
+                                var cseFormOneClick = adyen.encrypt.createEncryptedForm(cse_form_oneclick, cse_key_oneclick, cse_options_oneclick_<?php echo $_code ?>);
+                                // encrypt data directly because submit button is not always on the page
+                                cseFormOneClick.createEncryptedField(cseFormOneClick.encrypt());
                             } catch (e) {
                                 if (typeof console == "object") {
                                     console.error(e);
