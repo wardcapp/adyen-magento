@@ -35,6 +35,9 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
      */
     const GUEST_ID = 'customer_';
 
+    const KCP_CREDITCARD = 'kcp_creditcard';
+    const KCP_BANKTRANSFER = 'kcp_banktransfer';
+
     protected $_canUseInternal = false;
     protected $_code = 'adyen_hpp';
     protected $_formBlockType = 'adyen/form_hpp';
