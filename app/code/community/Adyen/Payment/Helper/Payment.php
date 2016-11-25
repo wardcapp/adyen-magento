@@ -173,8 +173,8 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         
         // set Shopper, Billing and DeliveryAddress
         $shopperInfo =  $this->getHppShopperDetails($order->getBillingAddress(), $order->getCustomerGender(), $order->getCustomerDob());
-        $billingAddress = $this->getHppBillingAdressDetails($order->getBillingAddress());
-        $deliveryAddress = $this->getHppDeliveryAdressDetails($order->getShippingAddress());
+        $billingAddress = $this->getHppBillingAddressDetails($order->getBillingAddress());
+        $deliveryAddress = $this->getHppDeliveryAddressDetails($order->getShippingAddress());
         
 
         // if option to put Return Url in request from magento is enabled add this in the request
@@ -536,7 +536,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      * @param $billingAddress
      * @return array
      */
-    public function getHppBillingAdressDetails($billingAddress)
+    public function getHppBillingAddressDetails($billingAddress)
     {
         $billingAddressRequest = [];
         $helper = Mage::helper('adyen');
@@ -579,39 +579,42 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      * @param $deliveryAddress
      * @return array
      */
-    public function getHppDeliveryAdressDetails($deliveryAddress)
+    public function getHppDeliveryAddressDetails($deliveryAddress)
     {
-        $deliveryAddressRequest = [];
         $helper = Mage::helper('adyen');
+        $deliveryAddressRequest = [
+            'street' => 'NA',
+            'houseNumberOrName' => 'NA',
+            'city' => 'NA',
+            'postalCode' => 'NA',
+            'stateOrProvince' => 'NA',
+            'country' => 'NA'
+        ];
+
+        if (!is_object($deliveryAddress)) {
+            // Gift Cards don't have delivery addresses, this prevents member function calls on non-object errors
+            return $deliveryAddressRequest;
+        }
 
         $deliveryAddressRequest['street'] = trim($helper->getStreet($deliveryAddress,true)->getName());
-        if (trim($helper->getStreet($deliveryAddress,true)->getHouseNumber()) == "") {
-            $deliveryAddressRequest['houseNumberOrName'] = "NA";
-        } else {
+
+        if (trim($helper->getStreet($deliveryAddress,true)->getHouseNumber()) != "") {
             $deliveryAddressRequest['houseNumberOrName'] = trim($helper->getStreet($deliveryAddress,true)->getHouseNumber());
         }
 
-        if (trim($deliveryAddress->getCity()) == "") {
-            $deliveryAddressRequest['city'] = "NA";
-        } else {
+        if (trim($deliveryAddress->getCity()) != "") {
             $deliveryAddressRequest['city'] = trim($deliveryAddress->getCity());
         }
 
-        if (trim($deliveryAddress->getPostcode()) == "") {
-            $deliveryAddressRequest['postalCode'] = "NA";
-        } else {
+        if (trim($deliveryAddress->getPostcode()) != "") {
             $deliveryAddressRequest['postalCode'] = trim($deliveryAddress->getPostcode());
         }
 
-        if (trim($deliveryAddress->getRegionCode()) == "") {
-            $deliveryAddressRequest['stateOrProvince'] = "NA";
-        } else {
+        if (trim($deliveryAddress->getRegionCode()) != "") {
             $deliveryAddressRequest['stateOrProvince'] = trim($deliveryAddress->getRegionCode());
         }
 
-        if (trim($deliveryAddress->getCountryId()) == "") {
-            $deliveryAddressRequest['country'] = "NA";
-        } else {
+        if (trim($deliveryAddress->getCountryId()) != "") {
             $deliveryAddressRequest['country'] = trim($deliveryAddress->getCountryId());
         }
 
