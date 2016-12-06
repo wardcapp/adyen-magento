@@ -410,7 +410,8 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
      */
     public function getIpNumberFromAddress($address)
     {
-        $pton = inet_pton($address);
+        // Unrecognised addresses cause PHP warnings, silence the warning and return a bool instead
+        $pton = @inet_pton($address);
         if (!$pton) {
             return false;
         }
