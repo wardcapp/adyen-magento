@@ -1595,7 +1595,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends><ip_filter>1</ip_filter></depends>
+                            <depends><ip_filter>2</ip_filter></depends>
                         </ip_filter_from>
                         <ip_filter_to>
                             <label>IP To</label>
@@ -1605,7 +1605,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <depends><ip_filter>1</ip_filter></depends>
+                            <depends><ip_filter>2</ip_filter></depends>
                         </ip_filter_to>
                         <allowspecific translate="label">
                             <label>Payment from applicable countries</label>
