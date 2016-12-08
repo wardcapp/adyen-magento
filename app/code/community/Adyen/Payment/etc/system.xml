@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package Adyen_Payment
+ * @copyright   Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -53,13 +53,16 @@
                             <frontend_model>adyen/adminhtml_system_config_fieldset_gettingstarted</frontend_model>
                             <comment><![CDATA[
                             <ul>
-                                <li><a target="_blank" href="https://docs.adyen.com/developers/magento">Visit the Magento Integration Manual</a></li>
+                                <li><a target="_blank" href="http://vimeo.com/94005128">Instructional video on how to set up the Adyen Magento plugin</a></a>
+                                <li><a target="_blank" href="https://www.adyen.com/dam/documentation/manuals/MagentoQuickIntegrationManual.pdf">Download the Quick Quick Integration Guide</a></li>
+                                <li><a target="_blank" href="https://www.adyen.com/dam/documentation/manuals/AdyenMagentoExtension.pdf">Download the more advanced manual</a></li>
+                                <li><a target="_blank" href="https://www.adyen.com/home/payment-services/plug-ins/magento#form"><strong>Sign</strong> up for a test account</a></li>
                                 <li>The latest version of the <a target="_blank" href="https://github.com/adyenpayments/magento/releases">Adyen Magento module is also available through GitHub</a>.</li>
                             </ul>
-                            <p>In the test mode you need to use test cards. <a target="_blank" href="http://adyen.com/test-card-numbers">Test cards can be found here</a>
-                            <p>In the test mode you can test with refused cards. For more information <a target="_blank" href="https://docs.adyen.com/display/TD/Error+code+testing">click here</a></p>
-                            <p>The Adyen back-office can be found on <a target="_blank" href="https://ca-test.adyen.com">https://ca-test.adyen.com</a> for test or <a target="_blank" href="https://ca-live.adyen.com">https://ca-live.adyen.com</a> for live.</p>
-                            <p>Already visited the Magento Integration Manual but still have questions? Please contact us at <a href="mailto:magento@adyen.com">magento@adyen.com</a>.</p>
+                            <p>In the test modus you nee to use test cards. <a target="_blank" href="http://adyen.com/test-card-numbers">Test cards can be found here</a>
+                            <p>In the test envirenment you can test with refused cards for more information <a target="_blank" href="https://docs.adyen.com/display/TD/Error+code+testing">click here</a></p>
+                            <p>You can find this in the Adyen back-office. The Adyen back-office can be found on <a target="_blank" href="https://ca-test.adyen.com">https://ca-test.adyen.com</a> for test or <a target="_blank" href="https://ca-live.adyen.com">https://ca-live.adyen.com</a> for live.</p>
+                            <p>If you have any further questions, please visit the <a target="_blank" href="http://www.adyen.com">Adyen.com</a> website or email <a href="mailto:magento@adyen.com">magento@adyen.com</a>.</p>
                             ]]>
                             </comment>
                             <fields>
@@ -668,7 +671,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-    			            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -890,6 +893,114 @@
                         </adyen_cc_advanced>
                     </fields>
                 </adyen_cc>
+                <!-- @CC installment only -->
+                <adyen_cc_installment translate="label" module="adyen">
+                    <label>Credit Card Installments</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>420</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_cc_installment/active</activity_path>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sort_order>
+                        <cctypes translate="label">
+                            <label>Credit Card Types</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>adyen/source_ccType</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cctypes>
+                        <cse_enabled translate="label">
+                            <label>Enable Client-Side Encryption (CSE)</label>
+                            <tooltip>Contact support@adyen.com to enable CSE permission on your Adyen account. If you want this to be turned on on your live account please fill in the SAQ-A form and send this to salessupport@adyen.com</tooltip>
+                            <comment><![CDATA[<a target="_blank" href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1_SAQ_A_rev1-1.docx">Click here to download the SAQ A form</a>]]></comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cse_enabled>
+                        <cse_publickey_test translate="label">
+                            <label>Enter CSE Public Key of Test Adyen Web Service User</label>
+                            <tooltip>Copy this from the Test Adyen Customer Area => Settings => Users => System => [web service user]=> Client Encryption Public Key.</tooltip>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><cse_enabled>1</cse_enabled></depends>
+                        </cse_publickey_test>
+                        <cse_publickey translate="label">
+                            <label>Enter CSE Public Key of Live Adyen Web Service User</label>
+                            <frontend_type>textarea</frontend_type>
+                            <tooltip>Copy this from the Live Adyen Customer Area => Settings => Users => System => [web service user] => Client Encryption Public Key.</tooltip>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><cse_enabled>1</cse_enabled></depends>
+                        </cse_publickey>
+                        <allowspecific translate="label">
+                            <label>Payment from applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>90</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment from specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>100</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><allowspecific>1</allowspecific></depends>
+                        </specificcountry>
+                        <visible_type>
+                            <label>Visible in</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adyen/source_VisibleType</source_model>
+                            <sort_order>101</sort_order>
+                            <tooltip>Determine the visibility of this payment method in the frontend and/or backend of Magento.</tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </visible_type>
+                    </fields>
+                </adyen_cc_installment>
                 <adyen_oneclick>
                     <label>OneClick - Requires Adyen Credit Card</label>
                     <frontend_type>text</frontend_type>
@@ -925,7 +1036,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -967,7 +1078,7 @@
                         </active>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1141,7 +1252,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1274,7 +1385,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1362,7 +1473,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1478,7 +1589,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1647,7 +1758,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1804,7 +1915,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
@@ -2022,7 +2133,7 @@
                         </title>
                         <sort_order translate="label">
                             <label>Sort Order</label>
-            			    <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>25</sort_order>
                             <show_in_default>1</show_in_default>
