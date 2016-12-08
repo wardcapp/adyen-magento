@@ -79,19 +79,7 @@ class Adyen_Payment_Model_Recurringcron {
                         $sql = "update adyen_order_installments set done = 1 , attempt = attempt + 1, payment_date = '".$paymentDate."' where  id='".$data['id']."'";
                         $connWrite->query($sql);
 
-                        if ($data['number_installment'] == 2) {
-                            if ($_SERVER['SERVER_NAME'] == 'staging.evematelas.fr') {
-                                $this->sendEmail($data, 48);
-                            } else {
-                                $this->sendEmail($data, 46);
-                            }
-                        } else if ($data['number_installment'] == 3) {
-                            if ($_SERVER['SERVER_NAME'] == 'staging.evematelas.fr') {
-                                $this->sendEmail($data, 49);
-                            } else {
-                                $this->sendEmail($data, 47);
-                            }
-                        }
+                        //send emails
 
                     } else if ($result['resultCode'] == 'Refused') {
 
@@ -101,34 +89,7 @@ class Adyen_Payment_Model_Recurringcron {
                         if ($res) {
                             $data['attempt'] = $data['attempt'] + 1;
                         }
-                        //Sending emails
-                        if ($data['attempt'] == 1) {
-                            if ($_SERVER['SERVER_NAME'] == 'staging.evematelas.fr') {
-                               //first attempt fails
-                                $this->sendEmail($data, 45); 
-                            } else {
-                                //first attempt fails
-                                $this->sendEmail($data, 43); 
-                            }                              
-                        } else if ($data['attempt'] == 2) {
-                            if ($_SERVER['SERVER_NAME'] == 'staging.evematelas.fr') {
-                                //if second attempt fails
-                                $this->sendEmail($data, 46); 
-                            } else {
-                                //second attempt fails
-                                $this->sendEmail($data, 44); 
-                            }
-                        } else if ($data['attempt'] == 3) {
-                            //setting order status
-                            $sql = "update sales_flat_order set status = 'adyen_installment_failed' where increment_id ='".$data['increment_id']."' ";
-                            $connWrite->query($sql); 
-                            //if third attempt fails
-                             if ($_SERVER['SERVER_NAME'] == 'staging.evematelas.fr') {
-                                $this->sendEmail($data, 47); 
-                            } else {
-                                $this->sendEmail($data, 45);
-                            }
-                        }
+                        //Send emails
 
                     } else {
                         Mage::log('Payment Failed '. $data['increment_id']);
@@ -189,7 +150,6 @@ class Adyen_Payment_Model_Recurringcron {
      
         // Send Transactional Email (transactional email template ID from admin)
         Mage::getModel('core/email_template')
-            ->addBcc(array('shruti@ranium.in', 'anup@ranium.in', 'serviceclient@evematelas.fr'))
             ->sendTransactional($templateId, $sender, $recepientEmails, '', $emailTemplateVariables, $store);
                 
         $translate->setTranslateInline(true);  
