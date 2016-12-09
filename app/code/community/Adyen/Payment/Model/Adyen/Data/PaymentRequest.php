@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package Adyen_Payment
+ * @copyright   Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -50,13 +50,13 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     public $shopperStatement;
     public $additionalData;
 
-	// added for boleto
-	public $shopperName;
-	public $socialSecurityNumber;
+    // added for boleto
+    public $shopperName;
+    public $socialSecurityNumber;
     const GUEST_ID = 'customer_';
 
     public function __construct() {
-    	$this->browserInfo = new Adyen_Payment_Model_Adyen_Data_BrowserInfo();
+        $this->browserInfo = new Adyen_Payment_Model_Adyen_Data_BrowserInfo();
         $this->card = new Adyen_Payment_Model_Adyen_Data_Card();
         $this->amount = new Adyen_Payment_Model_Adyen_Data_Amount();
         $this->elv = new Adyen_Payment_Model_Adyen_Data_Elv();
@@ -92,7 +92,19 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->reference = $incrementId;
         $this->merchantAccount = $merchantAccount;
         $this->amount->currency = $orderCurrencyCode;
-        $this->amount->value = Mage::helper('adyen')->formatAmount($amount, $orderCurrencyCode);
+
+        //Calculating first installment
+        $cartTotal =  $order->getGrandTotal();                  
+        $installments = number_format(((int)$cartTotal/3),2);
+        $totalInstallments = $installments * 3;
+        $remainingCents = $cartTotal - $totalInstallments;        
+        $firstInstallment = $installments + $remainingCents;
+
+        if ($paymentMethod == "cc_installment") {
+            $this->amount->value = Mage::helper('adyen')->formatAmount($firstInstallment, $orderCurrencyCode);
+        } else {
+            $this->amount->value = Mage::helper('adyen')->formatAmount($amount, $orderCurrencyCode);
+        }        
 
         //shopper data
         $customerEmail = $order->getCustomerEmail();
@@ -111,7 +123,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
                     $this->recurring->contract = "RECURRING";
                 }
-            } elseif($paymentMethod == "cc") {
+            } elseif($paymentMethod == "cc" || $paymentMethod == "cc_installment") {
                 // if save card is disabled only shoot in as recurring if recurringType is set to ONECLICK,RECURRING
                 if($payment->getAdditionalInformation("store_cc") == "" && $recurringType == "ONECLICK,RECURRING") {
                     $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
@@ -156,6 +168,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 break;
             case "apple_pay":
             case "cc":
+            case "cc_installment":
             case "oneclick":
 
                 $this->elv = null;
@@ -238,7 +251,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $kv->key = new SoapVar("payment.token", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
                     $kv->value = new SoapVar(base64_encode($token), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
                     $this->additionalData->entry = $kv;
-                } else if (Mage::getModel('adyen/adyen_cc')->isCseEnabled()) {
+                } else if (Mage::getModel('adyen/adyen_cc')->isCseEnabled() || Mage::getModel('adyen/adyen_cc_installment')->isCseEnabled()) {
 
                     $this->card = null;
 
@@ -249,7 +262,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                         $kv->value = new SoapVar($payment->getAdditionalInformation("encrypted_data"), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
                         $this->additionalData->entry = $kv;
                     } else {
-                        if($paymentMethod == 'cc') {
+                        if($paymentMethod == 'cc' || $paymentMethod == 'cc_installment') {
 
                             // log the browser data to see why it is failing
                             Mage::log($_SERVER['HTTP_USER_AGENT'], Zend_Log::ERR, "adyen_exception.log", true);
@@ -260,8 +273,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                             );
                         }
                     }
-				}
-				else {
+                }
+                else {
 
                     if($recurringDetailReference && $recurringDetailReference != "") {
 
@@ -286,10 +299,10 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                         $this->card->holderName = $payment->getCcOwner();
                         $this->card->number = $payment->getCcNumber();
                     }
-				}
+                }
 
                 // installments
-                if(Mage::helper('adyen/installments')->isInstallmentsEnabled() &&  $payment->getAdditionalInformation('number_of_installments') > 0){
+                if($payment->getAdditionalInformation('number_of_installments') > 0){
                     $this->installments = new Adyen_Payment_Model_Adyen_Data_Installments();
                     $this->installments->value = $payment->getAdditionalInformation('number_of_installments');
                 }
@@ -299,16 +312,16 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                 break;
             case "boleto":
-            	$boleto = unserialize($payment->getPoNumber());
-            	$this->card = null;
-            	$this->elv = null;
+                $boleto = unserialize($payment->getPoNumber());
+                $this->card = null;
+                $this->elv = null;
                 $this->bankAccount = null;
-            	$this->socialSecurityNumber = $boleto['social_security_number'];
-            	$this->selectedBrand = $boleto['selected_brand'];
-            	$this->shopperName->firstName = $boleto['firstname'];
-            	$this->shopperName->lastName = $boleto['lastname'];
-            	$this->deliveryDate = $boleto['delivery_date'];
-            	break;
+                $this->socialSecurityNumber = $boleto['social_security_number'];
+                $this->selectedBrand = $boleto['selected_brand'];
+                $this->shopperName->firstName = $boleto['firstname'];
+                $this->shopperName->lastName = $boleto['lastname'];
+                $this->deliveryDate = $boleto['delivery_date'];
+                break;
             case "sepa":
                 $sepa = unserialize($payment->getPoNumber());
                 $this->card = null;
