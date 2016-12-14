@@ -245,6 +245,6 @@
                 <payment_percentage_fee>16</payment_percentage_fee>
                 <payment_installment_fee>17</payment_installment_fee>
             </totals_sort>
-        </sales>xw
+        </sales>
     </default>
 </config>
