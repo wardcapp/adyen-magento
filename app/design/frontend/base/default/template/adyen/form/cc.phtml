@@ -42,7 +42,7 @@ $_code = $this->getMethodCode();
     <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_number">
         <label for="creditCardNumber" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
         <div class="input-box">
-            <input type="text" pattern="[0-9]*" id="creditCardNumber" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_number]\"" : " data-encrypted-name=\"number\""); ?> title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-type required-entry" value="" maxlength="23"/>
+            <input type="text" pattern="[0-9]{14,19}" id="creditCardNumber" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_number]\"" : " data-encrypted-name=\"number\""); ?> title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-type required-entry" value="" maxlength="23"/>
         </div>
     </li>
     <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">
@@ -79,7 +79,7 @@ $_code = $this->getMethodCode();
         <label id="<?php echo $_code ?>_cc_cid_label" for="<?php echo $_code ?>_cc_cid" class="required"><em id="<?php echo $_code ?>_cc_cid_label_em">*</em><?php echo $this->__('Card Verification Number') ?></label>
         <div class="input-box">
             <div class="v-fix">
-                <input type="text" pattern="[0-9]*" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-digits validate-length" id="<?php echo $_code ?>_cc_cid" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_cid]\"" : "data-encrypted-name=\"cvc\""); ?> value="" size="7" maxlength="4" />
+                <input type="text" pattern="[0-9]{14,19}" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-digits validate-length" id="<?php echo $_code ?>_cc_cid" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_cid]\"" : "data-encrypted-name=\"cvc\""); ?> value="" size="7" maxlength="4" />
             </div>
             <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
         </div>
