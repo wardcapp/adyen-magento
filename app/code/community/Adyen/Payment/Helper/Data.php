@@ -385,7 +385,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 
 
     /**
-     * Is th IP in the given range
+     * Is the IPv4/v6 IP address in the given range
      * @param $ip
      * @param $from
      * @param $to
@@ -394,14 +394,34 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
      */
     public function ipInRange($ip, $from, $to)
     {
-        $ip = ip2long($ip);
-        $lowIp = ip2long($from);
-        $highIp = ip2long($to);
+        $ip = $this->getIpNumberFromAddress($ip);
+        $from = $this->getIpNumberFromAddress($from);
+        $to = $this->getIpNumberFromAddress($to);
 
-        if ($ip <= $highIp && $lowIp <= $ip) {
-            return true;
+        return (!$ip || !$from || !$to) ? false : ($ip <= $to && $from <= $ip);
+    }
+
+    /**
+     * Converts any given IPv4/v6 address to a string representation of it's 32/128bit integer
+     * which may be used for comparison
+     *
+     * @param string $address
+     * @return string|bool
+     */
+    public function getIpNumberFromAddress($address)
+    {
+        // Unrecognised addresses cause PHP warnings, silence the warning and return a bool instead
+        $pton = @inet_pton($address);
+        if (!$pton) {
+            return false;
         }
-        return false;
+
+        $number = '';
+        foreach (unpack('C*', $pton) as $byte) {
+            $number .= str_pad(decbin($byte), 8, '0', STR_PAD_LEFT);
+        }
+
+        return base_convert(ltrim($number, '0'), 2, 10);
     }
 
 
