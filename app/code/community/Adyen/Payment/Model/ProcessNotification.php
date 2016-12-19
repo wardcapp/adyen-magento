@@ -1077,13 +1077,22 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                 return true;
             }
             // if auto capture mode for openinvoice is turned on then use auto capture
-            if ($captureModeOpenInvoice == true && (strcmp($this->_paymentMethod, 'openinvoice') === 0 || strcmp($this->_paymentMethod, 'afterpay_default') === 0 || strcmp($this->_paymentMethod, 'klarna') === 0)) {
+            if ($captureModeOpenInvoice == true && (
+                    strcmp($this->_paymentMethod, 'openinvoice') === 0 ||
+                    strcmp($this->_paymentMethod, 'afterpay_default') === 0 ||
+                    strcmp($this->_paymentMethod, 'klarna') === 0 ||
+                    strcmp($this->_paymentMethod, 'ratepay') === 0)
+            ) {
                 $this->_debugData[$this->_count]['_isAutoCapture result'] = 'openinvoice capture mode is set to auto capture';
                 return true;
             }
 
             // by default openinvoice payment methods are manual capture
-            if (strcmp($this->_paymentMethod, 'openinvoice') === 0 || strcmp($this->_paymentMethod, 'afterpay_default') === 0 || strcmp($this->_paymentMethod, 'klarna') === 0) {
+            if (strcmp($this->_paymentMethod, 'openinvoice') === 0 ||
+                strcmp($this->_paymentMethod, 'afterpay_default') === 0 ||
+                strcmp($this->_paymentMethod, 'klarna') === 0 ||
+                strcmp($this->_paymentMethod, 'ratepay') === 0)
+            {
                 return false;
             }
 
@@ -1138,6 +1147,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             case 'paypal':
             case 'klarna':
             case 'afterpay_default':
+            case 'ratepay':
             case 'sepadirectdebit':
                 $manualCaptureAllowed = true;
                 break;
@@ -1338,8 +1348,13 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             $order->setAdyenEventCode($this->_eventCode . " : " . strtoupper($success_result));
         }
 
-        // if payment method is klarna or openinvoice/afterpay show the reservartion number
-        if(($this->_paymentMethod == "klarna" || $this->_paymentMethod == "afterpay_default" || $this->_paymentMethod == "openinvoice") && ($this->_klarnaReservationNumber != null && $this->_klarnaReservationNumber != "")) {
+        // if payment method is klarna or openinvoice/afterpay show the reservation number
+        if(($this->_paymentMethod == "klarna" ||
+                $this->_paymentMethod == "afterpay_default" ||
+                $this->_paymentMethod == "openinvoice" ||
+                $this->_paymentMethod == "ratepay"
+            ) && ($this->_klarnaReservationNumber != null && $this->_klarnaReservationNumber != "")
+        ) {
             $klarnaReservationNumberText = "<br /> reservationNumber: " . $this->_klarnaReservationNumber;
         } else {
             $klarnaReservationNumberText = "";

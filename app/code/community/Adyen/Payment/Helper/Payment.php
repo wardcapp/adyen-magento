@@ -448,7 +448,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     public function getHppViewDetails($infoInstanceCCType, $paymentMethodCode, $hasDeliveryAddress)
     {
         // should the HPP page show address and delivery type details
-        if ($paymentMethodCode == "adyen_openinvoice" || $infoInstanceCCType == "klarna" || $infoInstanceCCType == "afterpay_default") {
+        if ($paymentMethodCode == "adyen_openinvoice" || $infoInstanceCCType == "klarna" || $infoInstanceCCType == "afterpay_default" || $infoInstanceCCType == "ratepay") {
             $billingAddressType = "1"; // yes, but not editable
             $deliveryAddressType = "1"; // yes, but not editable
 
