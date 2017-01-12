@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category    Adyen
- * @package Adyen_Payment
- * @copyright   Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category	Adyen
+ * @package	Adyen_Payment
+ * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -388,25 +388,6 @@
                 <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
                 <sort_order>20</sort_order>
             </adyen_cc>
-            <adyen_cc_installment translate="title" module="adyen">
-                <active>0</active>
-                <model>adyen/adyen_ccInstallment</model>
-                <group>adyen</group>
-                <title>Adyen Credit Card Installment</title>
-                <debug>0</debug>
-                <enable_installments>0</enable_installments>
-                <cse_enabled>1</cse_enabled>
-                <cse_public_key></cse_public_key>
-                <visible_type>both</visible_type>
-                <enable_moto>0</enable_moto>
-                <account_id>99999</account_id>
-                <trxuser_id>99999</trxuser_id>
-                <trxuser_password>0</trxuser_password>
-                <adminaction_password>5cfgRT34xsdedtFLdfHxj7tfwx24fe</adminaction_password>
-                <wsdl>https://pal-test.adyen.com/pal/Payment.wsdl</wsdl>
-                <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
-                <sort_order>30</sort_order>
-            </adyen_cc_installment>
             <adyen_oneclick translate="title" module="adyen">
                 <active>0</active>
                 <model>adyen/adyen_oneclick</model>
@@ -622,14 +603,6 @@
                     <model>adyen/cronjob::updateNotificationQueue</model>
                 </run>
             </adyen_payment_process_notification_queue>
-            <adyen_installment_process>
-                <schedule>
-                    <cron_expr>5 0 * * *</cron_expr>
-                </schedule>
-                <run>
-                    <model>adyen/recurringcron::processNextInstallment</model>
-                </run>
-            </adyen_installment_process>
         </jobs>
     </crontab>
 </config>

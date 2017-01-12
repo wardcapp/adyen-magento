@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category    Adyen
- * @package Adyen_Payment
- * @copyright   Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category	Adyen
+ * @package	Adyen_Payment
+ * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -258,7 +258,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
             $order->setCanSendNewEmailFlag(false);
         }
 
-        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || $this->getCode() == 'adyen_cc_installment' || substr($this->getCode(), 0, 14) == 'adyen_oneclick' || $this->getCode() == 'adyen_elv' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay') {
+        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || substr($this->getCode(), 0, 14) == 'adyen_oneclick' || $this->getCode() == 'adyen_elv' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay') {
 
             if(substr($this->getCode(), 0, 14) == 'adyen_oneclick') {
 
@@ -564,73 +564,6 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 $errorMsg = Mage::helper('adyen')->__('Unknown data type by Adyen');
                 Adyen_Payment_Exception::throwException($errorMsg);
                 break;
-        }
-
-        //For installment option only
-        if ($request == "authorise" && $payment->getMethod() == "adyen_cc_installment") {
-            //second and third installment amount
-            $total =  $payment->getOrder()->getGrandTotal();
-            $installments = number_format(((int)$total/3),2);
-            $totalInstallments = $installments * 3;
-            $remainingCents = $total - $totalInstallments;
-            $firstInstallment = $installments + $remainingCents;
-
-            //Todays date to calculate next two installments due date
-            $todaysDate = date('Y-m-d');
-
-            $data = array(
-                        'effectivedate' => $todaysDate,
-                        'duration'      => 2
-                    );
-
-            function getPaymentDates(array $data)
-            {   
-                $begin = new DateTime($data['effectivedate']);
-                $period = new DatePeriod(
-                    $begin,
-                    new DateInterval('P1M'),
-                    (int) $data['duration']
-                );
-              
-                $clean = array();
-                $last = (int) $begin->format('m');
-                foreach ($period as $date)
-                {
-                    while($last != $date->format('m'))
-                        $date->modify('-1 day');//subtract days until we get to the last day of the previous month...
-                    $clean[] = $date->format('Y-m-d');
-                    if (++$last > 12)
-                        $last = 1;//no 13th month, of course...
-                }
-                return $clean;
-            }
-
-            $duedates = getPaymentDates($data);
-
-            //Saving into new table (for next installments)
-            for ($i=0; $i <= 2; $i++) { 
-                $orderId  = $payment->getOrder()->getId();
-                $incrementId = $payment->getOrder()->getIncrementId();
-                if ($i == 0) {
-                    $amount = $firstInstallment;
-                    $done = 1;
-                    $attempt = 1;
-                } else {
-                    $amount = $installments;
-                    $done = 0;
-                    $attempt = 0;
-                }
-
-                $noInstallment = $i+1;
-                //if today's date(order placing date) is equal to last day of this month
-                //then due date of next two installments should be last day of respective months
-                $duedate = $duedates[$i];
-                $created_at = now();
-             
-                $connWrite = Mage::getSingleton('core/resource')->getConnection('core_write');
-                $sql = "insert into adyen_order_installments (order_id, increment_id, number_installment, amount, due_date, done, attempt,created_at) values ('$orderId','$incrementId', '$noInstallment', '$amount', '$duedate','$done', '$attempt', '$created_at')";
-                $connWrite->query($sql);
-            }
         }
 
         //save all response data for a pure duplicate detection
