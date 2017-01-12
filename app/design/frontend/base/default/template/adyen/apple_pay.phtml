@@ -3,12 +3,12 @@
 if ($this->hasApplePayEnabled()):
     $subtotal = $this->getSubTotal();
     $productId = $subtotal['productId'];
-    $finalPrice = $subtotal['amount'];
+    $finalPrice = ($subtotal['amount'] > 0) ? $subtotal['amount'] : '0';
     $productTitle = $subtotal['label'];
     $_shippingMethods = $this->getShippingMethods();
     $currency = Mage::app()->getStore()->getCurrentCurrencyCode();
     $_customerData = $this->getCustomerData();
-    $merchantIdentifier = $this->getMerchantIdentifier;
+    $merchantIdentifier = $this->getMerchantIdentifier();
     $reviewStep = $this->onReviewStep();
 
     $fistItem = null;
@@ -23,16 +23,15 @@ if ($this->hasApplePayEnabled()):
     ?>
 
     <div id="adyen-apple-pay-button" class="apple-pay-button-with-text apple-pay-button-black-with-text" style="display: none;">
-        <span class="text">Buy With</span>
         <span class="logo"></span>
     </div>
     
-        <script type="text/javascript">
+    <script type="text/javascript">
         // Only show button for browsers that suppoprt ApplePaySession
         if(window.ApplePaySession) {
-            var promise = ApplePaySession.canMakePaymentsWithActiveCard("<?php echo $merchantIdentifier; ?>");
-            promise.then(function (canMakePayments) {
-                if (canMakePayments) {
+//            var promise = ApplePaySession.canMakePaymentsWithActiveCard("<?php //echo $merchantIdentifier; ?>//");
+//            promise.then(function (canMakePayments) {
+//                if (canMakePayments) {
                     $('adyen-apple-pay-button').show();
 
                     // add handlers
@@ -45,8 +44,8 @@ if ($this->hasApplePayEnabled()):
                     var applePayButton = document.getElementById("adyen-apple-pay-button");
                     applePayButton.observe('click', applePayButtonClicked);
                 }
-            });
-        }
+//            });
+//        }
 
         // global shippingMethods value
         var shippingMethods = [];
