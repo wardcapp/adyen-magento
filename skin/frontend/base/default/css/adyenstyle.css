@@ -45,7 +45,6 @@
 .adyen-payment-method-icon.adyen_cc,
 .adyen-payment-method-icon.adyen_hpp,
 .adyen-payment-method-icon.adyen_boleto,
-.adyen-payment-method-icon.adyen_elv,
 .adyen-payment-method-icon.adyen_openinvoice_afterpay_default,
 .adyen-payment-method-icon.adyen_openinvoice_klarna,
 .adyen-payment-method-icon.adyen_pos,
@@ -58,7 +57,6 @@
 .adyen-payment-method-icon.adyen_cc { background-position: 0 -272px; }
 .adyen-payment-method-icon.adyen_hpp { background-position: 0 -272px; }
 .adyen-payment-method-icon.adyen_boleto { background-position: 0 -2092px; }
-.adyen-payment-method-icon.adyen_elv {background-position: 0 -2000px; }
 .adyen-payment-method-icon.adyen_openinvoice_afterpay_default {background-position: 0 -1637px; }
 .adyen-payment-method-icon.adyen_openinvoice_klarna {background-position: 0 -1728px; }
 .adyen-payment-method-icon.adyen_pos { background-position: 0 -1818px; }
