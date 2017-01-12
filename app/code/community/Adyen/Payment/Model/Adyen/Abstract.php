@@ -293,6 +293,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      */
     public function capture(Varien_Object $payment, $amount) {
         parent::capture($payment, $amount);
+
+
         $payment->setStatus(self::STATUS_APPROVED)
             ->setTransactionId($this->getTransactionId())
             ->setIsTransactionClosed(0);
@@ -304,10 +306,37 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 $amount  = $invoice->getGrandTotal();
         }
 
-        // do capture request to adyen
-        $order = $payment->getOrder();
-        $pspReference = Mage::getModel('adyen/event')->getOriginalPspReference($order->getIncrementId());
-        $order->getPayment()->getMethodInstance()->sendCaptureRequest($payment, $amount, $pspReference);
+
+        // if pre-order there needs to be done a new auth and a cap afterwards
+        if (Mage::helper('adyen')->containsPreOrderProduct($order)) {
+
+            // get the recurring contact
+            $recurringDetailReference = ""; // ????
+
+            $collection = Mage::getModel('adyen/billing_agreement')
+                ->getCollection()
+                ->addFieldToFilter('order_id', $order->getId())
+                ->join(array('sbao' => 'sales/billing_agreement_order'), 'main_table.agreement_id=sbao.agreement_id', array(), null , 'left')
+                ;
+
+            $result = $collection->getFirstItem();
+            $recurringDetailReference = $result->getReferenceId();
+
+            $agreement = Mage::getModel('adyen/billing_agreement')->load($recurringDetailReference, 'reference_id');
+
+            // do an authorisation of a new payment with the recurring details
+            $order->getPayment()->getMethodInstance()->authorize($payment, $amount);
+            
+            die("DF");
+        } else {
+            // do capture request to adyen
+            $order = $payment->getOrder();
+            $pspReference = Mage::getModel('adyen/event')->getOriginalPspReference($order->getIncrementId());
+            $order->getPayment()->getMethodInstance()->sendCaptureRequest($payment, $amount, $pspReference);
+
+        }
+
+
 
         return $this;
     }

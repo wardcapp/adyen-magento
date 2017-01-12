@@ -30,14 +30,10 @@
  */
 class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
 {
-    /**
-     * @var GUEST_ID , used when order is placed by guests
-     */
-    const GUEST_ID = 'customer_';
 
     const KCP_CREDITCARD = 'kcp_creditcard';
     const KCP_BANKTRANSFER = 'kcp_banktransfer';
-
+    
     protected $_canUseInternal = false;
     protected $_code = 'adyen_hpp';
     protected $_formBlockType = 'adyen/form_hpp';
@@ -205,6 +201,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         $paymentRoutine     = $this->_getConfigData('payment_routines', 'adyen_hpp');
         $isConfigDemoMode   = $this->getConfigDataDemoMode();
         $hppOptionsDisabled = $this->getHppOptionsDisabled();
+        $paymentMethod = $this->getInfoInstance()->getCcType();
 
         return Mage::helper('adyen/payment')->getFormUrl($fields, $isConfigDemoMode, $paymentRoutine, $hppOptionsDisabled);
     }
@@ -271,5 +268,13 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         }
 
         return $isAvailable;
+    }
+
+    public function allowRecurring()
+    {
+        if ($this->_code  == "adyen_hpp_sepa") {
+            return true;
+        }
+        return false;
     }
 }

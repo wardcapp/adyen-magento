@@ -50,13 +50,13 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     public $shopperStatement;
     public $additionalData;
 
-	// added for boleto
-	public $shopperName;
-	public $socialSecurityNumber;
+    // added for boleto
+    public $shopperName;
+    public $socialSecurityNumber;
     const GUEST_ID = 'customer_';
 
     public function __construct() {
-    	$this->browserInfo = new Adyen_Payment_Model_Adyen_Data_BrowserInfo();
+        $this->browserInfo = new Adyen_Payment_Model_Adyen_Data_BrowserInfo();
         $this->card = new Adyen_Payment_Model_Adyen_Data_Card();
         $this->amount = new Adyen_Payment_Model_Adyen_Data_Amount();
         $this->elv = new Adyen_Payment_Model_Adyen_Data_Elv();
@@ -84,7 +84,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
             $customer = Mage::getModel('customer/customer')->load($order->getCustomerId());
             $customerId = $customer->getData('adyen_customer_ref')
                 ?: $customer->getData('increment_id')
-                ?: $customerId;
+                    ?: $customerId;
         }
 
         $realOrderId = $order->getRealOrderId();
@@ -92,7 +92,26 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->reference = $incrementId;
         $this->merchantAccount = $merchantAccount;
         $this->amount->currency = $orderCurrencyCode;
-        $this->amount->value = Mage::helper('adyen')->formatAmount($amount, $orderCurrencyCode);
+
+
+        // check if quote items contain a pre-order product
+        $containsPreOrderItem = false;
+        if ($order->getQuote()) {
+            foreach ($order->getQuote()->getAllItems() as $item) {
+                if ($item->getAdyenPreOrder()) {
+                    $containsPreOrderItem = true;
+                    continue;
+                }
+            }
+        }
+
+        // if pre-order do a zero-auth
+        if ($containsPreOrderItem) {
+            $this->amount->value = Mage::helper('adyen')->formatAmount("0", $orderCurrencyCode);
+        } else {
+            $this->amount->value = Mage::helper('adyen')->formatAmount($amount, $orderCurrencyCode);
+        }
+
 
         //shopper data
         $customerEmail = $order->getCustomerEmail();
@@ -260,8 +279,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                             );
                         }
                     }
-				}
-				else {
+                }
+                else {
 
                     if($recurringDetailReference && $recurringDetailReference != "") {
 
@@ -286,7 +305,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                         $this->card->holderName = $payment->getCcOwner();
                         $this->card->number = $payment->getCcNumber();
                     }
-				}
+                }
 
                 // installments
                 if(Mage::helper('adyen/installments')->isInstallmentsEnabled() &&  $payment->getAdditionalInformation('number_of_installments') > 0){
@@ -299,16 +318,16 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                 break;
             case "boleto":
-            	$boleto = unserialize($payment->getPoNumber());
-            	$this->card = null;
-            	$this->elv = null;
+                $boleto = unserialize($payment->getPoNumber());
+                $this->card = null;
+                $this->elv = null;
                 $this->bankAccount = null;
-            	$this->socialSecurityNumber = $boleto['social_security_number'];
-            	$this->selectedBrand = $boleto['selected_brand'];
-            	$this->shopperName->firstName = $boleto['firstname'];
-            	$this->shopperName->lastName = $boleto['lastname'];
-            	$this->deliveryDate = $boleto['delivery_date'];
-            	break;
+                $this->socialSecurityNumber = $boleto['social_security_number'];
+                $this->selectedBrand = $boleto['selected_brand'];
+                $this->shopperName->firstName = $boleto['firstname'];
+                $this->shopperName->lastName = $boleto['lastname'];
+                $this->deliveryDate = $boleto['delivery_date'];
+                break;
             case "sepa":
                 $sepa = unserialize($payment->getPoNumber());
                 $this->card = null;

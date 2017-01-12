@@ -165,7 +165,6 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                 'sepadirectdebit' => 'adyen_sepa'
             );
 
-
             $ccTypes = Mage::helper('adyen')->getCcTypes();
             $ccTypes = array_keys(array_change_key_case($ccTypes, CASE_LOWER));
             foreach ($ccTypes as $ccType) {
@@ -210,6 +209,69 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         }
 
         return true;
+    }
+
+    public function authorizeApplePay($token, $amount)
+    {
+        $requestParams = [];
+        $requestParams['merchantAccount'] = 'TestMerchantAP';
+        $requestParams['reference'] = 'Test_1_GBP';
+        $requestParams['additionalData']['payment.token'] = base64_encode($token);
+
+        $amount = [];
+        $amount['currency'] = 'EUR';
+        $amount['value'] = '10500';
+        $requestParams['amount'] = $amount;
+
+        Mage::log("Params Send Payment" . print_r($requestParams,true), Zend_Log::DEBUG, 'adyen_apple_pay.log');
+
+        $jsonRequest = json_encode($requestParams);
+
+        $username = "ws_754709@Company.TestCompany";
+        $password = "sfwSxuxnmnc2";
+
+        //Initiate cURL.
+        $ch = curl_init("https://pal-test.adyen.com/pal/servlet/Payment/V12/authorise");
+        //Tell cURL that we want to send a POST request.
+        curl_setopt($ch, CURLOPT_POST, 1);
+        // set authorisation
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, $username.":".$password);
+
+        //Attach our encoded JSON string to the POST fields.
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonRequest);
+        // set a custom User-Agent
+        $userAgent = "test";
+        //Set the content type to application/json and use the defined userAgent
+        $headers = array(
+            'Content-Type: application/json',
+            'User-Agent: ' . $userAgent
+        );
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        // return the result
+        curl_setopt($ch,  CURLOPT_RETURNTRANSFER, 1);
+
+        //Execute the request
+        $result = curl_exec($ch);
+        $error = curl_error($ch);
+
+        if ($result === false) {
+            Adyen_Payment_Exception::throwException($error);
+        }
+
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpStatus != 200) {
+            Adyen_Payment_Exception::throwException(
+                Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
+            );
+        }
+
+        curl_close($ch);
+
+        Mage::log("Result Payment" . print_r($result,true), Zend_Log::DEBUG, 'adyen_apple_pay.log');
+
+        return $result;
     }
 
 

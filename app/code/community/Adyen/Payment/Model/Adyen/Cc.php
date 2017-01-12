@@ -45,6 +45,8 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
      */
     public function assignData($data) {
 
+        Mage::log(print_r($data, true), Zend_Log::DEBUG, "adyen_post_data.log", true);
+
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
@@ -202,8 +204,8 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         return $this->_ccTypes;
     }
 
-    public function canCreateAdyenSubscription() {
-
+    public function canCreateAdyenSubscription()
+    {
         // validate if recurringType is correctly configured
         $recurringType = $this->_getConfigData('recurringtypes', 'adyen_abstract');
         if($recurringType == "RECURRING" || $recurringType == "ONECLICK,RECURRING") {
@@ -231,5 +233,10 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         }
 
         return $isAvailable;
+    }
+
+    public function allowRecurring()
+    {
+        return true;
     }
 }

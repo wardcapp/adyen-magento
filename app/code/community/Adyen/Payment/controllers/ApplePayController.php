@@ -40,7 +40,7 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
 //        $validationUrl = $params['validationURL'];
         // Works for test and live. Maybe we need to switch for validationUrl from callback event waiting for apple to respond
         $validationUrl = "https://apple-pay-gateway-cert.apple.com/paymentservices/startSession";
-        
+
         // create a new cURL resource
         $ch = curl_init();
 
@@ -74,7 +74,8 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
         $message = curl_error($ch);
 
         if ($httpStatus != 200 && $result) {
-            Mage::logException("Apple Merchant Valdiation Failed. Please check merchantIdentifier, domainname and PEM file. Request is: " . var_export($data,true));
+            Mage::log("Check if your PEM file location is correct location is now defined:" . $fullPathLocationPEMFile, Zend_Log::ERR, 'adyen_exception.log');
+            Mage::log("Apple Merchant Valdiation Failed. Please check merchantIdentifier, domainname and PEM file. Request is: " . var_export($data,true) . "RESULT:" . $result . " HTTPS STATUS:" . $httpStatus . "VALIDATION URL:" . $validationUrl, Zend_Log::ERR, 'adyen_exception.log');
         } elseif(!$result) {
             $errno = curl_errno($ch);
             $message = curl_error($ch);
@@ -82,7 +83,7 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
             curl_close($ch);
 
             $msg = "\n(Network error [errno $errno]: $message)";
-            Mage::logException($msg);
+            Mage::log($msg, Zend_Log::ERR, 'adyen_exception.log');
             throw new \Exception($msg);
         }
 
@@ -375,7 +376,8 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
 
         $addressValidation = $quote->getBillingAddress()->validate();
         if ($addressValidation !== true) {
-            Mage::log("Billing Validation Error" . print_R($addressValidation, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
+            Mage::log("Billing Contract:" . print_R($billingContact, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
+            Mage::log("Billing Validation Error" . print_R($addressValidation, 1) . print_r($billingAddress, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
             Mage::throwException(Mage::helper('adyen')->__('Error Billing address validation'));
         }
     }

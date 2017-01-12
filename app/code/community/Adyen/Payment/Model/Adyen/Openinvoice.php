@@ -491,4 +491,9 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
     {
         return $this->_getConfigData('telephone_show', 'adyen_openinvoice');
     }
+
+    public function allowRecurring()
+    {
+        return false;
+    }
 }

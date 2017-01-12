@@ -178,4 +178,9 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
         return false;
     }
 
+    public function allowRecurring()
+    {
+        return false;
+    }
+
 }

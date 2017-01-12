@@ -30,13 +30,15 @@
 
 
 
-    <div id="adyen-checkout-wrapper">
+    <div id="adyen-checkout-wrapper" style="">
         <form class="form-list" action="<?php echo $this->getUrl("adyen/checkoutPos", array('_secure'=>true)); ?>" method="post">
 
 
             <div class="adyenExpressCheckoutBlockLeft">
                 <input style="width:240px;" type="text" class="input-text" name="adyenPosEmail" id="adyenPosEmail" value="<?php echo $this->getEmailAddressShopper(); ?>" size="60"  placeholder="Email" autocapitalize="off" autocomplete="off"/>
 
+<!--                <select id="adyenPosPaymentDevices">-->
+<!--                </select>-->
 
                 <div id="autocomplete_choices" class="adyenAutocomplete" style="display: none;"></div>
 
@@ -58,6 +60,7 @@
 
                 <script type="text/javascript">
                     $('adyenPosEmail').observe('change', getCustomerFromEmail);
+                    $('adyenPosEmail').observe('keyup', enablePOSButton);
 
                     new Ajax.Autocompleter(
                         'adyenPosEmail',
@@ -79,11 +82,25 @@
                         getCustomerFromEmailAjaxCall(null, customerId);
                     }
 
+                    function enablePOSButton(event) {
+                        if(this.value != "") {
+                            document.getElementById('CheckoutWithPos').disabled = false;
+                        } else {
+                            document.getElementById('CheckoutWithPos').disabled = true;
+                        }
+                    }
+
                     function getCustomerFromEmail(event) {
-                        getCustomerFromEmailAjaxCall(this.value, null);
+//                        getCustomerFromEmailAjaxCall(this.value, null);
+                        // clear info
+                        $('AdyenAccountInfo').update("");
+
                     }
 
                     function getCustomerFromEmailAjaxCall(email, customerId) {
+
+                        // clear info
+                        $('AdyenAccountInfo').update("");
 
                         var url = '<?php echo $this->getUrl('adyen/checkoutPos/validateCustomerByEmail', array('_secure'=>true));?>';
 
@@ -117,7 +134,8 @@
                                                         html += '<a href="<?php echo $this->getUrl('adyen/checkoutPos', array('_secure'=>true));?>?recurringDetailReference=' + json.recurringCards[i].recurringDetailReference + '&customerId=' + json.customerData.entity_id + '">';
                                                         html += '<img src="'+ imageUrl + '" alt="' + variant + '" label="' + variant + '" />';
                                                         html += '</a>';
-                                                        html += ' **** ' + json.recurringCards[i].card_number;
+                                                        html += '<span> **** ' + json.recurringCards[i].card_number + '</span>';
+                                                        html += ' ' + json.recurringCards[i].card_holderName;
                                                         html += '</div>';
                                                         text += html;
                                                     }
@@ -143,12 +161,70 @@
                 </script>
 
             <?php endif; ?>
-
-
+            
             <?php if($this->hasExpressCheckout()): ?>
-                <button id="CheckoutWithPos" style="" type="submit" title="<?php echo $this->__($this->getExpressCheckoutTitle()); ?>" class="button btn-proceed-checkout btn-checkout adyen-checkout-button">
+                <button id="CheckoutWithPos" style="" type="submit" title="<?php echo $this->__($this->getExpressCheckoutTitle()); ?>" class="button btn-proceed-checkout btn-checkout adyen-checkout-button" disabled>
                     <span><span><?php echo $this->__($this->getExpressCheckoutTitle()); ?></span></span>
                 </button>
+
+                <script type="text/javascript">
+
+
+//                    $('CheckoutWithPos').observe('click', doTransaction);
+//
+//                    function doTransaction(event) {
+//                        if(adyenpos)
+//                        {
+//                            var request = {
+//                                //terminalId: "test",
+//                                amount: '50',
+//                                currency: 'EUR',
+//                                reference: '10000-test',
+//                                callbackAutomatic: true
+//                            };
+//
+//                            var terminalId = $('adyenPosPaymentDevices').getValue();
+//
+//                            if (terminalId) {
+//                                request.terminalId = terminalId;
+//                            }
+//
+//                            console.log(request);
+//                            adyenpos.startTransaction(request, function(response){
+//
+//                                // redirect to success page
+//                            });
+//
+//                            return false;
+//                        }
+//                    }
+//                    
+//                    function adyenposLoaded() {
+//                        var devicesList = adyenpos.paymentDevices();
+//
+//                        setDropDown(
+//                            $('adyenPosPaymentDevices'),
+//                            devicesList,
+//                            function(e) {
+//                                return new Option( e.name, e.terminalId );
+//                            }
+//                        );
+//                    }
+//
+//                    function setDropDown(field, data, method, index) {
+//
+//                        field.options.length = index == null ? 1 : index;
+//                        data.each(
+//                            function(e) {
+//                                field.options.add(method(e));
+//                            }
+//                        );
+//                    }
+
+
+
+                </script>
+
             <?php endif; ?>
 
         </form>
@@ -163,8 +239,35 @@
             </form>
         <?php endif; ?>
 
+<!--        <div>-OR-</div>-->
+
     </div>
 
-    <div>-OR-</div>
+
+
+    <script type="text/javascript">
+
+        // if CheckoutWithPos not empty enable button
+        if($('adyenPosEmail').value) {
+            document.getElementById('CheckoutWithPos').disabled = false;
+        }
+
+        $$('.btn-proceed-checkout').last().update("Online checkout");
+
+        // show CheckoutWithPos only if you fill in a email address
+
+
+        // moved to scan_product this function can only be called once foreach page
+//        function adyenposLoaded() {
+//            // Show PIN checkout button
+//            $("adyen-checkout-wrapper").show();
+//
+//            // hide normal checkout button
+//            $$(".method-checkout-cart-methods-onepage-bottom").each(Element.hide);
+//        }
+
+    </script>
+
+
 
 <?php endif; ?>

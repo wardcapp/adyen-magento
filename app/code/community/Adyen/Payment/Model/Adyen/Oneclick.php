@@ -306,4 +306,35 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         $recurringDetails = Mage::getStoreConfig("payment/".$this->getCode(), $storeId);
         return $recurringDetails;
     }
+
+    public function allowRecurring()
+    {
+
+        $recurringDetails = $this->getRecurringDetails();
+
+        //@todo move the available credit cards to the config, one location where all the credit cards are specified
+        $creditcards = array(
+            'visa',
+            'mc',
+            'amex',
+            'discover',
+            'diners',
+            'maestro',
+            'jcb',
+            'elo',
+            'Hipercard'
+        );
+
+        if(in_array($recurringDetails['variant'],$creditcards) && isset($selectedSubscriptionPaymentMethods['adyen_cc'])) {
+            $observer->getResult()->isAvailable = true;
+        } elseif($recurringDetails['variant'] == "sepadirectdebit" && isset($selectedSubscriptionPaymentMethods['adyen_sepa'])) {
+            $observer->getResult()->isAvailable = true;
+        } elseif($recurringDetails['variant'] == "paypal" && isset($selectedSubscriptionPaymentMethods['adyen_hpp_paypal'])) {
+            $observer->getResult()->isAvailable = true;
+        } elseif($recurringDetails['variant'] == "directEbanking" && isset($selectedSubscriptionPaymentMethods['adyen_hpp_directEbanking'])) {
+            $observer->getResult()->isAvailable = true;
+        }
+        
+        return true;
+    }
 }

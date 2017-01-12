@@ -76,4 +76,9 @@ class Adyen_Payment_Model_Adyen_Ideal
             }
         }
     }
+
+    public function allowRecurring()
+    {
+        return true;
+    }
 }

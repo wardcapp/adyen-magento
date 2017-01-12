@@ -64,6 +64,47 @@ class Adyen_Payment_Model_Billing_Agreement_Observer
             return $this;
         }
 
+
+
+        // import contract for demo on custom ListRecurringContract
+        $recurringContractDetails = $this->_api()->listRecurringContractByType(
+            $customer->getId(),
+            $store->getId(),
+            "ONECLICK"
+        );
+
+
+        foreach ($recurringContractDetails as $rc) {
+            $contractDetail = $rc;
+
+            $recurringDetailReference = $contractDetail['recurringDetailReference'];
+
+            // does it already exists ?
+            // check if there is already a BillingAgreement
+            $currentAgreement = Mage::getModel('adyen/billing_agreement')->load($recurringDetailReference, 'reference_id');
+            if ($currentAgreement && $currentAgreement->getAgreementId() > 0) {
+
+                // && $currentAgreement->isValid() // this causes issues with oneclick empty payment method
+
+               // do nothing
+            } else {
+
+                $newAgreement = Mage::getModel('adyen/billing_agreement');
+                $newAgreement->setStoreId($store->getId());
+                $newAgreement->setCustomerId($customer->getId());
+                $newAgreement->setStatus('active');
+                $newAgreement->parseRecurringContractData($contractDetail);
+
+                try {
+                    $newAgreement->save();
+                } catch(Exception $e) {
+                    // do nothing
+                }
+            }
+
+
+        }
+
         // Get the setting Share Customer Accounts if storeId needs to be in filter
         $custAccountShareWebsiteLevel = Mage::getStoreConfig(Mage_Customer_Model_Config_Share::XML_PATH_CUSTOMER_ACCOUNT_SHARE, $store);
 
@@ -87,6 +128,13 @@ class Adyen_Payment_Model_Billing_Agreement_Observer
         Varien_Profiler::stop(__CLASS__.'::'.__FUNCTION__);
     }
 
+    /**
+     * @return Adyen_Payment_Model_Api
+     */
+    protected function _api()
+    {
+        return Mage::getSingleton('adyen/api');
+    }
 
     /**
      * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement

@@ -31,11 +31,11 @@ class Adyen_Payment_Block_PosExpressCheckout extends Mage_Core_Block_Template
     public function hasExpressCheckout()
     {
         // must be login to show this checkout option
-        if(Mage::getSingleton('customer/session')->isLoggedIn()) {
+//        if(Mage::getSingleton('customer/session')->isLoggedIn()) {
             return (string) Mage::helper('adyen')->hasExpressCheckout();
-        } else {
-            return false;
-        }
+//        } else {
+//            return false;
+//        }
     }
 
     public function getExpressCheckoutTitle() {
@@ -83,6 +83,10 @@ class Adyen_Payment_Block_PosExpressCheckout extends Mage_Core_Block_Template
 
     public function getCashDrawerPrinterDeviceId() {
         return Mage::helper('adyen')->_getConfigData("cash_drawer_printer_device_id", "adyen_pos", null);
+    }
+
+    public function hasApplePayEnabled() {
+        return Mage::helper('adyen')->getConfigData("active", "adyen_apple_pay", null);
     }
 
 }

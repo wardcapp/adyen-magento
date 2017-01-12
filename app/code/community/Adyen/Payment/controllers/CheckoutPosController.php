@@ -57,22 +57,59 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
                     // customer exists so give back customerData
                     $customerObject = $customer;
                 } else {
+
+
+                    $firstName = "Frank";
+                    $lastName = "Wallace";
+                    $street = "8442 homestead rd";
+                    $city = "thousand oaks";
+                    $countryId = 'US';
+                    $state = "michigan";
+                    $regionId = 33;
+                    $postalCode = "13853";
+                    $phone = "228-149-7856";
+
                     // create new account with provided email
                     $websiteId = Mage::app()->getWebsite()->getId();
 
-                    $customer = Mage::getModel("customer/customer");
+//                    $password = Mage::helper('core')->getRandomString($length = 8);
 
-                    $password = Mage::helper('core')->getRandomString($length = 8);
+                    $password = "password";
+
+                    $addressData = array (
+                        'firstname' => $firstName,
+                        'middlename' => '',
+                        'lastname' => $lastName,
+                        'suffix' => '',
+                        'company' => '',
+                        'street' => $street,
+                        'city' => $city,
+                        'country_id' => $countryId,
+                        'region' => $state,
+                        'region_id' => $regionId,
+                        'postcode' => $postalCode,
+                        'telephone' => $phone,
+                        'is_default_billing' => 1,
+                        'is_default_shipping' => 1,
+                    );
+
+                    // add default adress to customer
+                    $address = Mage::getModel('customer/address');
+                    $address->addData($addressData);
 
 
-                    $customer->setWebsiteId($websiteId)
-                        ->setStore($store)
-                        ->setEmail($adyenPosEmail)
-                        ->setPassword($password);
+                    $customer->setEmail($adyenPosEmail)
+                        ->setPassword($password)
+                        ->setFirstname($firstName)
+                        ->setLastname($lastName)
+                        ->addAddress($address);
 
-                    try{
+                    try {
                         $customer->save();
-                        $customerObject = $customer;
+//                        $customerObject = $customer; // this throws error do below
+                        $customerObject = Mage::getModel("customer/customer");
+                        $customerObject->setWebsiteId(Mage::app()->getStore()->getWebsiteId());
+                        $customerObject->loadByEmail($customer->getEmail());
                     }
                     catch (Exception $e) {
                         Zend_Debug::dump($e->getMessage());
@@ -84,17 +121,21 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
                 if($customer->isLoggedIn()) {
                     $customerObject = Mage::getModel('customer/customer')->load($customer->getId());
                 } else {
-                    Mage::throwException('Customer is not logged in.');
+                    Mage::log('Customer is not logged in.', Zend_Log::ERR, 'adyen_exception.log');
+                    // return back to checkout
+                    $this->_redirect('/checkout/cart/');
+                    return $this;
+
                 }
             }
         }
 
         // get email
-
         $quote = (Mage::getModel('checkout/type_onepage') !== false)? Mage::getModel('checkout/type_onepage')->getQuote(): Mage::getModel('checkout/session')->getQuote();
 
         // important update the shippingaddress and billingaddress this can be null sometimes.
         $quote->assignCustomerWithAddressChange($customerObject);
+
 
         $shippingAddress = $quote->getShippingAddress();
 
@@ -104,12 +145,20 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
 
 
         if($recurringDetailReference) {
+
             $store->setConfig('payment/adyen_oneclick/active', 1);
 
             // set config to recurring because we want to do a recurring transaction in this case
             $store->setConfig('payment/adyen_abstract/recurringtypes', 'RECURRING');
 
-            // do the payment
+            
+            // declare the payment method fist so methodInstance works
+            $quote->getPayment()->importData(array('method' => 'adyen_oneclick'));
+
+            // set no interaction type with customer because we want to do recurring transaction
+            $quote->getPayment()->getMethodInstance()->setCustomerInteraction(false);
+
+            // declare now all values
             $quote->getPayment()->importData(array('method' => 'adyen_oneclick', 'recurring_detail_reference' => $recurringDetailReference));
         } else {
             $quote->getPayment()->importData(array('method' => 'adyen_pos', 'store_cc' => $saveCard));
@@ -120,19 +169,33 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
         $session = Mage::getSingleton('checkout/session');
 
         $service = Mage::getModel('sales/service_quote', $quote);
+
         $service->submitAll();
+
         $order = $service->getOrder();
 
         $oderStatus = Mage::helper('adyen')->getOrderStatus();
         $order->setStatus($oderStatus);
         $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
-        $order->save();
+
+        try {
+            $order->save();
+        } catch(Exception $e) {
+            Mage::logException($e);
+            // return back to checkout
+            $this->_redirect('checkout/cart/');
+            return $this;
+        }
+
 
         // add order information to the session
-        $session->setLastOrderId($order->getId())
-            ->setLastRealOrderId($order->getIncrementId())
-            ->setLastSuccessQuoteId($order->getQuoteId())
-            ->setLastQuoteId($order->getQuoteId());
+        $session->setLastOrderId($order->getId());
+        $session->setLastRealOrderId($order->getIncrementId());
+        $session->setLastSuccessQuoteId($order->getQuoteId());
+        $session->setLastQuoteId($order->getQuoteId());
+        $session->unsAdyenRealOrderId();
+        $session->setQuoteId($session->getAdyenQuoteId(true));
+        $session->getQuote()->setIsActive(false)->save();
 
         if($recurringDetailReference) {
             $this->_redirect('checkout/onepage/success');
@@ -143,6 +206,9 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
         return $this;
     }
 
+    /**
+     * Get card data from customer
+     */
     public function validateCustomerByEmailAction()
     {
         $this->getResponse()->setHeader('Content-type', 'application/json');
@@ -180,11 +246,41 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
                 $merchantAccount = trim($adyenHelper->getConfigData('merchantAccount', 'adyen_abstract', $store->getId()));
 //            $recurringType = $adyenHelper->getConfigData('recurringtypes', 'adyen_abstract', $store->getId());
                 // you only want recurring cards so you can select the card to do online payment
-                $recurringType = "RECURRING";
+                $recurringPaymentType = "RECURRING";
 
                 try {
-                    $recurringCards = $adyenHelper->getRecurringCards($merchantAccount, $customerId, $recurringType);
-                    $jsonData['recurringCards'] = $recurringCards;
+
+                    // Get the setting Share Customer Accounts if storeId needs to be in filter
+                    $custAccountShareWebsiteLevel = Mage::getStoreConfig(Mage_Customer_Model_Config_Share::XML_PATH_CUSTOMER_ACCOUNT_SHARE, $store);
+
+                    $baCollection = Mage::getResourceModel('adyen/billing_agreement_collection');
+                    $baCollection->addFieldToFilter('customer_id', $customerId);
+
+                    if($custAccountShareWebsiteLevel) {
+                        $baCollection->addFieldToFilter('store_id', $store->getId());
+                    }
+
+                    $baCollection->addFieldToFilter('method_code', 'adyen_oneclick');
+                    $baCollection->addActiveFilter();
+
+
+                    foreach ($baCollection as $billingAgreement) {
+
+                        // only recurring contracts!
+
+                        // only create payment method when label is set
+                        if ($billingAgreement->getAgreementLabel() != null) {
+                            $agreementData = $billingAgreement->getAgreementData();
+                            if(isset($agreementData['recurring_type'])) {
+                                // Only add recurring contract types as option
+                                $result = strpos($agreementData['recurring_type'], $recurringPaymentType);
+                                if($result !== false) {
+                                    $agreementData['recurringDetailReference'] = $billingAgreement->getReferenceId();
+                                    $jsonData['recurringCards'][] = $agreementData;
+                                }
+                            }
+                        }
+                    }
                 } catch(Exception $e) {
                     // do nothing
                 }
@@ -200,6 +296,7 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
         if($this->_hasExpressCheckout() && $this->_inKioskMode() != "1") {
             $params = $this->getRequest()->getParams();
             $email = isset($params['email']) ? $params['email'] : "";
+
 
             $customers = Mage::getModel('customer/customer')->getCollection()
                 ->addAttributeToSelect('email')
@@ -220,11 +317,11 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
     protected function _hasExpressCheckout()
     {
         // must be login to show this checkout option
-        if(Mage::getSingleton('customer/session')->isLoggedIn()) {
+//        if(Mage::getSingleton('customer/session')->isLoggedIn()) {
             return (string) Mage::helper('adyen')->hasExpressCheckout();
-        } else {
-            return false;
-        }
+//        } else {
+//            return false;
+//        }
     }
 
     protected function _inKioskMode()

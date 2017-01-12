@@ -184,7 +184,7 @@ class Adyen_Fee_Helper_Data extends Mage_Payment_Helper_Data
             $paymentTaxClass = $config->getPaymentFeeTaxClass($store);
             $rate = $taxCalculationModel->getRate($request->setProductClassId($paymentTaxClass));
             if ($rate) {
-                $paymentTax = $taxCalculationModel->calcTaxAmount($fee, $rate, $config->paymentFeePriceIncludesTax($store), true);
+                $paymentTax = $taxCalculationModel->calcTaxAmount($fee, $rate, $config->paymentFeePriceIncludesTax($store), false);
             }
         }
         return $paymentTax;
@@ -202,6 +202,39 @@ class Adyen_Fee_Helper_Data extends Mage_Payment_Helper_Data
         $totals = $propertyTotals->getValue($address);
         unset($totals[$code]);
         $propertyTotals->setValue($address, $totals);
+    }
+
+    /**
+     * Validate if OneStepCheckout module installed and activated
+     *
+     * @param null $store
+     * @return bool
+     */
+    public function isOneStepCheckout($store = null)
+    {
+        $active = false;
+        if (Mage::getStoreConfig('onestepcheckout/general/rewrite_checkout_links', $store)) {
+
+            $active = true;
+            $request = Mage::app()->getRequest();
+            $requestedRouteName = $request->getRequestedRouteName();
+            $requestedControllerName = $request->getRequestedControllerName();
+
+            if ($requestedRouteName == 'checkout' && $requestedControllerName == 'onepage') {
+                $active = false;
+            }
+        }
+        return $active;
+    }
+
+    /**
+     * Check if OneStepCheckout module displays their prises with the tax included
+     *
+     * @return bool
+     */
+    public function isOneStepCheckoutTaxIncluded()
+    {
+        return (bool) Mage::getStoreConfig( 'onestepcheckout/general/display_tax_included' );
     }
 
 }

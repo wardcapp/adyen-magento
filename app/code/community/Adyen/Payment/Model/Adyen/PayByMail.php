@@ -42,12 +42,7 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
     public function getPaymentMethodType() {
         return $this->_paymentMethodType;
     }
-
-    /**
-     * @var GUEST_ID , used when order is placed by guests
-     */
-    const GUEST_ID = 'customer_';
-
+    
     public function __construct()
     {
         // check if this is adyen_cc payment method because this function is as well used for oneclick payments
@@ -185,5 +180,10 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
     {
         // do nothing for now
         return $this;
+    }
+
+    public function allowRecurring()
+    {
+        return false;
     }
 }

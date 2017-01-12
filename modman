@@ -15,3 +15,4 @@ app/locale/es_ES/*                              app/locale/es_ES/
 app/locale/fr_FR/*                              app/locale/fr_FR/
 app/locale/nl_NL/*                              app/locale/nl_NL/
 app/locale/pt_BR/*                              app/locale/pt_BR/
+lib/AdyenLib/*                                  lib/AdyenLib/

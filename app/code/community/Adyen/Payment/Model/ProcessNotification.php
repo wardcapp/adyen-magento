@@ -587,7 +587,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                         $listRecurringContracts = Mage::getSingleton('adyen/api')->listRecurringContracts($agreement->getCustomerReference(), $agreement->getStoreId());
 
                         $contractDetail = null;
-                        // get currenct Contract details and get list of all current ones
+                        // get current Contract details and get list of all current ones
                         $recurringReferencesList = array();
                         foreach ($listRecurringContracts as $rc) {
                             $recurringReferencesList[] = $rc['recurringDetailReference'];
@@ -1412,6 +1412,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         $order->addStatusHistoryComment($comment);
         $this->_debugData[$this->_count]['_addStatusHistoryComment'] = 'Created comment history for this notification';
     }
+
     /**
      * @param $order
      * @return bool

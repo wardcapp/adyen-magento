@@ -152,5 +152,9 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
         return true;
     }
 
-
+    public function allowRecurring()
+    {
+        return true;
+    }
+    
 }

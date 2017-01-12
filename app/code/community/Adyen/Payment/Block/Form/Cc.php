@@ -133,4 +133,17 @@ class Adyen_Payment_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
         return $quote->getId();
     }
 
+    public function getMagentoCardType($cardType)
+    {
+        $cards = array(
+            'visa'  => 'VI',
+            'amex'  => 'AE'
+        );
+
+        if(in_array($cards)) {
+            return $cards[$cardType];
+        }
+        return null;
+    }
+
 }
