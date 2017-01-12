@@ -310,13 +310,12 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
             	$this->deliveryDate = $boleto['delivery_date'];
             	break;
             case "sepa":
-                $sepa = unserialize($payment->getPoNumber());
                 $this->card = null;
                 $this->elv = null;
                 $this->shopperName = null;
-                $this->bankAccount->iban = $sepa['iban'];
-                $this->bankAccount->ownerName = $sepa['account_name'];
-                $this->bankAccount->countryCode = $sepa['country'];
+                $this->bankAccount->iban = $payment->getAdditionalInformation('iban');
+                $this->bankAccount->ownerName = $payment->getAdditionalInformation('account_name');
+                $this->bankAccount->countryCode = $payment->getAdditionalInformation('country');
                 $this->selectedBrand = "sepadirectdebit";
                 break;
         }
