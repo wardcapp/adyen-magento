@@ -221,9 +221,9 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         $isAvailable = parent::isAvailable();
 
         if (!is_null($quote)) {
-            $disableZeroTotal = Mage::getStoreConfig('payment/adyen_hpp/disable_zero_total', $quote->getStoreId());
+            $disableZeroTotal = Mage::getStoreConfig('payment/adyen_cc/disable_zero_total', $quote->getStoreId());
         } else {
-            $disableZeroTotal = Mage::getStoreConfig('payment/adyen_hpp/disable_zero_total');
+            $disableZeroTotal = Mage::getStoreConfig('payment/adyen_cc/disable_zero_total');
         }
         
         if (!is_null($quote) && $quote->getGrandTotal() <= 0 && $disableZeroTotal) {
