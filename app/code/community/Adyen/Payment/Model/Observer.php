@@ -151,11 +151,6 @@ class Adyen_Payment_Model_Observer {
                 continue;
             }
 
-            if (Mage::getStoreConfigFlag('payment/adyen_elv/active')
-                && in_array($paymentMethodCode, array('elv'))) {
-                continue;
-            }
-
             if (Mage::getStoreConfigFlag('payment/adyen_cash/active')
                 && in_array($paymentMethodCode, array('c_cash'))) {
                 continue;

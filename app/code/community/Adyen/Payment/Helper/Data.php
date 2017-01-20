@@ -529,6 +529,6 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         if ($this->getConfigDataDemoMode($storeId)) {
             return $this->getConfigData('full_path_location_pem_file_test', 'adyen_apple_pay', $storeId);
         }
-        return $this->getConfigData('full_path_location_pem_file_test', 'adyen_apple_pay', $storeId);
+        return $this->getConfigData('full_path_location_pem_file_live', 'adyen_apple_pay', $storeId);
     }
 }

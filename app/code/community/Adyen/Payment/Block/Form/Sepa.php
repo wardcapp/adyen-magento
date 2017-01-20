@@ -18,9 +18,6 @@
  * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
  * @license      http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-
-
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -35,7 +32,6 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
         parent::_construct();
         $this->setTemplate('adyen/form/sepa.phtml');
     }
-
 
     public function getCountries()
     {
@@ -90,14 +86,13 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
         }
         return $countryList;
     }
-
-
+    
     /**
      * @return string
      */
     public function getCountryValue()
     {
-        if ($country = $this->_getPaymentData('country')) {
+        if ($country = $this->getMethod()->getInfoInstance()->getAdditionalInformation('country')) {
             return $country;
         }
 
@@ -108,14 +103,13 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
 
         return $quote->getBillingAddress()->getCountryId();
     }
-
-
+    
     /**
      * @return string
      */
     public function getBankHolderValue()
     {
-        if ($accountName = $this->_getPaymentData('account_name')) {
+        if ($accountName = $this->getMethod()->getInfoInstance()->getAdditionalInformation('account_name')) {
             return $accountName;
         }
 
@@ -126,13 +120,15 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
 
         return $quote->getBillingAddress()->getName();
     }
-
-
+    
     /**
      * @return string
      */
     public function getIbanValue()
     {
-        return $this->_getPaymentData('iban');
+        if ($iban = $this->getMethod()->getInfoInstance()->getAdditionalInformation('iban')) {
+            return $iban;
+        }
+        return '';
     }
 }
