@@ -1479,6 +1479,11 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                 'datetime' => true))
             ->addOrder('created_at', 'asc');
 
+        $limit = (int)$this->_getConfigData('event_queue_limit');
+        if ($limit > 0) {
+            $collection->getSelect()->limit($limit);
+        }
+
         if($collection->getSize() > 0) {
             $this->_count = 0;
             foreach($collection as $event){
