@@ -328,9 +328,9 @@ $_code = $this->getMethodCode();
 
             var cseUpdate = function() {
                 try {
-                    var cseForm = adyen.encrypt.createEncryptedForm(form, cse_key, cse_options);
+                    form.cseForm = form.cseForm || adyen.encrypt.createEncryptedForm(form, cse_key, cse_options);
                     // encrypt data directly because submit button is not always on the page
-                    cseForm.createEncryptedField(cseForm.encrypt());
+                    form.cseForm.createEncryptedField(form.cseForm.encrypt());
                 } catch (e) {
                     if (typeof console == "object") {
                         console.error(e);

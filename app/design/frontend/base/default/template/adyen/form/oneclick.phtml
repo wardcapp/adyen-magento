@@ -137,9 +137,9 @@ $_recurringDetails = $this->getRecurringDetails();
                                 // do not validate because number does not exists for oneclick
                                 cse_options_oneclick_<?php echo $_code ?>.enableValidations = false;
 
-                                var cseFormOneClick = adyen.encrypt.createEncryptedForm(cse_form_oneclick, cse_key_oneclick, cse_options_oneclick_<?php echo $_code ?>);
+                                form.cseFormOneClick = form.cseFormOneClick || adyen.encrypt.createEncryptedForm(cse_form_oneclick, cse_key_oneclick, cse_options_oneclick_<?php echo $_code ?>);
                                 // encrypt data directly because submit button is not always on the page
-                                cseFormOneClick.createEncryptedField(cseFormOneClick.encrypt());
+                                form.cseFormOneClick.createEncryptedField(form.cseFormOneClick.encrypt());
                             } catch (e) {
                                 if (typeof console == "object") {
                                     console.error(e);
