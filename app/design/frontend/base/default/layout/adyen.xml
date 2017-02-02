@@ -71,6 +71,7 @@
             <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
         </reference>
         <reference name="after_body_start">
+            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml" />
             <block type="core/text" name="adyen.diners.validation" after="-">
                 <action method="setText">
                     <text>

@@ -206,6 +206,12 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
          */
         $dataString = (is_array($merchantReturnData)) ? serialize($merchantReturnData) : $merchantReturnData;
 
+
+        $dfValue = null;
+        if($order->getPayment()->getAdditionalInformation('dfvalue')) {
+            $dfValue = $order->getPayment()->getAdditionalInformation('dfvalue');
+        }
+
         $adyFields = $this->adyenValueArray(
             $orderCurrencyCode,
             $shopperEmail,
@@ -230,7 +236,8 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $shopperInfo,
             $billingAddress,
             $deliveryAddress,
-            $openInvoiceData
+            $openInvoiceData,
+            $dfValue
         );
 
         // eventHandler to overwrite the adyFields without changing module code
@@ -245,10 +252,6 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             'fields' => $adyFields
         ]);
         $adyFields = $adyFields->getData();
-
-        // remove keys that has empty or null value
-        $adyFields = array_filter($adyFields);
-
 
         return $adyFields;
     }
@@ -307,7 +310,8 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $shopperInfo,
         $billingAddress,
         $deliveryAddress,
-        $openInvoiceData
+        $openInvoiceData,
+        $dfValue = null
     )
     {
         $adyFields = [
@@ -347,6 +351,10 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         // Add brandCode if payment selection is done
         if($brandCode) {
             $adyFields['brandCode'] = $brandCode;
+        }
+
+        if($dfValue) {
+            $adyFields['dfValue'] = $dfValue;
         }
 
         return $adyFields;
@@ -491,6 +499,8 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $middleName = trim($billingAddress->getMiddlename());
         if($middleName != "") {
             $shopperInfo['infix'] = trim($middleName);
+        } else {
+            $shopperInfo['infix'] = "";
         }
 
         $shopperInfo['lastName'] = trim($billingAddress->getLastname());
@@ -504,6 +514,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         }
 
         $shopperInfo['telephoneNumber'] = trim($billingAddress->getTelephone());
+
 
         return $shopperInfo;
     }

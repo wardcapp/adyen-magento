@@ -139,6 +139,11 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
             }
         }
 
+        $dfValue = $data->getDfvalue();
+        if($dfValue != "") {
+            $info->setAdditionalInformation('dfvalue', $dfValue);
+        }
+
         return $this;
     }
 
