@@ -844,15 +844,19 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
 
         // only do this if status in configuration is set
         if(!empty($status)) {
-            $order->addStatusHistoryComment(Mage::helper('adyen')->__('Payment is pre authorised waiting for capture'), $status);
-            $order->sendOrderUpdateEmail((bool) $this->_getConfigData('send_update_mail', 'adyen_abstract', $order->getStoreId()));
-            // update the state to pending_payment
-            $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
+
+            $statusObject = Mage::getModel('sales/order_status')->getCollection()
+                ->addFieldToFilter('main_table.status', $status)
+                ->joinStates()
+                ->getFirstItem();
+            $state = $statusObject->getState();
+            $order->setState($state, $status, Mage::helper('adyen')->__('Payment is pre authorised waiting for capture'));
 
             /**
              * save the order this is needed for older magento version so that status is not reverted to state NEW
              */
             $order->save();
+            $order->sendOrderUpdateEmail((bool) $this->_getConfigData('send_update_mail', 'adyen_abstract', $order->getStoreId()));
             $this->_debugData[$this->_count]['_setPrePaymentAuthorized'] = 'Order status is changed to Pre-authorised status, status is ' . $status;
         } else {
             $this->_debugData[$this->_count]['_setPrePaymentAuthorized'] = 'No pre-authorised status is used so ignore';
