@@ -58,7 +58,12 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
 
         if ($this->isCseEnabled()) {
             $info->setCcType($data->getCcType());
-            $info->setAdditionalInformation('encrypted_data', $data->getEncryptedData());
+
+            if($data->getEncryptedData() == "false" || $data->getEncryptedData() == "") {
+                Mage::throwException(Mage::helper('adyen')->__('Credit card number does not match credit card type.'));
+            } else if($data->getEncryptedData()) {
+                $info->setAdditionalInformation('encrypted_data', $data->getEncryptedData());
+            }
         }
         else {
             $info->setCcType($data->getCcType())
@@ -79,6 +84,11 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         }
 
         return $this;
+    }
+
+    public function validate()
+    {
+        parent::validate();
     }
 
     public function getPossibleInstallments() {
