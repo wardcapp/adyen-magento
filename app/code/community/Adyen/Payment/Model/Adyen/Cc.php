@@ -60,7 +60,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
             $info->setCcType($data->getCcType());
 
             if($data->getEncryptedData() == "false" || $data->getEncryptedData() == "") {
-                Mage::throwException(Mage::helper('adyen')->__('Credit card number does not match credit card type.'));
+                Mage::throwException(Mage::helper('adyen')->__('Invalid credit number card.'));
             } else if($data->getEncryptedData()) {
                 $info->setAdditionalInformation('encrypted_data', $data->getEncryptedData());
             }
