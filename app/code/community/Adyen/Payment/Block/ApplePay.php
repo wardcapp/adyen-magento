@@ -66,7 +66,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
             if (Mage::getSingleton('checkout/session')->getQuote()->getItemsCount() > 0) {
                 $cart = Mage::getModel('checkout/cart')->getQuote();
                 $subtotal['label'] = $this->__('Grand Total');
-                $subtotal['amount']  = $cart->getGrandTotal();
+                $subtotal['amount']  = $cart->getSubtotal();
                 $subtotal['productId'] = 0;
             }
         }
@@ -92,7 +92,15 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
 
         if(Mage::getSingleton('customer/session')->isLoggedIn()) {
             $customer = Mage::getSingleton('customer/session')->getCustomer();
-            $shippingAddressId = $customer->getDefaultShipping();
+
+            // check if address is already chosen in the checkout if os use this otherwise use the default shipping
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            $shippingAddressId = $quote->getShippingAddress()->customer_address_id;
+
+            if(!$shippingAddressId > 0) {
+                $shippingAddressId = $customer->getDefaultShipping();
+            }
+
             if ($shippingAddressId) {
                 $shippingAddress = Mage::getModel('customer/address')->load($shippingAddressId);
                 $country = $shippingAddress->getCountryId();

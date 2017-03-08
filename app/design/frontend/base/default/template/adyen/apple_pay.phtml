@@ -5,21 +5,23 @@ if ($this->hasApplePayEnabled()):
     $productId = $subtotal['productId'];
     $finalPrice = ($subtotal['amount'] > 0) ? $subtotal['amount'] : '0';
     $productTitle = $subtotal['label'];
-    $_shippingMethods = $this->getShippingMethods();
     $currency = Mage::app()->getStore()->getCurrentCurrencyCode();
     $_customerData = $this->getCustomerData();
     $merchantIdentifier = $this->getMerchantIdentifier();
     $reviewStep = $this->onReviewStep();
 
-    $fistItem = null;
-    $shippingAmount = 0;
-    if(is_array($_shippingMethods) && !empty($_shippingMethods)) {
-        $fistItem = current($_shippingMethods);
-        // add key into array
-        $firstKey = key($_shippingMethods);
-        $fistItem['key'] = $firstKey;
-        $shippingAmount = $fistItem['price'];
+    // shippingMethods not needed in review step
+    if(!$reviewStep) {
+        $_shippingMethods = $this->getShippingMethods();
+        $fistItem = null;
+        if(is_array($_shippingMethods) && !empty($_shippingMethods)) {
+            $fistItem = current($_shippingMethods);
+            // add key into array
+            $firstKey = key($_shippingMethods);
+            $fistItem['key'] = $firstKey;
+        }
     }
+
     ?>
 
     <div id="adyen-apple-pay-button" class="apple-pay-button-with-text apple-pay-button-black-with-text" style="display: none;">
@@ -363,10 +365,6 @@ if ($this->hasApplePayEnabled()):
 
         function performValidation(validationURL)
         {
-            // reset shippingMethod
-            // window.AdyenApplePayTotalAmount = "<?php echo $finalPrice + $fistItem['price']; ?>";
-            // window.AdyenApplePayShippingMethodIdentifier = "<?php echo $fistItem['key']; ?>";
-
             // Return a new promise.
             return new Promise(function(resolve, reject) {
 
@@ -423,8 +421,7 @@ if ($this->hasApplePayEnabled()):
                 });
             });
         }
-
-
+        
         function retrieveShippingMethods(country, zipcode) {
 
             return new Promise(function(resolve, reject) {
