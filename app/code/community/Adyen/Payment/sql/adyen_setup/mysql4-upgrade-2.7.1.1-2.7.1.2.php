@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Adyen Payment Module
  *
@@ -25,19 +24,22 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Info_Elv extends Mage_Payment_Block_Info {
 
-    /**
-     * Init default template for block
-     */
-    protected function _construct() {
-        parent::_construct();
-        $this->setTemplate('adyen/info/elv.phtml');
-    }
+/* @var $installer Mage_Sales_Model_Resource_Setup */
+$installer = new Mage_Sales_Model_Resource_Setup('core_setup');
 
-    public function toPdf() {
-        $this->setTemplate('adyen/pdf/elv.phtml');
-        return $this->toHtml();
-    }
+$entities = [
+    'quote_item',
+    'quote_address_item',
+    'order_item'
+];
 
+foreach ($entities as $entity) {
+    $installer->addAttribute($entity, 'adyen_pre_order', [
+        'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
+        'visible'  => false,
+        'required' => false
+    ]);
 }
+
+$installer->endSetup();

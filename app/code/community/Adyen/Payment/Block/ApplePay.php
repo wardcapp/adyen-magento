@@ -92,7 +92,15 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
 
         if(Mage::getSingleton('customer/session')->isLoggedIn()) {
             $customer = Mage::getSingleton('customer/session')->getCustomer();
-            $shippingAddressId = $customer->getDefaultShipping();
+
+            // check if address is already chosen in the checkout if os use this otherwise use the default shipping
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            $shippingAddressId = $quote->getShippingAddress()->customer_address_id;
+
+            if(!$shippingAddressId > 0) {
+                $shippingAddressId = $customer->getDefaultShipping();
+            }
+
             if ($shippingAddressId) {
                 $shippingAddress = Mage::getModel('customer/address')->load($shippingAddressId);
                 $country = $shippingAddress->getCountryId();
@@ -196,7 +204,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
 
             $customer = Mage::getSingleton('customer/session')->getCustomer();
-            $lastName = trim($customer->getMiddlename() . " " . $customer->getLastName());
+            $lastName = trim($customer->getMiddlename() . " " . $customer->getLastname());
             $customCustomerData['givenName'] = $customer->getFirstname();
             $customCustomerData['familyName'] = $lastName;
             $customCustomerData['emailAddress'] = $customer->getEmail();
@@ -206,8 +214,19 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
             if ($billingAddressId && !$this->onReviewStep()) {
 
                 $billingAddress = Mage::getModel('customer/address')->load($billingAddressId);
-                $lastName = trim($billingAddress->getMiddlename() . " " . $billingAddress->getLastName());
+                $lastName = trim($billingAddress->getMiddlename() . " " . $billingAddress->getLastname());
                 $countryName = Mage::app()->getLocale()->getCountryTranslation($billingAddress->getCountryId());
+
+                // get state name
+                $administrativeArea = "";
+                if($billingAddress->getRegionId() > 0) {
+                    $region = Mage::getModel('directory/region')->load($billingAddress->getRegionId());
+                    if($region) {
+                        $administrativeArea = $region->getCode(); //CA
+                    }
+                } else {
+                    $administrativeArea = $billingAddress->getRegion(); // open field
+                }
 
                 $customCustomerData['billingContact'] = [
                     'emailAddress' => $customer->getEmail(),
@@ -217,7 +236,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
                     'addressLines' =>  $billingAddress->getStreet(),
                     'locality' => $billingAddress->getCity(),
                     'postalCode' => $billingAddress->getPostcode(),
-                    'administrativeArea' => $billingAddress->getRegionId(), // state
+                    'administrativeArea' => $administrativeArea, // state
                     'country' => $countryName,
                     'countryCode' => $billingAddress->getCountryId()
                 ];
@@ -229,8 +248,19 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
             if ($shippingAddressId && !$this->onReviewStep()) {
                 $shippingAddress = Mage::getModel('customer/address')->load($shippingAddressId);
 
-                $lastName = trim($shippingAddress->getMiddlename() . " " . $shippingAddress->getLastName());
+                $lastName = trim($shippingAddress->getMiddlename() . " " . $shippingAddress->getLastname());
                 $countryName = Mage::app()->getLocale()->getCountryTranslation($shippingAddress->getCountryId());
+
+                // get state name
+                $administrativeArea = "";
+                if($shippingAddress->getRegionId() > 0) {
+                    $region = Mage::getModel('directory/region')->load($shippingAddress->getRegionId());
+                    if($region) {
+                        $administrativeArea = $region->getCode(); //CA
+                    }
+                } else {
+                    $administrativeArea = $shippingAddress->getRegion(); // open field
+                }
 
                 $customCustomerData['shippingContact'] = [
                     'emailAddress' => $customer->getEmail(),
@@ -240,7 +270,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
                     'addressLines' =>  $shippingAddress->getStreet(),
                     'locality' => $shippingAddress->getCity(),
                     'postalCode' => $shippingAddress->getPostcode(),
-                    'administrativeArea' => $shippingAddress->getRegionId(), // state
+                    'administrativeArea' => $administrativeArea, // state
                     'country' => $countryName,
                     'countryCode' => $shippingAddress->getCountryId()
                 ];

@@ -1,7 +1,10 @@
 Magento
 =======
 
-This is the Adyen Payment plugin for Magento. The plugin supports the Magento Community and Enterprise edition.
+This is the Adyen Payment plugin for Magento 1.x.
+The plugin supports the Magento Community and Enterprise edition. 
+
+For Magento 2.x please use the following plugin: [https://github.com/Adyen/adyen-magento2](https://github.com/Adyen/adyen-magento2)
 
 We commit all our new features directly into our GitHub repository.
 But you can also request or suggest new features or code changes yourself!
@@ -9,12 +12,12 @@ But you can also request or suggest new features or code changes yourself!
 <h2>Setup Module</h2>
 * <a target="_blank" href="http://vimeo.com/94005128">Click here to see the video how to setup your Adyen Magento module and the Adyen backoffice</a>
 * <a target="_blank" href="https://www.adyen.com/dam/jcr:80ea0213-02cd-43aa-8136-459a471d2a0d/MagentoQuickIntegrationManual.pdf">Click here to download the Magento Quick Integration Guide how to setup the basics for the Adyen Magento module and the Adyen backoffice</a>
-* <a target="_blank" href="https://docs.adyen.com/display/TD/Magento+Integration">For a more advanced manual click here</a>
+* <a target="_blank" href="https://docs.adyen.com/developers/magento#magentointegration">For a more advanced manual click here</a>
 * <a target="_blank" href="https://vimeo.com/128983014">Click here to see the Point-of-Sale demo of the Adyen Payment module</a>
 * <a target="_blank" href="https://vimeo.com/135459940">Click here to see how to configure the configuration of the Point-of-Sale</a>
 
 <h2>Setup Cron</h2>
-For Adyen Payment Plug-in Version >= 2.5.0 it is needed to enable the Magento cron. Make sure that this is running every minute.
+It is needed to enable the Magento cron. Make sure that this is running every minute.
 We are using a cronjob to process the notifications. The cronjob will be executed every minute. It only executes the notifications that have been received at least 5 minutes ago. We have built in this 5 minutes so we are sure Magento has created the order and all save after events are executed.
 A handy tool to get inside into your cronjobs is AOE scheduler. You can download this tool through <a href="http://www.magentocommerce.com/magento-connect/aoe-scheduler.html" target="_blank">Magento Connect</a> or <a target="_blank" href="https://github.com/AOEpeople/Aoe_Scheduler/releases">GitHub</a>
 

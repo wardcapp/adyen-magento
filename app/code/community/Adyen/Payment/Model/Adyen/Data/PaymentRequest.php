@@ -35,7 +35,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     public $dccQuote;
     public $deliveryAddress;
     public $billingAddress;
-    public $elv;
     public $fraudOffset;
     public $merchantAccount;
     public $mpiData;
@@ -59,7 +58,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     	$this->browserInfo = new Adyen_Payment_Model_Adyen_Data_BrowserInfo();
         $this->card = new Adyen_Payment_Model_Adyen_Data_Card();
         $this->amount = new Adyen_Payment_Model_Adyen_Data_Amount();
-        $this->elv = new Adyen_Payment_Model_Adyen_Data_Elv();
         $this->additionalData = new Adyen_Payment_Model_Adyen_Data_AdditionalData();
         $this->shopperName = new Adyen_Payment_Model_Adyen_Data_ShopperName(); // for boleto
         $this->bankAccount = new Adyen_Payment_Model_Adyen_Data_BankAccount(); // for SEPA
@@ -78,7 +76,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $incrementId = $order->getIncrementId();
         $orderCurrencyCode = $order->getOrderCurrencyCode();
         // override amount because this amount uses the right currency
-        $amount = $order->getGrandTotal();
 
         $customerId = $order->getCustomerId();
         if ($customerId) {
@@ -144,23 +141,10 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         }
 
         switch ($paymentMethod) {
-            case "elv":
-                $elv = unserialize($payment->getPoNumber());
-                $this->card = null;
-                $this->shopperName = null;
-                $this->bankAccount = null;
-                $this->elv->accountHolderName = $elv['account_owner'];
-                $this->elv->bankAccountNumber = $elv['account_number'];
-                $this->elv->bankLocation = $elv['bank_location'];
-                $this->elv->bankLocationId = $elv['bank_location'];
-                $this->elv->bankName = $elv['bank_name'];
-                break;
             case "apple_pay":
             case "cc":
             case "oneclick":
-
-                $this->shopperName = null;
-            	$this->elv = null;
+                
                 $this->bankAccount = null;
 
                 $billingAddress = $order->getBillingAddress();
@@ -168,6 +152,14 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                 if($billingAddress)
                 {
+                    // add shopperName with firstName, middleName and lastName to support PapPal seller protection
+                    $this->shopperName->firstName = trim($billingAddress->getFirstname());
+                    $middleName = trim($billingAddress->getMiddlename());
+                    if($middleName != "") {
+                        $this->shopperName->infix = trim($middleName);
+                    }
+                    $this->shopperName->lastName = trim($billingAddress->getLastname());
+
                     $this->billingAddress = new Adyen_Payment_Model_Adyen_Data_BillingAddress();
                     $this->billingAddress->street = $helper->getStreet($billingAddress)->getName();
                     $this->billingAddress->houseNumberOrName = $helper->getStreet($billingAddress)->getHouseNumber();
@@ -295,7 +287,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
             case "boleto":
             	$boleto = unserialize($payment->getPoNumber());
             	$this->card = null;
-            	$this->elv = null;
                 $this->bankAccount = null;
             	$this->socialSecurityNumber = $boleto['social_security_number'];
             	$this->selectedBrand = $boleto['selected_brand'];
@@ -304,13 +295,11 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
             	$this->deliveryDate = $boleto['delivery_date'];
             	break;
             case "sepa":
-                $sepa = unserialize($payment->getPoNumber());
                 $this->card = null;
-                $this->elv = null;
                 $this->shopperName = null;
-                $this->bankAccount->iban = $sepa['iban'];
-                $this->bankAccount->ownerName = $sepa['account_name'];
-                $this->bankAccount->countryCode = $sepa['country'];
+                $this->bankAccount->iban = $payment->getAdditionalInformation('iban');
+                $this->bankAccount->ownerName = $payment->getAdditionalInformation('account_name');
+                $this->bankAccount->countryCode = $payment->getAdditionalInformation('country');
                 $this->selectedBrand = "sepadirectdebit";
                 break;
         }

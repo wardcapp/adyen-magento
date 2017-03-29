@@ -35,7 +35,7 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
     protected $_canCreateBillingAgreement = true;
 
     /**
-     * 1)Called everytime the adyen_sepa is called or used in checkout
+     * Called everytime the adyen_sepa is called or used in checkout
      * @descrition Assign data to info model instance
      *
      * @param   mixed $data
@@ -48,32 +48,33 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
         }
 
         $info = $this->getInfoInstance();
-        $sepa = array(
-            'account_name' => $data->getAccountName(),
-            'iban' => $data->getIban(),
-            'country' => $data->getCountry(),
-            'accept_sepa' => $data->getAcceptSepa()
-        );
 
-        $info = $this->getInfoInstance();
+        $info->setAdditionalInformation('account_name', $data->getAccountName());
+        $info->setAdditionalInformation('iban', $data->getIban());
+        $info->setAdditionalInformation('country', $data->getCountry());
+        $info->setAdditionalInformation('accept_sepa', $data->getAcceptSepa());
+
         $info->setCcOwner($data->getOwner())
                 ->setCcType($data->getBankLocation())
                 ->setCcLast4(substr($data->getAccountNumber(), -4))
                 ->setCcNumber($data->getAccountNumber())
-                ->setCcNumberEnc($data->getBankCode())
-                ->setPoNumber(serialize($sepa)); /* @note misused field for the elv */
+                ->setCcNumberEnc($data->getBankCode());
 
         return $this;
     }
 
+    /**
+     * Validate Form
+     * 
+     * @return $this
+     */
     public function validate()
     {
         parent::validate();
 
         $info = $this->getInfoInstance();
-        $sepa = unserialize($info->getPoNumber());
 
-        if(!$sepa['accept_sepa']) {
+        if(!$info->getAdditionalInformation('accept_sepa')) {
             $errorMsg = Mage::helper('adyen')->__('Please accept the conditions for a SEPA direct debit.');
             Mage::throwException($errorMsg);
         }
@@ -82,7 +83,8 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
 
         if($ibanValidation) {
 
-            if(!$this->validateIban($sepa['iban']) || empty($sepa['iban'])){
+            $iban = $info->getAdditionalInformation('iban');
+            if(!$this->validateIban($iban) || empty($iban)){
                 $errorCode = 'invalid_data';
                 $errorMsg = Mage::helper('adyen')->__('Invalid Iban number.');
                 Mage::throwException($errorMsg);
@@ -91,6 +93,12 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
         return $this;
     }
 
+    /**
+     * Validate IBAN
+     * 
+     * @param $iban
+     * @return bool
+     */
     public function validateIban($iban) {
 
         $iban = strtolower(str_replace(' ','',$iban));
@@ -144,4 +152,13 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
 
         // TODO: add config where merchant can set the payment types that are available for subscription
     }
+    /**
+     * @return bool
+     */
+    public function isBillingAgreement()
+    {
+        return true;
+    }
+
+
 }

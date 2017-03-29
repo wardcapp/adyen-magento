@@ -214,7 +214,24 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         parent::authorize($payment, $amount);
         $payment->setLastTransId($this->getTransactionId())->setIsTransactionPending(true);
 
+        /** @var Mage_Sales_Model_Order $order */
         $order = $payment->getOrder();
+        $amount = $order->getGrandTotal();
+
+        // check if a zero auth should be done for this order
+        $useZeroAuth = (bool)Mage::helper('adyen')->getConfigData('use_zero_auth', null, $order->getStoreId());
+        $zeroAuthDateField = (bool)Mage::helper('adyen')->getConfigData('base_zero_auth_on_date', null, $order->getStoreId());
+        
+        if ($useZeroAuth) { // zero auth should be used
+
+            // only orders that are scheduled to be captured later than
+            // the auth valid period use zero auth
+            // the period is 7 days since this works for most payment methods
+            $scheduledDate = strtotime($order->getData($zeroAuthDateField));
+            if ($scheduledDate > strtotime("+7 days")) { // scheduled date is higher than now + 7 days
+                $amount = 0; // set amount to 0 for zero auth
+            }
+        }
 
         /*
          * ReserveOrderId for this quote so payment failed notification
@@ -241,7 +258,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
             $order->setCanSendNewEmailFlag(false);
         }
 
-        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || substr($this->getCode(), 0, 14) == 'adyen_oneclick' || $this->getCode() == 'adyen_elv' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay') {
+        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || substr($this->getCode(), 0, 14) == 'adyen_oneclick' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay') {
 
             if(substr($this->getCode(), 0, 14) == 'adyen_oneclick') {
 
@@ -511,6 +528,10 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 } else {
                     $errorMsg = Mage::helper('adyen')->__('The payment is REFUSED.');
                 }
+
+                $errorMsg = new Varien_Object(array('error_message' => $errorMsg));
+                Mage::dispatchEvent('adyen_payment_authorize_refused_error', array('responseResult' => $response->paymentResult, 'error' => $errorMsg));
+                $errorMsg = $errorMsg->getErrorMessage();
 
                 $this->resetReservedOrderId();
                 Adyen_Payment_Exception::throwException($errorMsg);
