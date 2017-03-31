@@ -160,6 +160,18 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         }
     }
 
+    /**
+     * This method is called for redirect to 3D secure
+     *
+     * @return mixed
+     */
+    public function getFormUrl() {
+        $this->_initOrder();
+        $order = $this->_order;
+        $payment = $order->getPayment();
+        return $payment->getAdditionalInformation('issuerUrl');
+    }
+
     public function getFormName() {
         return "Adyen CC";
     }
