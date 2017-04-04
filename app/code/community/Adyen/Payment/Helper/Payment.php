@@ -563,31 +563,32 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     public function getHppBillingAddressDetails($billingAddress)
     {
-        $billingAddressRequest = [];
+        $billingAddressRequest = [
+            'street' => 'NA',
+            'houseNumberOrName' => 'NA',
+            'city' => 'NA',
+            'postalCode' => 'NA',
+            'stateOrProvince' => 'NA',
+            'country' => 'NA'
+        ];
 
-        $billingAddressRequest['street'] = trim($this->getStreet($billingAddress,true)->getName());
-        if($this->getStreet($billingAddress,true)->getHouseNumber() == "") {
-            $billingAddressRequest['houseNumberOrName'] = "NA";
-        } else {
+        if(trim($this->getStreet($billingAddress,true)->getName()) != "") {
+            $billingAddressRequest['street'] = trim($this->getStreet($billingAddress,true)->getName());
+        }
+
+        if($this->getStreet($billingAddress,true)->getHouseNumber() != "") {
             $billingAddressRequest['houseNumberOrName'] = trim($this->getStreet($billingAddress,true)->getHouseNumber());
         }
 
-        if (trim($billingAddress->getCity()) == "") {
-            $billingAddressRequest['city'] = "NA";
-        } else {
+        if (trim($billingAddress->getCity()) != "") {
             $billingAddressRequest['city'] = trim($billingAddress->getCity());
         }
 
-        if (trim($billingAddress->getPostcode()) == "") {
-            $billingAddressRequest['postalCode'] = "NA";
-        } else {
+        if (trim($billingAddress->getPostcode()) != "") {
             $billingAddressRequest['postalCode'] = trim($billingAddress->getPostcode());
         }
 
-        if (trim($billingAddress->getRegionCode()) == "") {
-            $billingAddressRequest['stateOrProvince'] = "NA";
-        } else {
-
+        if (trim($billingAddress->getRegionCode()) != "") {
             // if regionCode is numeric get region otherwise go for regionCode
             if(is_numeric($billingAddress->getRegionCode())) {
                 $region = $billingAddress->getRegion();
@@ -597,11 +598,10 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $billingAddressRequest['stateOrProvince'] = trim($region);
         }
 
-        if (trim($billingAddress->getCountryId()) == "") {
-            $billingAddressRequest['country'] = "NA";
-        } else {
+        if (trim($billingAddress->getCountryId()) != "") {
             $billingAddressRequest['country'] = trim($billingAddress->getCountryId());
         }
+        
         return $billingAddressRequest;
     }
 
@@ -626,7 +626,9 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             return $deliveryAddressRequest;
         }
 
-        $deliveryAddressRequest['street'] = trim($this->getStreet($deliveryAddress,true)->getName());
+        if(trim($this->getStreet($deliveryAddress,true)->getName() != "")) {
+            $deliveryAddressRequest['street'] = trim($this->getStreet($deliveryAddress,true)->getName());
+        }
 
         if (trim($this->getStreet($deliveryAddress,true)->getHouseNumber()) != "") {
             $deliveryAddressRequest['houseNumberOrName'] = trim($this->getStreet($deliveryAddress,true)->getHouseNumber());
