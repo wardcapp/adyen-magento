@@ -693,6 +693,11 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
             }
+
+            // Needed for RatePay
+            if ($item->getSku() != "") {
+                $openInvoiceData['openinvoicedata.' . $linename . '.itemId'] = $item->getSku();
+            }
         }
         //discount cost
         if($order->getDiscountAmount() > 0 || $order->getDiscountAmount() < 0)
