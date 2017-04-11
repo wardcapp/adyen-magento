@@ -33,47 +33,33 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     const GUEST_ID = 'customer_';
 
-
     /**
-     * @param array $fields
+     * @param string $brandCode
      * @param bool $isConfigDemoMode
      * @param string $paymentRoutine
      * @param bool $hppOptionsDisabled
      * @return string
      */
-    public function getFormUrl($brandCode, $isConfigDemoMode = false, $paymentRoutine='single', $hppOptionsDisabled = true)
+    public function getFormUrl($brandCode, $isConfigDemoMode = false, $paymentRoutine = 'single', $hppOptionsDisabled = true)
     {
-        switch ($isConfigDemoMode) {
-            case true:
-                if ($paymentRoutine == 'single' && $hppOptionsDisabled) {
-                    $url = 'https://test.adyen.com/hpp/pay.shtml';
-                } else {
-                    if ($brandCode && ($brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb")) {
-                        $url = "https://test.adyen.com/hpp/skipDetails.shtml";
-                    } else {
-                        $url = ($hppOptionsDisabled)
-                            ? 'https://test.adyen.com/hpp/select.shtml'
-                            : "https://test.adyen.com/hpp/details.shtml";
-                    }
-                }
-                break;
-            default:
-                if ($paymentRoutine == 'single' && $hppOptionsDisabled) {
-                    $url = 'https://live.adyen.com/hpp/pay.shtml';
-                } else {
-                    if($brandCode && ($brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb")) {
-                        $url = "https://live.adyen.com/hpp/skipDetails.shtml";
-                    } else {
-                        $url = ($hppOptionsDisabled)
-                            ? 'https://live.adyen.com/hpp/select.shtml'
-                            : "https://live.adyen.com/hpp/details.shtml";
-                    }
-                }
-                break;
+        $baseUrl = 'https://' . ($isConfigDemoMode ? 'test' : 'live') . '.adyen.com/hpp/';
+
+        if ($paymentRoutine == 'single' && $hppOptionsDisabled) {
+            return "{$baseUrl}pay.shtml";
         }
-        return $url;
+
+        if ($brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb") {
+           return "{$baseUrl}skipDetails.shtml";
+        }
+
+        return $baseUrl . ($hppOptionsDisabled ? "select" : "details") . ".shtml";
     }
 
+    /**
+     * @param array $fields
+     * @param bool $isConfigDemoMode
+     * @return string
+     */
     public function prepareFieldsforUrl($fields, $isConfigDemoMode = false)
     {
         $url = $this->getFormUrl(null, $isConfigDemoMode);
@@ -357,11 +343,11 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $adyFields = $adyFields + $openInvoiceData;
 
         // Add brandCode if payment selection is done
-        if($brandCode) {
+        if ($brandCode) {
             $adyFields['brandCode'] = $brandCode;
         }
 
-        if($dfValue) {
+        if ($dfValue) {
             $adyFields['dfValue'] = $dfValue;
         }
 
@@ -500,19 +486,12 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     public function getHppShopperDetails($billingAddress, $gender, $dob)
     {
-        $shopperInfo = [];
-
-        $shopperInfo['firstName'] = trim($billingAddress->getFirstname());
-
         $middleName = trim($billingAddress->getMiddlename());
-        if($middleName != "") {
-            $shopperInfo['infix'] = trim($middleName);
-        } else {
-            $shopperInfo['infix'] = "";
-        }
 
+        $shopperInfo = [];
+        $shopperInfo['firstName'] = trim($billingAddress->getFirstname());
+        $shopperInfo['infix'] = $middleName != "" ? trim($middleName) : "";
         $shopperInfo['lastName'] = trim($billingAddress->getLastname());
-
         $shopperInfo['gender'] = $this->getGenderText($gender);
 
         if (!empty($dob)) {
@@ -522,7 +501,6 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         }
 
         $shopperInfo['telephoneNumber'] = trim($billingAddress->getTelephone());
-
 
         return $shopperInfo;
     }
@@ -589,12 +567,10 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         }
 
         if (trim($billingAddress->getRegionCode()) != "") {
-            // if regionCode is numeric get region otherwise go for regionCode
-            if(is_numeric($billingAddress->getRegionCode())) {
-                $region = $billingAddress->getRegion();
-            } else {
-                $region = $billingAddress->getRegionCode();
-            }
+            $region = is_numeric($billingAddress->getRegionCode())
+                ? $billingAddress->getRegion()
+                : $billingAddress->getRegionCode();
+
             $billingAddressRequest['stateOrProvince'] = trim($region);
         }
 

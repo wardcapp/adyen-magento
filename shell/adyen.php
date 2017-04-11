@@ -84,12 +84,12 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
    	public function loadBillingAgreementsAction()
 	{
 		$api = Mage::getSingleton('adyen/api');
-        	$storeId = $this->getArg('store');
-        	$dateCreated = $this->getArg('createdAfter');
+		$storeId = $this->getArg('store');
+		$dateCreated = $this->getArg('createdAfter');
 
 		$stores = Mage::getModel('core/store')->getCollection();
-        	if ((int)$storeId > 0) {
-            		$stores->addFieldToFilter('store_id', ['in' => [0, $storeId]]);
+		if ((int)$storeId) {
+            $stores->addFieldToFilter('store_id', ['in' => [0, $storeId]]);
 		}
 
 		foreach ($stores as $store) {
@@ -98,9 +98,9 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 
 			$customerCollection = Mage::getResourceModel('customer/customer_collection');
 			$customerCollection->addFieldToFilter('store_id', $store->getId());
-            		if (isset($dateCreated)) {
-                		$customerCollection->addFieldToFilter('created_at', ['gteq' => $dateCreated]);
-            		}
+			if (isset($dateCreated)) {
+				$customerCollection->addFieldToFilter('created_at', ['gteq' => $dateCreated]);
+			}
 			
 			$select = $customerCollection->getSelect();
 			$select->reset(Varien_Db_Select::COLUMNS);
