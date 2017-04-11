@@ -68,4 +68,14 @@ $_code = $this->getMethodCode();
             <?php echo $this->__('You will be redirected to Adyen website when you place an order.') ?>
         </li>
     </ul>
+
+    <input type="hidden" name="payment[dfvalue]" id="dfValue" />
+    <script type="text/javascript">
+        //<![CDATA[
+        var dfDoInit = function() {
+            dfSet('dfValue', 0);
+        }
+        dfDoInit();
+        //]]>
+    </script>
 </fieldset>

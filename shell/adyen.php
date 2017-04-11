@@ -84,14 +84,24 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
    	public function loadBillingAgreementsAction()
 	{
 		$api = Mage::getSingleton('adyen/api');
+        	$storeId = $this->getArg('store');
+        	$dateCreated = $this->getArg('createdAfter');
 
-		foreach (Mage::app()->getStores(true) as $store) {
+		$stores = Mage::getModel('core/store')->getCollection();
+        	if ((int)$storeId > 0) {
+            		$stores->addFieldToFilter('store_id', ['in' => [0, $storeId]]);
+		}
+
+		foreach ($stores as $store) {
             /** @var Mage_Core_Model_Store $store */
             echo sprintf("Load for store %s\n", $store->getCode());
 
 			$customerCollection = Mage::getResourceModel('customer/customer_collection');
 			$customerCollection->addFieldToFilter('store_id', $store->getId());
-
+            		if (isset($dateCreated)) {
+                		$customerCollection->addFieldToFilter('created_at', ['gteq' => $dateCreated]);
+            		}
+			
 			$select = $customerCollection->getSelect();
 			$select->reset(Varien_Db_Select::COLUMNS);
 			$select->columns(['e.entity_id','e.increment_id']);
