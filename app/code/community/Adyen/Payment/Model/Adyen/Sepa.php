@@ -82,12 +82,10 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
         $ibanValidation = $this->_getConfigData("validate_iban", "adyen_sepa");
 
         if($ibanValidation) {
-
             $iban = $info->getAdditionalInformation('iban');
-            if(!$this->validateIban($iban) || empty($iban)){
-                $errorCode = 'invalid_data';
-                $errorMsg = Mage::helper('adyen')->__('Invalid Iban number.');
-                Mage::throwException($errorMsg);
+
+            if (!$this->validateIban($iban) || empty($iban)) {
+                Mage::throwException(Mage::helper('adyen')->__('Invalid Iban number.'));
             }
         }
         return $this;
