@@ -64,8 +64,22 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     {
         $url = $this->getFormUrl(null, $isConfigDemoMode);
 
-        if (count($fields)) {
-            $url = $url . '?' . http_build_query($fields, '', '&');
+        // Issue some empty values will not be presenting in the url causing signature issues
+//        if (count($fields)) {
+//            $url = $url . '?' . http_build_query($fields, '', '&');
+//        }
+
+        $count = 0;
+        $size = count($fields);
+        foreach ($fields as $field => $value) {
+            if($count == 0) {
+                $url .= "?";
+            }
+            $url .= urlencode($field) . "=" . urlencode($value);
+            if($count != $size) {
+                $url .= "&";
+            }
+            ++$count;
         }
 
         return $url;
@@ -350,6 +364,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         if ($dfValue) {
             $adyFields['dfValue'] = $dfValue;
         }
+
 
         return $adyFields;
     }
