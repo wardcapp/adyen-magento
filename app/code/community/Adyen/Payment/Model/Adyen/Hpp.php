@@ -258,7 +258,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
      */
     public function isAvailable($quote = null)
     {
-        $isAvailable = parent::isAvailable();
+        $isAvailable = parent::isAvailable($quote);
         
         if (!is_null($quote)) {
             $disableZeroTotal = Mage::getStoreConfig('payment/adyen_hpp/disable_zero_total', $quote->getStoreId());
