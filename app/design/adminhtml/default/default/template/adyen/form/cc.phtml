@@ -120,9 +120,9 @@
 
             if (order.paymentMethod && order.paymentMethod == '<?php echo $_code ?>') {
                 try {
-                    form.cseForm = form.cseForm || adyen.encrypt.createEncryptedForm(form, cse_key, cse_options);
+                    cse_form.cseForm = cse_form.cseForm || adyen.encrypt.createEncryptedForm(cse_form, cse_key, cse_options);
                     // encrypt data directly because submit button is not always on the page
-                    form.cseForm.createEncryptedField(form.cseForm.encrypt());
+                    cse_form.cseForm.createEncryptedField(cse_form.cseForm.encrypt());
                 } catch (e) {
                     var encryptionFailed = true;
                 }
