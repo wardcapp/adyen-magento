@@ -446,15 +446,21 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             // the following allows to send the 'pretty' customer ID or increment ID to Adyen instead of the entity id
             // used collection here, it's about half the resources of using the load method on the customer opject
             /* var $customer Mage_Customer_Model_Resource_Customer_Collection */
-            $customer = Mage::getResourceModel('customer/customer_collection')
+            $collection = Mage::getResourceModel('customer/customer_collection')
                 ->addAttributeToSelect('adyen_customer_ref')
                 ->addAttributeToSelect('increment_id')
-                ->addAttributeToFilter('entity_id', $customerId)
-                ->getFirstItem();
+                ->addAttributeToFilter('entity_id', $customerId);
+            $collection->getSelect()->limit(1);
+            $customer = $collection->getFirstItem();
 
-            $customerId = $customer->getId() && $customer->getData('adyen_customer_ref') ?
-                $customer->getData('increment_id') :
-                $customerId;
+            if ($customer->getData('adyen_customer_ref')) {
+               $customerId = $customer->getData('adyen_customer_ref');
+            } elsef ($customer->getData('increment_id')) {
+               $customerId = $customer->getData('increment_id');
+            } else {
+               $customerId = $customer->getId();
+            }
+            
             return $customerId;
         } else { // it was a guest order
             $customerId = self::GUEST_ID . $realOrderId;
