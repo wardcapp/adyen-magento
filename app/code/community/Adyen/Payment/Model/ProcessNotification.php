@@ -847,6 +847,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
 
             $statusObject = Mage::getModel('sales/order_status')->getCollection()
                 ->addFieldToFilter('main_table.status', $status)
+                ->addFieldToFilter('state_table.is_default', true)
                 ->joinStates()
                 ->getFirstItem();
             $state = $statusObject->getState();
