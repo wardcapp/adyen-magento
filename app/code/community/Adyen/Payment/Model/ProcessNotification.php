@@ -1538,7 +1538,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                 $params = unserialize($event->getResponse());
 
                 // If the event is a RECURRING_CONTRACT wait an extra 5 minutes before processing so we are sure the RECURRING_CONTRACT
-                if (trim($params->getData('eventCode') == Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT) &&
+                if (trim($params->getData('eventCode')) == Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT &&
                     strtotime($event->getCreatedAt()) >= strtotime('-5 minutes', time())) {
                     $this->_debugData[$this->_count]['UpdateNotProcessedEvents end'] = 'This is a recurring_contract notification wait an extra 5 minutes before processing this to make sure the contract exists';
                     $this->_count++;
