@@ -364,8 +364,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         if ($dfValue) {
             $adyFields['dfValue'] = $dfValue;
         }
-
-
+        
         return $adyFields;
     }
 
@@ -455,7 +454,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
 
             if ($customer->getData('adyen_customer_ref')) {
                $customerId = $customer->getData('adyen_customer_ref');
-            } elsef ($customer->getData('increment_id')) {
+            } elseif ($customer->getData('increment_id')) {
                $customerId = $customer->getData('increment_id');
             } else {
                $customerId = $customer->getId();

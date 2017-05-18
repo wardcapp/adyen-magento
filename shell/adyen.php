@@ -116,7 +116,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 
 				if ($customerData['adyen_customer_ref']) {
 				   $customerReference = $customerData['adyen_customer_ref'];
-				} elsef ($customerData['increment_id']) {
+				} elseif ($customerData['increment_id']) {
 				   $customerReference = $customerData['increment_id'];
 				} else {
 				   $customerReference = customerId;
