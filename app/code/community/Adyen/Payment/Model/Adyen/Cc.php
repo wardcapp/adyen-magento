@@ -64,8 +64,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
             } else if($data->getEncryptedData()) {
                 $info->setAdditionalInformation('encrypted_data', $data->getEncryptedData());
             }
-        }
-        else {
+        } else {
             $info->setCcType($data->getCcType())
                 ->setCcOwner($data->getCcOwner())
                 ->setCcLast4(substr($data->getCcNumber(), -4))

@@ -1,5 +1,4 @@
 <?php
-
 if ($this->hasApplePayEnabled()):
     $subtotal = $this->getSubTotal();
     $productId = $subtotal['productId'];
@@ -11,17 +10,15 @@ if ($this->hasApplePayEnabled()):
     $reviewStep = $this->onReviewStep();
 
     // shippingMethods not needed in review step
-    if(!$reviewStep) {
+    if (!$reviewStep) {
         $_shippingMethods = $this->getShippingMethods();
-        $fistItem = null;
+        $firstItem = null;
         if(is_array($_shippingMethods) && !empty($_shippingMethods)) {
-            $fistItem = current($_shippingMethods);
-            // add key into array
+            $firstItem = current($_shippingMethods);
             $firstKey = key($_shippingMethods);
-            $fistItem['key'] = $firstKey;
+            $firstItem['key'] = $firstKey;
         }
     }
-
     ?>
 
     <div id="adyen-apple-pay-button" class="apple-pay-button-with-text apple-pay-button-black-with-text" style="display: none;">
@@ -118,17 +115,17 @@ if ($this->hasApplePayEnabled()):
                     window.AdyenApplePayShippingMethodIdentifier = shippingMethods[0].identifier;
 
                 } else {
-                    <?php if($fistItem && is_array($fistItem)): ?>
+                    <?php if($firstItem && is_array($firstItem)): ?>
                         lineItems.push(
                             {
                                 type: "final",
                                 label: "<?php echo $this->__('shipping') ?>",
-                                amount: <?php echo $fistItem['price'] ?>
+                                amount: <?php echo $firstItem['price'] ?>
                             }
                         );
 
-                        window.AdyenApplePayTotalAmount = amount + <?php echo $fistItem['price']; ?>;
-                        window.AdyenApplePayShippingMethodIdentifier = "<?php echo $fistItem['key']; ?>";
+                        window.AdyenApplePayTotalAmount = amount + <?php echo $firstItem['price']; ?>;
+                        window.AdyenApplePayShippingMethodIdentifier = "<?php echo $firstItem['key']; ?>";
 
                     <?php else: ?>
                         window.AdyenApplePayTotalAmount = amount;

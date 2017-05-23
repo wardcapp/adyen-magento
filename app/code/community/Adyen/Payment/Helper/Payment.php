@@ -33,53 +33,53 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     const GUEST_ID = 'customer_';
 
-
     /**
-     * @param array $fields
+     * @param string $brandCode
      * @param bool $isConfigDemoMode
      * @param string $paymentRoutine
      * @param bool $hppOptionsDisabled
      * @return string
      */
-    public function getFormUrl($brandCode, $isConfigDemoMode = false, $paymentRoutine='single', $hppOptionsDisabled = true)
+    public function getFormUrl($brandCode, $isConfigDemoMode = false, $paymentRoutine = 'single', $hppOptionsDisabled = true)
     {
-        switch ($isConfigDemoMode) {
-            case true:
-                if ($paymentRoutine == 'single' && $hppOptionsDisabled) {
-                    $url = 'https://test.adyen.com/hpp/pay.shtml';
-                } else {
-                    if ($brandCode && ($brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb")) {
-                        $url = "https://test.adyen.com/hpp/skipDetails.shtml";
-                    } else {
-                        $url = ($hppOptionsDisabled)
-                            ? 'https://test.adyen.com/hpp/select.shtml'
-                            : "https://test.adyen.com/hpp/details.shtml";
-                    }
-                }
-                break;
-            default:
-                if ($paymentRoutine == 'single' && $hppOptionsDisabled) {
-                    $url = 'https://live.adyen.com/hpp/pay.shtml';
-                } else {
-                    if($brandCode && ($brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb")) {
-                        $url = "https://live.adyen.com/hpp/skipDetails.shtml";
-                    } else {
-                        $url = ($hppOptionsDisabled)
-                            ? 'https://live.adyen.com/hpp/select.shtml'
-                            : "https://live.adyen.com/hpp/details.shtml";
-                    }
-                }
-                break;
+        $baseUrl = 'https://' . ($isConfigDemoMode ? 'test' : 'live') . '.adyen.com/hpp/';
+
+        if ($paymentRoutine == 'single' && $hppOptionsDisabled) {
+            return "{$baseUrl}pay.shtml";
         }
-        return $url;
+
+        if ($brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb") {
+           return "{$baseUrl}skipDetails.shtml";
+        }
+
+        return $baseUrl . ($hppOptionsDisabled ? "select" : "details") . ".shtml";
     }
 
+    /**
+     * @param array $fields
+     * @param bool $isConfigDemoMode
+     * @return string
+     */
     public function prepareFieldsforUrl($fields, $isConfigDemoMode = false)
     {
         $url = $this->getFormUrl(null, $isConfigDemoMode);
 
-        if (count($fields)) {
-            $url = $url . '?' . http_build_query($fields, '', '&');
+        // Issue some empty values will not be presenting in the url causing signature issues
+//        if (count($fields)) {
+//            $url = $url . '?' . http_build_query($fields, '', '&');
+//        }
+
+        $count = 0;
+        $size = count($fields);
+        foreach ($fields as $field => $value) {
+            if($count == 0) {
+                $url .= "?";
+            }
+            $url .= urlencode($field) . "=" . urlencode($value);
+            if($count != $size) {
+                $url .= "&";
+            }
+            ++$count;
         }
 
         return $url;
@@ -357,14 +357,14 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $adyFields = $adyFields + $openInvoiceData;
 
         // Add brandCode if payment selection is done
-        if($brandCode) {
+        if ($brandCode) {
             $adyFields['brandCode'] = $brandCode;
         }
 
-        if($dfValue) {
+        if ($dfValue) {
             $adyFields['dfValue'] = $dfValue;
         }
-
+        
         return $adyFields;
     }
 
@@ -445,15 +445,21 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             // the following allows to send the 'pretty' customer ID or increment ID to Adyen instead of the entity id
             // used collection here, it's about half the resources of using the load method on the customer opject
             /* var $customer Mage_Customer_Model_Resource_Customer_Collection */
-            $customer = Mage::getResourceModel('customer/customer_collection')
+            $collection = Mage::getResourceModel('customer/customer_collection')
                 ->addAttributeToSelect('adyen_customer_ref')
                 ->addAttributeToSelect('increment_id')
-                ->addAttributeToFilter('entity_id', $customerId)
-                ->getFirstItem();
+                ->addAttributeToFilter('entity_id', $customerId);
+            $collection->getSelect()->limit(1);
+            $customer = $collection->getFirstItem();
 
-            $customerId = $customer->getId() && $customer->getData('adyen_customer_ref') ?
-                $customer->getData('increment_id') :
-                $customerId;
+            if ($customer->getData('adyen_customer_ref')) {
+               $customerId = $customer->getData('adyen_customer_ref');
+            } elseif ($customer->getData('increment_id')) {
+               $customerId = $customer->getData('increment_id');
+            } else {
+               $customerId = $customer->getId();
+            }
+            
             return $customerId;
         } else { // it was a guest order
             $customerId = self::GUEST_ID . $realOrderId;
@@ -500,19 +506,12 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     public function getHppShopperDetails($billingAddress, $gender, $dob)
     {
-        $shopperInfo = [];
-
-        $shopperInfo['firstName'] = trim($billingAddress->getFirstname());
-
         $middleName = trim($billingAddress->getMiddlename());
-        if($middleName != "") {
-            $shopperInfo['infix'] = trim($middleName);
-        } else {
-            $shopperInfo['infix'] = "";
-        }
 
+        $shopperInfo = [];
+        $shopperInfo['firstName'] = trim($billingAddress->getFirstname());
+        $shopperInfo['infix'] = $middleName != "" ? trim($middleName) : "";
         $shopperInfo['lastName'] = trim($billingAddress->getLastname());
-
         $shopperInfo['gender'] = $this->getGenderText($gender);
 
         if (!empty($dob)) {
@@ -522,7 +521,6 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         }
 
         $shopperInfo['telephoneNumber'] = trim($billingAddress->getTelephone());
-
 
         return $shopperInfo;
     }
@@ -563,45 +561,43 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     public function getHppBillingAddressDetails($billingAddress)
     {
-        $billingAddressRequest = [];
+        $billingAddressRequest = [
+            'street' => 'NA',
+            'houseNumberOrName' => 'NA',
+            'city' => 'NA',
+            'postalCode' => 'NA',
+            'stateOrProvince' => 'NA',
+            'country' => 'NA'
+        ];
 
-        $billingAddressRequest['street'] = trim($this->getStreet($billingAddress,true)->getName());
-        if($this->getStreet($billingAddress,true)->getHouseNumber() == "") {
-            $billingAddressRequest['houseNumberOrName'] = "NA";
-        } else {
+        if(trim($this->getStreet($billingAddress,true)->getName()) != "") {
+            $billingAddressRequest['street'] = trim($this->getStreet($billingAddress,true)->getName());
+        }
+
+        if($this->getStreet($billingAddress,true)->getHouseNumber() != "") {
             $billingAddressRequest['houseNumberOrName'] = trim($this->getStreet($billingAddress,true)->getHouseNumber());
         }
 
-        if (trim($billingAddress->getCity()) == "") {
-            $billingAddressRequest['city'] = "NA";
-        } else {
+        if (trim($billingAddress->getCity()) != "") {
             $billingAddressRequest['city'] = trim($billingAddress->getCity());
         }
 
-        if (trim($billingAddress->getPostcode()) == "") {
-            $billingAddressRequest['postalCode'] = "NA";
-        } else {
+        if (trim($billingAddress->getPostcode()) != "") {
             $billingAddressRequest['postalCode'] = trim($billingAddress->getPostcode());
         }
 
-        if (trim($billingAddress->getRegionCode()) == "") {
-            $billingAddressRequest['stateOrProvince'] = "NA";
-        } else {
+        if (trim($billingAddress->getRegionCode()) != "") {
+            $region = is_numeric($billingAddress->getRegionCode())
+                ? $billingAddress->getRegion()
+                : $billingAddress->getRegionCode();
 
-            // if regionCode is numeric get region otherwise go for regionCode
-            if(is_numeric($billingAddress->getRegionCode())) {
-                $region = $billingAddress->getRegion();
-            } else {
-                $region = $billingAddress->getRegionCode();
-            }
             $billingAddressRequest['stateOrProvince'] = trim($region);
         }
 
-        if (trim($billingAddress->getCountryId()) == "") {
-            $billingAddressRequest['country'] = "NA";
-        } else {
+        if (trim($billingAddress->getCountryId()) != "") {
             $billingAddressRequest['country'] = trim($billingAddress->getCountryId());
         }
+        
         return $billingAddressRequest;
     }
 
@@ -626,7 +622,9 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             return $deliveryAddressRequest;
         }
 
-        $deliveryAddressRequest['street'] = trim($this->getStreet($deliveryAddress,true)->getName());
+        if(trim($this->getStreet($deliveryAddress,true)->getName() != "")) {
+            $deliveryAddressRequest['street'] = trim($this->getStreet($deliveryAddress,true)->getName());
+        }
 
         if (trim($this->getStreet($deliveryAddress,true)->getHouseNumber()) != "") {
             $deliveryAddressRequest['houseNumberOrName'] = trim($this->getStreet($deliveryAddress,true)->getHouseNumber());
@@ -690,6 +688,11 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
+            }
+
+            // Needed for RatePay
+            if ($item->getSku() != "") {
+                $openInvoiceData['openinvoicedata.' . $linename . '.itemId'] = $item->getSku();
             }
         }
         //discount cost

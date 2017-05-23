@@ -34,13 +34,13 @@ $_code = $this->getMethodCode();
     <script type="text/javascript">
         // check if apple pay is available for shopper
         if(window.ApplePaySession) {
-            var promise = ApplePaySession.canMakePaymentsWithActiveCard("<?php echo $this->getMerchantIdentifier(); ?>");
-            promise.then(function (canMakePayments) {
-                if (canMakePayments) {
+//            var promise = ApplePaySession.canMakePaymentsWithActiveCard("<?php //echo $this->getMerchantIdentifier(); ?>//");
+//            promise.then(function (canMakePayments) {
+//                if (canMakePayments) {
                     $('AdyenApplePayError').hide();
                     $('AdyenAllowApplePay').setValue("1");
-                }
-            });
+//                }
+//            });
         }
     </script>
 

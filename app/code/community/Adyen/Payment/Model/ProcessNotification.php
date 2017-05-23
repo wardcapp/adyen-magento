@@ -847,6 +847,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
 
             $statusObject = Mage::getModel('sales/order_status')->getCollection()
                 ->addFieldToFilter('main_table.status', $status)
+                ->addFieldToFilter('state_table.is_default', true)
                 ->joinStates()
                 ->getFirstItem();
             $state = $statusObject->getState();
@@ -1523,6 +1524,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                 'datetime' => true))
             ->addOrder('created_at', 'asc');
 
+
         $limit = (int)$this->_getConfigData('event_queue_limit');
         if ($limit > 0) {
             $collection->getSelect()->limit($limit);
@@ -1533,6 +1535,15 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             foreach($collection as $event){
 
                 $incrementId = $event->getIncrementId();
+                $params = unserialize($event->getResponse());
+
+                // If the event is a RECURRING_CONTRACT wait an extra 5 minutes before processing so we are sure the RECURRING_CONTRACT
+                if (trim($params->getData('eventCode')) == Adyen_Payment_Model_Event::ADYEN_EVENT_RECURRING_CONTRACT &&
+                    strtotime($event->getCreatedAt()) >= strtotime('-5 minutes', time())) {
+                    $this->_debugData[$this->_count]['UpdateNotProcessedEvents end'] = 'This is a recurring_contract notification wait an extra 5 minutes before processing this to make sure the contract exists';
+                    $this->_count++;
+                    continue;
+                }
 
                 $this->_debugData[$this->_count]['UpdateNotProcessedEvents Step2'] = 'Going to update notification with incrementId: ' . $incrementId;
 
@@ -1541,8 +1552,6 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
 
                     $this->_debugData[$this->_count]['UpdateNotProcessedEvents Step3'] = 'Order exists going to update it';
                     // try to process it now
-                    $params = unserialize($event->getResponse());
-
                     $this->_debugData[$this->_count]['UpdateNotProcessedEvents params'] = $params->debug();
 
                     // check if notification is already processed

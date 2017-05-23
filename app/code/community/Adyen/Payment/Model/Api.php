@@ -85,7 +85,11 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                         }
                     }
                 }
-            } catch (Adyen_Payment_Exception $exception) { }
+            } catch (Adyen_Payment_Exception $e) {
+                Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__(
+                    "Error retrieving the Billing Agreement for shopperReference %s with recurringType #%s Error: %s", $shopperReference, $recurringType, $e->getMessage()
+                ));
+            }
         }
         return $recurringContracts;
     }
