@@ -461,7 +461,7 @@ class Adyen_Payment_Model_Observer {
 
         if($this->isPaymentMethodAdyen($order) && $autoRefund) {
             $pspReference = Mage::getModel('adyen/event')->getOriginalPspReference($order->getIncrementId());
-            $payment->getMethodInstance()->SendCancelOrRefund($payment, $pspReference);
+            $payment->getMethodInstance()->sendCancelRequest($payment, $pspReference);
         }
     }
 
