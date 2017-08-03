@@ -1556,7 +1556,12 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
 
                     // check if notification is already processed
                     if(!$this->_isDuplicate($params)) {
-                        $this->_updateOrder($order, $params);
+                        try {
+                            $this->_updateOrder($order, $params);
+                        } catch (\Exception $error) {
+                            $this->_debugData[$this->_count]['UpdateNotProcessedEvents updateOrderException']  = $error->getMessage();
+                            Mage::logException($error);
+                        }
                     } else {
                         // already processed so ignore this notification
                         $this->_debugData[$this->_count]['UpdateNotProcessedEvents duplicate']  = "This notification is already processed so ignore this one";
