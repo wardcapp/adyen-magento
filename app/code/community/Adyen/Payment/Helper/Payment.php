@@ -683,7 +683,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = (int) $item->getQtyOrdered();
 
 
-            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
+            if($this->isHighVatCategory($order->getPayment())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -704,7 +704,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatAmount'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatPercentage'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
-            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
+            if($this->isHighVatCategory($order->getPayment())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -723,7 +723,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $taxRate = $this->getTaxRate($order, $taxClass);
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatPercentage'] = $this->getMinorUnitTaxPercent($taxRate);
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
-            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
+            if($this->isHighVatCategory($order->getPayment())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -737,7 +737,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatAmount'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatPercentage'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
-            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
+            if($this->isHighVatCategory($order->getPayment())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -748,6 +748,19 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $openInvoiceData['openinvoicedata.numberOfLines'] = $count;
 
         return $openInvoiceData;
+    }
+
+    /**
+     * Checks if HigVat Cateogry is needed
+     *
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function isHighVatCategory($paymentMethod) {
+        if($this->isOpenInvoiceMethod($paymentMethod->getMethod()) || Mage::helper('adyen')->isAfterPay($paymentMethod->getMethodInstance()->getInfoInstance()->getCcType())) {
+            return true;
+        }
+        return false;
     }
 
     /**

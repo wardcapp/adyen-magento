@@ -563,7 +563,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
      */
     public function isAfterPay($paymentMethod)
     {
-        if(substr($paymentMethod, 0, 8) == self::AFTERPAY) {
+        if(strcmp(substr($paymentMethod, 0, 8), self::AFTERPAY) === 0) {
             return true;
         }
         return false;
