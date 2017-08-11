@@ -32,7 +32,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      * @var GUEST_ID , used when order is placed by guests
      */
     const GUEST_ID = 'customer_';
-
+    const AFTERPAY_DEFAULT = "afterpay_default";
     /**
      * @param string $brandCode
      * @param bool $isConfigDemoMode
@@ -48,7 +48,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             return "{$baseUrl}pay.shtml";
         }
 
-        if ($brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb") {
+        if (Mage::helper('adyen')->isOpenInvoice($brandCode) || $brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb") {
            return "{$baseUrl}skipDetails.shtml";
         }
 
@@ -198,8 +198,8 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         }
 
         // type of payment method (card)
-        $brandCode = $paymentMethodCode == "adyen_openinvoice" ?
-            trim($this->getConfigData('openinvoicetypes', 'adyen_openinvoice', $orderStoreId)) :
+        $brandCode = $paymentMethodCode == Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE ?
+            trim($this->getConfigData('openinvoicetypes', Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE, $orderStoreId)) :
             trim($infoInstanceCCType) ;
 
         // Risk offset, 0 to 100 points
@@ -476,12 +476,12 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     public function getHppViewDetails($infoInstanceCCType, $paymentMethodCode, $hasDeliveryAddress)
     {
         // should the HPP page show address and delivery type details
-        if ($paymentMethodCode == "adyen_openinvoice" || $infoInstanceCCType == "klarna" || $infoInstanceCCType == "afterpay_default" || $infoInstanceCCType == "ratepay") {
+        if ($paymentMethodCode == Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE || Mage::helper('adyen')->isOpenInvoice($infoInstanceCCType)) {
             $billingAddressType = "1"; // yes, but not editable
             $deliveryAddressType = "1"; // yes, but not editable
 
             // get shopperType setting
-            $shopperType = $this->getConfigData("shoppertype", "adyen_openinvoice") == '1' ? "" : "1"; // only for openinvoice show this
+            $shopperType = $this->getConfigData("shoppertype", Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE) == '1' ? "" : "1"; // only for openinvoice show this
         } else {
             $shopperType = "";
             // for other payment methods like creditcard don't show the address field on the HPP page
@@ -658,8 +658,6 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     public function getOpenInvoiceData($merchantReference, $order)
     {
-
-        $openinvoiceType = $this->getConfigData('openinvoicetypes', 'adyen_openinvoice');
         $count = 0;
         $currency = $order->getOrderCurrencyCode();
         $openInvoiceData = [];
@@ -683,8 +681,9 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $taxRate = $this->getTaxRate($order, $product->getTaxClassId());
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatPercentage'] = $this->getMinorUnitTaxPercent($taxRate);
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = (int) $item->getQtyOrdered();
-            // afterpay_default_nl ?
-            if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
+
+
+            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -705,7 +704,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatAmount'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatPercentage'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
-            if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
+            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -724,7 +723,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $taxRate = $this->getTaxRate($order, $taxClass);
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatPercentage'] = $this->getMinorUnitTaxPercent($taxRate);
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
-            if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
+            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -738,7 +737,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatAmount'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.itemVatPercentage'] = "0";
             $openInvoiceData['openinvoicedata.' . $linename . '.numberOfItems'] = 1;
-            if(($order->getPayment()->getMethod() == "adyen_openinvoice" && $openinvoiceType == "afterpay_default") || ($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType() == "afterpay_default")) {
+            if($this->isOpenInvoiceMethod($order->getPayment()->getMethod()) || Mage::helper('adyen')->isAfterPay($order->getPayment()->getMethodInstance()->getInfoInstance()->getCcType())) {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "High";
             } else {
                 $openInvoiceData['openinvoicedata.' . $linename . '.vatCategory'] = "None";
@@ -749,6 +748,23 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $openInvoiceData['openinvoicedata.numberOfLines'] = $count;
 
         return $openInvoiceData;
+    }
+
+    /**
+     * Check if the payment method is openinvoice and the payment method type is afterpay_default
+     *
+     * @param $method
+     * @return bool
+     */
+    public function isOpenInvoiceMethod($method)
+    {
+        $openinvoiceType = $this->getConfigData('openinvoicetypes', Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE);
+
+        if($method == Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE && $openinvoiceType == self::AFTERPAY_DEFAULT) {
+            return true;
+        }
+
+        return false;
     }
 
     public function loadProductById($id)
