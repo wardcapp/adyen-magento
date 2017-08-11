@@ -181,6 +181,11 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
 
             // get payment details
             $payment = $order->getPayment();
+
+            if ($payment === false) {
+                throw new Exception('No payment information available');
+            }
+
             $paRequest = $payment->getAdditionalInformation('paRequest');
             $md = $payment->getAdditionalInformation('md');
             $issuerUrl = $payment->getAdditionalInformation('issuerUrl');
@@ -259,7 +264,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                 Adyen_Payment_Exception::throwException($errorMsg);
             }
         } catch (Exception $e) {
-            $alreadySuccessful = $order->getPayment()->getAdditionalInformation('3d_successful');
+            $alreadySuccessful = $order->getPayment() && $order->getPayment()->getAdditionalInformation('3d_successful');
             // ignore because 3d was already successful for this order
             if (!$alreadySuccessful)  {
                 Mage::logException($e);
