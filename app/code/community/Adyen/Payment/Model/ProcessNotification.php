@@ -1082,22 +1082,13 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                 return true;
             }
             // if auto capture mode for openinvoice is turned on then use auto capture
-            if ($captureModeOpenInvoice == true && (
-                    strcmp($this->_paymentMethod, 'openinvoice') === 0 ||
-                    strcmp($this->_paymentMethod, 'afterpay_default') === 0 ||
-                    strcmp($this->_paymentMethod, 'klarna') === 0 ||
-                    strcmp($this->_paymentMethod, 'ratepay') === 0)
-            ) {
+            if ($captureModeOpenInvoice == true && Mage::helper('adyen')->isOpenInvoice($this->_paymentMethod)) {
                 $this->_debugData[$this->_count]['_isAutoCapture result'] = 'openinvoice capture mode is set to auto capture';
                 return true;
             }
 
             // by default openinvoice payment methods are manual capture
-            if (strcmp($this->_paymentMethod, 'openinvoice') === 0 ||
-                strcmp($this->_paymentMethod, 'afterpay_default') === 0 ||
-                strcmp($this->_paymentMethod, 'klarna') === 0 ||
-                strcmp($this->_paymentMethod, 'ratepay') === 0)
-            {
+            if (Mage::helper('adyen')->isOpenInvoice($this->_paymentMethod)) {
                 return false;
             }
 
@@ -1135,6 +1126,11 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         $manualCaptureAllowed = null;
         $paymentMethod = $this->_paymentMethod;
 
+        // For all openinvoice methods is manual capture allowed
+        if(Mage::helper('adyen')->isOpenInvoice($paymentMethod)) {
+            return true;
+        }
+
         switch($paymentMethod) {
             case 'cup':
             case 'cartebancaire':
@@ -1149,17 +1145,10 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             case 'jcb':
             case 'laser':
             case 'paypal':
-            case 'klarna':
-            case 'afterpay_default':
-            case 'ratepay':
             case 'sepadirectdebit':
                 $manualCaptureAllowed = true;
                 break;
             default:
-                // To be sure check if it payment method starts with afterpay_ then manualCapture is allowed
-                if (strlen($this->_paymentMethod) >= 9 && substr($this->_paymentMethod, 0, 9) == "afterpay_") {
-                    $manualCaptureAllowed = true;
-                }
                 $manualCaptureAllowed = false;
         }
 
@@ -1353,11 +1342,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         }
 
         // if payment method is klarna or openinvoice/afterpay show the reservation number
-        if(($this->_paymentMethod == "klarna" ||
-                $this->_paymentMethod == "afterpay_default" ||
-                $this->_paymentMethod == "openinvoice" ||
-                $this->_paymentMethod == "ratepay"
-            ) && ($this->_klarnaReservationNumber != null && $this->_klarnaReservationNumber != "")
+        if(Mage::helper('adyen')->isOpenInvoice() && ($this->_klarnaReservationNumber != null && $this->_klarnaReservationNumber != "")
         ) {
             $klarnaReservationNumberText = "<br /> reservationNumber: " . $this->_klarnaReservationNumber;
         } else {

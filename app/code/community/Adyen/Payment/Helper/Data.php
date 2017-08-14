@@ -27,6 +27,11 @@
  */
 class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 {
+
+    const KLARNA = "klarna";
+    const RATEPAY = "ratepay";
+    const AFTERPAY = "afterpay";
+
     /**
      * @return array
      */
@@ -530,5 +535,37 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
             return $this->getConfigData('full_path_location_pem_file_test', 'adyen_apple_pay', $storeId);
         }
         return $this->getConfigData('full_path_location_pem_file_live', 'adyen_apple_pay', $storeId);
+    }
+
+
+    /**
+     * Identifiy if payment method is an openinvoice payment method
+     *
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function isOpenInvoice($paymentMethod)
+    {
+        if( strcmp($paymentMethod, self::KLARNA) === 0 ||
+            strcmp($paymentMethod, self::RATEPAY) === 0 ||
+            $this->isAfterPay($paymentMethod))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Identifiy if paymentMethod is afterpay
+     *
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function isAfterPay($paymentMethod)
+    {
+        if(strcmp(substr($paymentMethod, 0, 8), self::AFTERPAY) === 0) {
+            return true;
+        }
+        return false;
     }
 }
