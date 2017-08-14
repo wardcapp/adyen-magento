@@ -440,7 +440,7 @@
                 <active>0</active>
                 <model>adyen/adyen_oneclick</model>
                 <group>adyen</group>
-                <title>Adyen OneClick</title>
+                <title>Adyen Stored Payment Methods</title>
                 <sort_order>1</sort_order>
                 <recurring_payment_type>ONECLICK</recurring_payment_type>
             </adyen_oneclick>
