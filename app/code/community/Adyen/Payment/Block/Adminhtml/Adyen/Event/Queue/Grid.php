@@ -104,7 +104,7 @@ class Adyen_Payment_Block_Adminhtml_Adyen_Event_Queue_Grid extends Mage_Adminhtm
                 'getter'     => 'getId',
                 'actions'   => array(
                     array(
-                        'caption' => Mage::helper('adyen')->__('Excecute'),
+                        'caption' => Mage::helper('adyen')->__('Execute'),
                         'url'     => array('base'=>'*/adyen_event_queue/execute'),
                         'field'   => 'event_queue_id',
                         'data-column' => 'action',
@@ -137,8 +137,8 @@ class Adyen_Payment_Block_Adminhtml_Adyen_Event_Queue_Grid extends Mage_Adminhtm
             'confirm' => Mage::helper('adyen')->__('Are you sure?')
         ));
 
-        $this->getMassactionBlock()->addItem('excecute', array(
-            'label'=> Mage::helper('adyen')->__('Excecute'),
+        $this->getMassactionBlock()->addItem('execute', array(
+            'label'=> Mage::helper('adyen')->__('Execute'),
             'url'  => $this->getUrl('*/*/massExecute', array('' => '')),        // public function massDeleteAction() in Adyen_Payment_Adminhtml_Adyen_Event_QueueController
             'confirm' => Mage::helper('adyen')->__('Are you sure?')
         ));
