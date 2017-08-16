@@ -29,7 +29,7 @@
 <config>
     <modules>
         <Adyen_Payment>
-            <version>2.9.1</version>
+            <version>2.9.2</version>
         </Adyen_Payment>
     </modules>
     <global>
@@ -199,9 +199,7 @@
                     </adyen_payment_billing_agreement>
                 </observers>
             </controller_action_predispatch_opc>
-
-
-            <adminhtml_controller_action_predispatch_start>
+            <controller_action_predispatch_streamcheckout>
                 <observers>
                     <adyen_payment_hpp>
                         <class>adyen/observer</class>
@@ -212,7 +210,19 @@
                         <method>addMethodsToConfig</method>
                     </adyen_payment_billing_agreement>
                 </observers>
-            </adminhtml_controller_action_predispatch_start>
+            </controller_action_predispatch_streamcheckout>
+            <controller_action_predispatch_gomage_checkout>
+                <observers>
+                    <adyen_payment_hpp>
+                        <class>adyen/observer</class>
+                        <method>addMethodsToConfig</method>
+                    </adyen_payment_hpp>
+                    <adyen_payment_billing_agreement>
+                        <class>adyen/billing_agreement_observer</class>
+                        <method>addMethodsToConfig</method>
+                    </adyen_payment_billing_agreement>
+                </observers>
+            </controller_action_predispatch_gomage_checkout>
             <sales_order_shipment_save_before>
                 <observers>
                     <adyen_payment_capture_invoice_on_shipment>
@@ -284,6 +294,18 @@
             </modules>
         </translate>
         <events>
+            <controller_action_predispatch_adminhtml>
+                <observers>
+                    <adyen_payment_hpp>
+                        <class>adyen/observer</class>
+                        <method>addMethodsToConfig</method>
+                    </adyen_payment_hpp>
+                    <adyen_payment_billing_agreement>
+                        <class>adyen/billing_agreement_observer</class>
+                        <method>addMethodsToConfig</method>
+                    </adyen_payment_billing_agreement>
+                </observers>
+            </controller_action_predispatch_adminhtml>
             <sales_order_payment_cancel>
                 <observers>
                     <adyen_payment>
@@ -418,7 +440,7 @@
                 <active>0</active>
                 <model>adyen/adyen_oneclick</model>
                 <group>adyen</group>
-                <title>Adyen OneClick</title>
+                <title>Adyen Stored Payment Methods</title>
                 <sort_order>1</sort_order>
                 <recurring_payment_type>ONECLICK</recurring_payment_type>
             </adyen_oneclick>

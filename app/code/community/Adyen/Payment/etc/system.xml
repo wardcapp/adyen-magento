@@ -902,10 +902,10 @@
                     </fields>
                 </adyen_cc>
                 <adyen_oneclick>
-                    <label>OneClick - Requires Adyen Credit Card</label>
+                    <label>Stored Payment Methods - Requires Adyen Credit Card</label>
                     <frontend_type>text</frontend_type>
                     <comment><![CDATA[
-                                During checkout shoppers can choose to have their payment details remembered and stored for trusted websites in Adyen’s highly secure platform. Adyen takes care of this process for its customers. Shoppers can then select in the Magento checkout the saved card and checkout with ‘OneClick’.
+                                During checkout shoppers can choose to have their payment details remembered and stored for trusted websites in Adyen’s highly secure platform. Adyen takes care of this process for its customers. Shoppers can then select the stored payment method in the checkout.
                                 <br />
                                 <b>Make sure you have turned on RECURRING_CONTRACT notification on your merchantAccount. If you want to add this or if you are not sure, just send us an <a href="mailto:magento@adyen.com">email</a>.</b>
                             ]]></comment>
@@ -1892,7 +1892,7 @@
                     <activity_path>payment/adyen_apple_pay/active</activity_path>
                     <comment><![CDATA[
                                You need to configure Apple Pay on the Adyen Platform. Please contact support@adyen.com and provide us CSR + merchant Identifier.<br />
-                               Apple Pay will only be visable if you are running on IOS10 and higher. You need to browse on a Safari browser and you need to have active creditcards in your wallet.
+                               Apple Pay will only be visible if you are running on IOS10 and higher. You need to browse on a Safari browser and you need to have active credit cards in your wallet.
                             ]]></comment>
                     <fields>
                         <active translate="label">
@@ -1923,7 +1923,7 @@
                         </sort_order>
                         <merchant_identifier_test>
                             <label>Test: Apple Merchant Identifier</label>
-                            <tooltip>You can retrieve this from you Apple Account</tooltip>
+                            <tooltip>You can retrieve this from you Apple Account.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1932,7 +1932,7 @@
                         </merchant_identifier_test>
                         <merchant_identifier_live>
                             <label>Live: Apple Merchant Identifier</label>
-                            <tooltip>You can retrieve this from you Apple Account</tooltip>
+                            <tooltip>You can retrieve this from you Apple Account.</tooltip>
                             <frontend_type>text</frontend_type>
                             <sort_order>35</sort_order>
                             <show_in_default>1</show_in_default>
@@ -1959,7 +1959,7 @@
                         </full_path_location_pem_file_live>
                         <shipping_type>
                             <label>Shipping Type</label>
-                            <tooltip>Title of the shipping method selection on the payments sheet you only these options this is limited by Apple</tooltip>
+                            <tooltip>Title of the shipping method selection on the payments sheet.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adyen/source_applePayShippingType</source_model>
                             <sort_order>50</sort_order>
@@ -1969,7 +1969,7 @@
                         </shipping_type>
                         <allow_quest_checkout>
                             <label>Allow Guest Checkout</label>
-                            <tooltip>Show Apple Pay icon if user is not logged in. The user has the option to set his own contact detals and shipping\billing address</tooltip>
+                            <tooltip>Show Apple Pay icon if user is not logged in. The user has the option to set his own contact details and shipping\billing address.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>60</sort_order>
@@ -1990,7 +1990,7 @@
                         </change_address>
                         <show_in_payment_step_checkout>
                             <label>Show payment method as well in the Payment Information step of the checkout</label>
-                            <tooltip>If you set this to NO this will not be shown as a payment method option in the checkout steps. It will be visable on the product and shopping basket page</tooltip>
+                            <tooltip>If you set this to NO this will not be shown as a payment method option in the checkout steps. It will be visible on the product and shopping basket page.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>80</sort_order>

@@ -57,9 +57,15 @@ class Adyen_Payment_Block_Form_Hpp extends Mage_Payment_Block_Form {
                     $adyenUrl = "https://live.adyen.com";
                 }
 
-                $imageUrl = file_exists($result)
-                    ? $this->getSkinUrl("images/adyen/{$imgFileName}.png")
-                    : ($this->getMethod()->getCode() != 'adyen_ideal') ? "{$adyenUrl}/hpp/img/pm/{$imgFileName}.png" : $this->getSkinUrl("images/adyen/img_trans.gif");
+                if (file_exists($result)){
+                    $imageUrl = $this->getSkinUrl("images/adyen/{$imgFileName}.png");
+                }else{
+                    if  ($this->getMethod()->getCode() != 'adyen_ideal') {
+                        $imageUrl = "{$adyenUrl}/hpp/img/pm/{$imgFileName}.png";
+                    }else{
+                        $imageUrl = $this->getSkinUrl("images/adyen/img_trans.gif");
+                    }
+                }      
                 
             } else {
                 $imageUrl = $this->getSkinUrl("images/adyen/img_trans.gif");

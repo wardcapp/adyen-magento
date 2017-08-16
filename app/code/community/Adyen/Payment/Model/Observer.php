@@ -461,7 +461,7 @@ class Adyen_Payment_Model_Observer {
 
         if($this->isPaymentMethodAdyen($order) && $autoRefund) {
             $pspReference = Mage::getModel('adyen/event')->getOriginalPspReference($order->getIncrementId());
-            $payment->getMethodInstance()->SendCancelOrRefund($payment, $pspReference);
+            $payment->getMethodInstance()->sendCancelRequest($payment, $pspReference);
         }
     }
 
@@ -539,7 +539,10 @@ class Adyen_Payment_Model_Observer {
                         $invoice->sendEmail();
                     }
                 } else {
-                    throw new Adyen_Payment_Exception($adyenHelper->__("Could not capture the invoice"));
+                    // If there is already an invoice created, continue shipment
+                    if($order->hasInvoices() == 0) {
+                        throw new Adyen_Payment_Exception($adyenHelper->__("Could not create the invoice"));
+                    }
                 }
             }
         }
