@@ -539,7 +539,10 @@ class Adyen_Payment_Model_Observer {
                         $invoice->sendEmail();
                     }
                 } else {
-                    throw new Adyen_Payment_Exception($adyenHelper->__("Could not capture the invoice"));
+                    // If there is already an invoice created, continue shipment
+                    if($order->hasInvoices() == 0) {
+                        throw new Adyen_Payment_Exception($adyenHelper->__("Could not create the invoice"));
+                    }
                 }
             }
         }
