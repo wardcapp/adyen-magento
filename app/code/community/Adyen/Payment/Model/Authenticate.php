@@ -155,7 +155,7 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract {
     public function fixCgiHttpAuthentication() { // unsupported is $_SERVER['REMOfixCgiHttpAuthenticationTE_AUTHORIZATION']: as stated in manual :p
 
         // do nothing if values are already there
-        if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != "" && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_PW'] != "") {
+        if(!empty($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_PW'])) {
             return;
         } else  if (isset($_SERVER['REDIRECT_REMOTE_AUTHORIZATION']) && $_SERVER['REDIRECT_REMOTE_AUTHORIZATION'] != '') { //pcd note: no idea who sets this
             list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode($_SERVER['REDIRECT_REMOTE_AUTHORIZATION']),2);
