@@ -48,7 +48,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             return "{$baseUrl}pay.shtml";
         }
 
-        if (Mage::helper('adyen')->isOpenInvoice($brandCode) || $brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb") {
+        if (!empty($brandCode) && (Mage::helper('adyen')->isOpenInvoice($brandCode) || $brandCode == "cofinoga_3xcb" || $brandCode == "cofinoga_4xcb")) {
            return "{$baseUrl}skipDetails.shtml";
         }
 
