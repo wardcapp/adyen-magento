@@ -223,7 +223,10 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
 
     public function isRatePay()
     {
-        return $this->_getConfigData('openinvoicetypes', Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE);
+        if ($this->_getConfigData('openinvoicetypes', Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE) == Adyen_Payment_Helper_Data::RATEPAY) {
+            return true;
+        }
+        return false;
     }
 
     public function getRatePayId()
