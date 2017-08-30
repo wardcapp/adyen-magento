@@ -982,10 +982,16 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
     {
         $this->_debugData[$this->_count]['_createInvoice'] = 'Creating invoice for order';
 
-        //Set order state to new because with order state payment_review it is not possible to create an invoice
+        // Set order state to new because with order state payment_review it is not possible to create an invoice
         if (strcmp($order->getState(), Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) == 0) {
             $order->setState(Mage_Sales_Model_Order::STATE_NEW);
         }
+        
+        // Check to see if the order is in the "Hold" state, and unhold when it is.
+        if ($order->canUnhold()) {
+	        $order->unhold();
+            $order->save();
+        }        
 
         if ($order->canInvoice()) {
 
