@@ -1253,6 +1253,16 @@
                             <show_in_store>1</show_in_store>
                             <depends><allowspecific>1</allowspecific></depends>
                         </specificcountry>
+                        <ratepay_id>
+                            <label>RatePAY Device Ident SId</label>
+                            <tooltip>Unique RatePAY Id provided by RatePAY integration consultant</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>51</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends><openinvoicetypes>ratepay</openinvoicetypes></depends>
+                        </ratepay_id>
                     </fields>
                 </adyen_openinvoice>
                 <!-- @SEPA only -->

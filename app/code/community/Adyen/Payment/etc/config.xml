@@ -417,6 +417,7 @@
                 <telephone_show>0</telephone_show>
                 <shoppertype>1</shoppertype>
                 <different_address_disable>0</different_address_disable>
+                <ratepay_id>oj9GsQ</ratepay_id>
                 <sort_order>40</sort_order>
             </adyen_openinvoice>
             <adyen_cc translate="title" module="adyen">

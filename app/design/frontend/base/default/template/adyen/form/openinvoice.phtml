@@ -68,14 +68,36 @@ $_code = $this->getMethodCode();
             <?php echo $this->__('You will be redirected to Adyen website when you place an order.') ?>
         </li>
     </ul>
-
-    <input type="hidden" name="payment[dfvalue]" id="dfValue" />
+    <?php if(!$this->isRatePay()):?>
+    <input type="hidden" name="payment[dfvalue]" id="dfValue"/>
     <script type="text/javascript">
         //<![CDATA[
         var dfDoInit = function() {
-            dfSet('dfValue', 0);
-        }
+                dfSet('dfValue', 0);
+            }
         dfDoInit();
         //]]>
     </script>
+    <?php else: ?>
+    <input type="hidden" name="payment[dfvalue]" id="dfValue" value="<?php echo $this->calculateDeviceIdentToken()?>"/>
+    <script type="text/javascript">
+        //<![CDATA[
+        var ratePayId = "<?php echo $this->getRatePayId()?>";
+        di = {t: '', v: ratePayId, l: 'Checkout'};
+        function waitForDfValue() {
+            var dfValue = document.getElementById('dfValue');
+            if (dfValue && dfValue.value) {
+                di.t = dfValue.value.replace(':', '');
+                var scriptTag = document.createElement('script');
+                scriptTag.src = "//d.ratepay.com/" + ratePayId + "/di.js";
+                scriptTag.type = "text/javascript";
+                document.body.appendChild(scriptTag);
+            } else {
+                setTimeout(waitForDfValue, 200);
+                }
+            }
+        waitForDfValue();
+        //]]>
+    </script>
+    <?php endif; ?>
 </fieldset>
