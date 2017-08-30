@@ -40,21 +40,23 @@ class Adyen_Payment_Model_Source_Zeroauthdatefield {
         $dbname = (string)Mage::getConfig()->getNode('global/resources/default_setup/connection/dbname');
 
         $results = $readConnection->fetchAll("
-SELECT
-  `column_name`
-FROM
-  `information_schema`.`columns`
-WHERE
-  `table_schema` = '{$dbname}'
-   AND `table_name` = '{$resource->getTableName('sales/order')}'
-   AND `data_type` IN ('date','datetime','timestamp')
-ORDER BY
-  `table_name`, `ordinal_position`
-        ");
+            SELECT
+              `column_name`
+            FROM
+              `information_schema`.`columns`
+            WHERE
+              `table_schema` = ?
+               AND `table_name` = ?
+               AND `data_type` IN ('date','datetime','timestamp')
+            ORDER BY
+              `table_name`, `ordinal_position`
+            ", [$dbname,$resource->getTableName('sales/order')]
+        );
 
         $rows = [];
         foreach ($results as $row) {
-            $rows[] = ['value' => $row['column_name'], 'label' => $row['column_name']];
+            $column = reset($row);
+            $rows[] = ['value' => $column, 'label' => $column];
         }
 
         return $rows;
