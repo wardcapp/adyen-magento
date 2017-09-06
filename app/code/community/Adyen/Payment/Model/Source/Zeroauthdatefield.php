@@ -34,7 +34,9 @@ class Adyen_Payment_Model_Source_Zeroauthdatefield {
         $resource = Mage::getSingleton('core/resource');
         /* @var $resource Varien_Db_Adapter_Interface */
         $readConnection = $resource->getConnection('core_read');
+
         $dbname = (string)Mage::getConfig()->getNode('global/resources/default_setup/connection/dbname');
+
         $results = $readConnection->fetchAll("
 SELECT
   `column_name`
@@ -47,10 +49,13 @@ WHERE
 ORDER BY
   `table_name`, `ordinal_position`
         ");
+
         $rows = [];
         foreach ($results as $row) {
             $rows[] = ['value' => $row['column_name'], 'label' => $row['column_name']];
         }
+
         return $rows;
     }
+    
 }
