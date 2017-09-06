@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Adyen Payment Module
  *
@@ -26,7 +25,6 @@
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
 class Adyen_Payment_Model_Source_Zeroauthdatefield {
-
     /**
      * @return array
      */
@@ -36,30 +34,23 @@ class Adyen_Payment_Model_Source_Zeroauthdatefield {
         $resource = Mage::getSingleton('core/resource');
         /* @var $resource Varien_Db_Adapter_Interface */
         $readConnection = $resource->getConnection('core_read');
-
         $dbname = (string)Mage::getConfig()->getNode('global/resources/default_setup/connection/dbname');
-
         $results = $readConnection->fetchAll("
-            SELECT
-              `column_name`
-            FROM
-              `information_schema`.`columns`
-            WHERE
-              `table_schema` = ?
-               AND `table_name` = ?
-               AND `data_type` IN ('date','datetime','timestamp')
-            ORDER BY
-              `table_name`, `ordinal_position`
-            ", [$dbname,$resource->getTableName('sales/order')]
-        );
-
+SELECT
+  `column_name`
+FROM
+  `information_schema`.`columns`
+WHERE
+  `table_schema` = '{$dbname}'
+   AND `table_name` = '{$resource->getTableName('sales/order')}'
+   AND `data_type` IN ('date','datetime','timestamp')
+ORDER BY
+  `table_name`, `ordinal_position`
+        ");
         $rows = [];
         foreach ($results as $row) {
-            $column = reset($row);
-            $rows[] = ['value' => $column, 'label' => $column];
+            $rows[] = ['value' => $row['column_name'], 'label' => $row['column_name']];
         }
-
         return $rows;
     }
-
 }
