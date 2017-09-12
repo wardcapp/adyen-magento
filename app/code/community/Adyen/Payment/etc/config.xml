@@ -332,6 +332,7 @@
                 <demoMode>Y</demoMode>
                 <debug>1</debug>
                 <uncancelorder>1</uncancelorder>
+                <unholdorder>0</unholdorder>
                 <autorefundoncancel>1</autorefundoncancel>
                 <order_status>pending</order_status>
                 <payment_authorized>processing</payment_authorized>
