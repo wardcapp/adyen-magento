@@ -1351,7 +1351,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         }
 
         // if payment method is klarna or openinvoice/afterpay show the reservation number
-        if(Mage::helper('adyen')->isOpenInvoice() && ($this->_klarnaReservationNumber != null && $this->_klarnaReservationNumber != "")
+        if(Mage::helper('adyen')->isOpenInvoice($this->_paymentMethod) && ($this->_klarnaReservationNumber != null && $this->_klarnaReservationNumber != "")
         ) {
             $klarnaReservationNumberText = "<br /> reservationNumber: " . $this->_klarnaReservationNumber;
         } else {
