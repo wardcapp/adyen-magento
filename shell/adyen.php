@@ -119,7 +119,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 				} elseif ($customerData['increment_id']) {
 				   $customerReference = $customerData['increment_id'];
 				} else {
-				   $customerReference = customerId;
+				   $customerReference = $customerId;
 				}
 
 				$recurringContracts = $api->listRecurringContracts($customerReference, $store);

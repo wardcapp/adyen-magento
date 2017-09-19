@@ -146,7 +146,7 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
     public function validateCustomerByEmailAction()
     {
         $this->getResponse()->setHeader('Content-type', 'application/json');
-        $jsonData = "";
+        $jsonData = array();
 
         if($this->_hasExpressCheckout() && $this->_inKioskMode() != "1") {
             $params = $this->getRequest()->getParams();
