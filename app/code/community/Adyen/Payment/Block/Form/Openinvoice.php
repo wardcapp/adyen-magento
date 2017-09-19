@@ -178,4 +178,20 @@ class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form {
         return $this->_address;
     }
 
+    public function isRatePay()
+    {
+        return $this->getMethod()->isRatePay();
+    }
+
+    public function getRatePayId()
+    {
+        return $this->getMethod()->getRatePayId();
+    }
+
+    public function calculateDeviceIdentToken()
+    {
+        $quote = Mage::helper('checkout/cart')->getQuote();
+        return md5($quote->getReservedOrderId().date('c'));
+    }
+
 }

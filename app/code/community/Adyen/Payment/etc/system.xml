@@ -380,6 +380,17 @@
                                     <show_in_website>0</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </uncancelorder>
+                                <unholdorder translate="label">
+                                    <label>Enable Unhold Order</label>
+                                    <tooltip>If an order is holded for some reason but it received a notification that the payment is processed this will automatically unhold the order</tooltip>
+                                    <frontend_type>select</frontend_type>
+                                    <config_path>payment/adyen_abstract/unholdorder</config_path>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>95</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>0</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </unholdorder>
                                 <autorefundoncancel translate="label">
                                     <label>Automatic cancel\refund when a order is canceled</label>
                                     <tooltip>Enable/Disable automatic refund when canceling a order.</tooltip>
@@ -1253,6 +1264,16 @@
                             <show_in_store>1</show_in_store>
                             <depends><allowspecific>1</allowspecific></depends>
                         </specificcountry>
+                        <ratepay_id>
+                            <label>RatePAY Device Ident SId</label>
+                            <tooltip>Unique RatePAY Id provided by RatePAY integration consultant</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>51</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends><openinvoicetypes>ratepay</openinvoicetypes></depends>
+                        </ratepay_id>
                     </fields>
                 </adyen_openinvoice>
                 <!-- @SEPA only -->

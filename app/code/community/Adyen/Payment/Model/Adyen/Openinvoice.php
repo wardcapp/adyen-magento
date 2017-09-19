@@ -220,4 +220,18 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
     {
         return $this->_getConfigData('telephone_show', 'adyen_openinvoice');
     }
+
+    public function isRatePay()
+    {
+        if ($this->_getConfigData('openinvoicetypes', Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE) == Adyen_Payment_Helper_Data::RATEPAY) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getRatePayId()
+    {
+        return $this->_getConfigData('ratepay_id', Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE);
+    }
+
 }

@@ -204,8 +204,10 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         $paymentRoutine     = $this->_getConfigData('payment_routines', 'adyen_hpp');
         $isConfigDemoMode   = $this->getConfigDataDemoMode();
         $hppOptionsDisabled = $this->getHppOptionsDisabled();
-        $brandCode          = $this->getFormFields()['brandCode'];
-
+        $brandCode          = null;
+        if(!empty($this->getFormFields()['brandCode'])) {
+            $brandCode          = $this->getFormFields()['brandCode'];
+        }
         return Mage::helper('adyen/payment')->getFormUrl($brandCode, $isConfigDemoMode, $paymentRoutine, $hppOptionsDisabled);
     }
 
