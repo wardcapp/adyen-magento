@@ -1364,6 +1364,8 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             $boletoPaidAmountText = "";
         }
 
+        $valueText = '';
+
         if($this->_value != null && $this->_value != "") {
             $valueText = "<br /> amount value: " . $this->_value;
         }
