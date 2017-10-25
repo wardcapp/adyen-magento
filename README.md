@@ -1,8 +1,8 @@
 Magento
 =======
 
-This is the Adyen Payment plugin for Magento 1.x.
-The plugin supports the Magento Community and Enterprise edition. 
+This is the Adyen Payment plugin for Magento.
+The plugin supports the Magento Community (version 1.8 and higher) and Enterprise edition (version 1.13 and higher). 
 
 For Magento 2.x please use the following plugin: [https://github.com/Adyen/adyen-magento2](https://github.com/Adyen/adyen-magento2)
 
