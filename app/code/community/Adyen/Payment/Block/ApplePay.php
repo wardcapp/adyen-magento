@@ -82,9 +82,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
         $totals = $cart->getQuote()->getTotals();
         $config = Mage::getSingleton('tax/config');
         if (isset($totals['subtotal'])) {
-            if ($config->displayCartSubtotalBoth()) {
-                $subtotal = $totals['subtotal']->getValueInclTax();
-            } elseif($config->displayCartSubtotalInclTax()) {
+            if ($config->displayCartSubtotalBoth() || $config->displayCartSubtotalInclTax()) {
                 $subtotal = $totals['subtotal']->getValueInclTax();
             } else {
                 $subtotal = $totals['subtotal']->getValue();
