@@ -198,12 +198,12 @@
         </reference>
     </checkout_multishipping_billing>
     <checkout_onepage_success>
-        <reference name="content">
+        <reference name="checkout.success">
             <block type="adyen/checkout_success" name="adyen.checkout.success" template="adyen/checkout/success.phtml"/>
         </reference>
     </checkout_onepage_success>
     <checkout_multishipping_success translate="label">
-        <reference name="content">
+        <reference name="checkout_success">
             <block type="adyen/checkout_success" name="adyen.checkout.success" template="adyen/checkout/success.phtml"/>
         </reference>
     </checkout_multishipping_success>
