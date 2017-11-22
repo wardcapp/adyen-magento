@@ -7,6 +7,8 @@ class Adyen_Payment_Model_Adyen_Multibanco extends Adyen_Payment_Model_Adyen_Abs
     protected $_formBlockType = 'adyen/form_multibanco';
     protected $_infoBlockType = 'adyen/info_multibanco';
     protected $_paymentMethod = 'multibanco';
+    protected $_canRefund = false;
+    protected $_canRefundInvoicePartial = false;
 
     /**
      * Assign data to info model instance
