@@ -963,19 +963,18 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
         return $this->_getConfigData('fraud_manual_review_accept_status', 'adyen_abstract', $order->getStoreId());
     }
 
-    protected function _isTotalAmount($orderAmount) {
-
+    protected function _isTotalAmount($orderAmount)
+    {
         $this->_debugData[$this->_count]['_isTotalAmount'] = 'Validate if AUTHORISATION notification has the total amount of the order';
         $value = (int)$this->_value;
 
-        if($value == $orderAmount) {
+        if($value >= $orderAmount) {
             $this->_debugData[$this->_count]['_isTotalAmount result'] = 'AUTHORISATION has the full amount';
             return true;
         } else {
             $this->_debugData[$this->_count]['_isTotalAmount result'] = 'This is a partial AUTHORISATION, the amount is ' . $this->_value;
             return false;
         }
-
     }
 
     /**
