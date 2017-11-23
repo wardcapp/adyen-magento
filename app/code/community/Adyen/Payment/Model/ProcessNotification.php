@@ -1144,6 +1144,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
             case 'cup':
             case 'cartebancaire':
             case 'visa':
+            case 'visadankort':
             case 'mc':
             case 'uatp':
             case 'amex':
