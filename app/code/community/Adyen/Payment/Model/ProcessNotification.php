@@ -570,7 +570,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract {
                     // set billing agreement data
                     $payment->setBillingAgreementData(array(
                         'billing_agreement_id'  => $recurringDetailReference,
-                        'method_code'           => $payment->getMethodCode()
+                        'method_code'           => $_paymentCode
                     ));
 
                     // create billing agreement for this order
