@@ -287,7 +287,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
             $billingAgreement->setAgreementLabel($label);
         }
 
-        if ($data['variant'] == 'paypal') {
+        if (isset($data['variant']) && $data['variant'] == 'paypal') {
             
             $email = "";
             if (isset($data['tokenDetails']['tokenData']['EmailId'])) {

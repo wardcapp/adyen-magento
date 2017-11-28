@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Adyen Payment Module
  *
@@ -25,9 +24,23 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-?>
-<?php if ($this->isBoletoPayment()): ?>
-    <div class="adyen-boleto-download-pdf">
-        <?php echo Mage::helper('downloadable')->__('<a href="%s">Click here to download the Boleto payment PDF</a>', $this->getUrlBoletoPDF()) ?>
-    </div>
-<?php endif; ?>
+
+
+/*
+ * clear the field payment/adyen_ideal/allowspecific because this is not a setting anymore
+ */
+
+$path = "payment/adyen_ideal/allowspecific";
+
+try {
+    $collection = Mage::getModel('core/config_data')->getCollection()
+        ->addFieldToFilter('path', array('like' => $path ));
+
+    if ($collection->count() > 0) {
+        foreach ($collection as $coreConfig) {
+            $coreConfig->setValue('0')->save();
+        }
+    }
+} catch (Exception $e) {
+    Mage::log($e->getMessage(), Zend_Log::ERR);
+}

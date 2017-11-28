@@ -29,10 +29,10 @@ class Adyen_Payment_Model_Source_CcType {
 
     public function toOptionArray() {
         $options = array();
-        foreach (Mage::helper('adyen')->getCcTypes() as $code => $name) {
+        foreach (Mage::helper('adyen')->getCcTypes() as $code => $data) {
             $options[] = array(
                 'value' => $code,
-                'label' => $name
+                'label' => $data['name']
             );
         }
         return $options;
@@ -40,6 +40,12 @@ class Adyen_Payment_Model_Source_CcType {
 
     public function toOptionHash()
     {
-        return Mage::helper('adyen')->getCcTypes();
+        $types = Mage::helper('adyen')->getCcTypes();
+
+        //Return the following key-values: "Magento CC code" -> "CC name"
+        return array_reduce($types, function($carry, $item) {
+            $carry[$item['code']] = $item['name'];
+            return $carry;
+        });
     }
 }

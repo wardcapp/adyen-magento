@@ -29,7 +29,7 @@
 <config>
     <modules>
         <Adyen_Payment>
-            <version>2.9.5</version>
+            <version>2.9.6</version>
         </Adyen_Payment>
     </modules>
     <global>
@@ -373,8 +373,7 @@
                 <show_ideal_logos>0</show_ideal_logos>
                 <autoselect_stored_ideal_bank>1</autoselect_stored_ideal_bank>
                 <sort_order>35</sort_order>
-                <allowspecific>1</allowspecific>
-                <specificcountry>NL</specificcountry>
+                <allowspecific>0</allowspecific>
             </adyen_ideal>
             <adyen_pos translate="title" module="adyen">
                 <active>0</active>
