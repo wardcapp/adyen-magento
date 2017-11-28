@@ -140,14 +140,16 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
         try {
             $session = $this->_getCheckout();
             $order = $this->_getOrder();
-            $session->setAdyenQuoteId($session->getQuoteId());
+            $quoteId = $session->getQuoteId();
+
+            $session->setAdyenQuoteId($quoteId);
             $session->setAdyenRealOrderId($session->getLastRealOrderId());
             $order->loadByIncrementId($session->getLastRealOrderId());
 
             //redirect only if this order is never recorded
             $hasEvent = Mage::getResourceModel('adyen/adyen_event')
                 ->getLatestStatus($session->getLastRealOrderId());
-            if (!empty($hasEvent) || !$order->getId()) {
+            if (!empty($hasEvent) || !$order->getId() || empty($quoteId)) {
                 $this->_redirect('/');
                 return $this;
             }
@@ -159,8 +161,8 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                     ->setOrder($order)
                     ->toHtml()
             );
-            $session->unsQuoteId();
 
+            $session->setQuoteId(null);
         } catch (Exception $e) {
             $session->addException($e, Mage::helper('adyen')->__($e->getMessage()));
             $this->cancel();
