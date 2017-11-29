@@ -376,8 +376,8 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
 
         $addressValidation = $quote->getBillingAddress()->validate();
         if ($addressValidation !== true) {
-            Mage::log("Billing Contract:" . print_R($billingContact, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
-            Mage::log("Billing Validation Error" . print_R($addressValidation, 1) . print_r($billingAddress, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
+            Mage::log("Billing Contract:" . print_r($billingContact, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
+            Mage::log("Billing Validation Error" . print_r($addressValidation, 1) . print_r($billingAddress, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
             Mage::throwException(Mage::helper('adyen')->__('Error Billing address validation'));
         }
     }
@@ -427,7 +427,7 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
 
         $addressValidation = $quote->getShippingAddress()->validate();
         if ($addressValidation !== true) {
-            Mage::log("Shipping Validation Error" . print_R($addressValidation, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
+            Mage::log("Shipping Validation Error" . print_r($addressValidation, 1), Zend_Log::DEBUG, 'adyen_apple_pay.log');
             Mage::throwException(Mage::helper('adyen')->__('Error Shipping address validation'));
         }
     }
