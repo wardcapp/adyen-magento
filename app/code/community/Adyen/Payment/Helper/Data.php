@@ -44,7 +44,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
             if (! $data['is_checkout']) {
                 continue;
             }
-            $types[$data['code']] = $data['name'];
+            $types[$data['code']] = $data;
         }
         return $types;
     }

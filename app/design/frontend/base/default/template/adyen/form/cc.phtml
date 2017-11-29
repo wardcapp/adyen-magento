@@ -29,11 +29,12 @@
 /** @var Adyen_Payment_Block_Form_Cc $this */
 $_code = $this->getMethodCode();
 ?>
+
 <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li class="adyen_payment_creditcard_labels">
         <?php $count = 0;
-        foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
-            <?php $_filename = $this->getSkinUrl('images/adyen/' . strtolower($_typeCode) . '_small.png'); ?>
+        foreach ($this->getCcAvailableTypes() as $_typeCode => $_data): ?>
+            <?php $_filename = $this->getSkinUrl('images/adyen/' . strtolower($_data['code_alt']) . '_small.png'); ?>
             <img id="cc_type_<?php echo $count; ?>" width="40" height="22" src="<?php echo $_filename; ?>" alt="" class="mid" />
             <?php ++$count;
         endforeach; ?>
@@ -118,15 +119,12 @@ $_code = $this->getMethodCode();
     <?php endif; ?>
 
     <script type="text/javascript">
-        var group_types = [];
-        <?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
-        group_types.push("<?php echo $_typeCode; ?>");
-        <?php endforeach ?>
+
+        var group_types = <?php echo json_encode(array_keys($this->getCcAvailableTypes())); ?>;
 
         card_previousCardNumber = "";
 
         function selectBrand() {
-
             cardNumber = (document.getElementById( '<?php echo $_code ?>_cc_number' ).value);
             dontHideErrorFrame = null;
 

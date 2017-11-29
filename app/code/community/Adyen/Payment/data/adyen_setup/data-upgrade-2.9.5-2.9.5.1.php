@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Adyen Payment Module
  *
@@ -25,27 +24,23 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Source_CcType {
 
-    public function toOptionArray() {
-        $options = array();
-        foreach (Mage::helper('adyen')->getCcTypes() as $code => $data) {
-            $options[] = array(
-                'value' => $code,
-                'label' => $data['name']
-            );
+
+/*
+ * clear the field payment/adyen_ideal/allowspecific because this is not a setting anymore
+ */
+
+$path = "payment/adyen_ideal/allowspecific";
+
+try {
+    $collection = Mage::getModel('core/config_data')->getCollection()
+        ->addFieldToFilter('path', array('like' => $path ));
+
+    if ($collection->count() > 0) {
+        foreach ($collection as $coreConfig) {
+            $coreConfig->setValue('0')->save();
         }
-        return $options;
     }
-
-    public function toOptionHash()
-    {
-        $types = Mage::helper('adyen')->getCcTypes();
-
-        //Return the following key-values: "Magento CC code" -> "CC name"
-        return array_reduce($types, function($carry, $item) {
-            $carry[$item['code']] = $item['name'];
-            return $carry;
-        });
-    }
+} catch (Exception $e) {
+    Mage::log($e->getMessage(), Zend_Log::ERR);
 }
