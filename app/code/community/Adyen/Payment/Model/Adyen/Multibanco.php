@@ -66,4 +66,77 @@ class Adyen_Payment_Model_Adyen_Multibanco extends Adyen_Payment_Model_Adyen_Abs
     {
         return true;
     }
+
+    /**
+     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function parseRecurringContractData(Adyen_Payment_Model_Billing_Agreement $billingAgreement, array $data)
+    {
+        $billingAgreement->setMethodCode($this->getCode())
+            ->setReferenceId($data['recurringDetailReference'])
+            ->setCreatedAt($data['creationDate']);
+
+        $creationDate = str_replace(' ', '-', $data['creationDate']);
+
+        $billingAgreement->setCreatedAt($creationDate);
+
+        $billingAgreement->setAgreementLabel(Mage::helper('adyen')->__('Multibanco, %s', $data['multibanco_name']));
+
+        return $this;
+    }
+
+    /**
+     * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
+     * @param Mage_Sales_Model_Quote_Payment $paymentInfo
+     *
+     * @return $this
+     */
+    public function initBillingAgreementPaymentInfo(Adyen_Payment_Model_Billing_Agreement $billingAgreement, Mage_Sales_Model_Quote_Payment $paymentInfo)
+    {
+        try {
+            $paymentInfo->setMethod('adyen_multibanco')
+                ->setAdditionalInformation(array(
+                    'recurring_detail_reference' => $billingAgreement->getReferenceId(),
+                    'delivery_date' => date('Y-m-d\TH:i:s.000\Z'),
+                ));
+        } catch (Exception $e) {
+            Adyen_Payment_Exception::logException($e);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Ability to set the code, for dynamic payment methods.
+     * @param $code
+     * @return $this
+     */
+    public function setCode($code)
+    {
+        $this->_code = $code;
+        return $this;
+    }
+
+    /**
+     * @desc CustomerInteraction is set by the recurring_payment_type or controlled by Adyen_Subscription module
+     * @param $customerInteraction
+     */
+    public function setCustomerInteraction($customerInteraction)
+    {
+        $this->_customerInteraction = (bool)$customerInteraction;
+    }
+
+    /**
+     * @return Adyen_Payment_Model_Billing_Agreement
+     */
+    public function getBillingAgreement()
+    {
+
+        return Mage::getModel('adyen/billing_agreement')->getCollection()
+            ->addFieldToFilter('reference_id', $this->getInfoInstance()->getAdditionalInformation('recurring_detail_reference'))
+            ->getFirstItem();
+    }
 }
