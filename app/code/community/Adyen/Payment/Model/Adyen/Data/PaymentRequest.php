@@ -155,8 +155,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->shopperName->lastName = trim($billingAddress->getLastname());
 
                     $this->billingAddress = new Adyen_Payment_Model_Adyen_Data_BillingAddress();
-                    $this->billingAddress->street = $helper->getStreet($billingAddress)->getName();
-                    $this->billingAddress->houseNumberOrName = $helper->getStreet($billingAddress)->getHouseNumber();
+                    $this->billingAddress->street = $billingAddress->getStreet(1);
+                    $this->billingAddress->houseNumberOrName = '';
                     $this->billingAddress->city = $billingAddress->getCity();
                     $this->billingAddress->postalCode = $billingAddress->getPostcode();
                     $this->billingAddress->stateOrProvince = $billingAddress->getRegionCode();
@@ -167,8 +167,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 if($deliveryAddress)
                 {
                     $this->deliveryAddress = new Adyen_Payment_Model_Adyen_Data_DeliveryAddress();
-                    $this->deliveryAddress->street = $helper->getStreet($deliveryAddress)->getName();
-                    $this->deliveryAddress->houseNumberOrName = $helper->getStreet($deliveryAddress)->getHouseNumber();
+                    $this->deliveryAddress->street = $deliveryAddress->getStreet(1);
+                    $this->deliveryAddress->houseNumberOrName = '';
                     $this->deliveryAddress->city = $deliveryAddress->getCity();
                     $this->deliveryAddress->postalCode = $deliveryAddress->getPostcode();
                     $this->deliveryAddress->stateOrProvince = $deliveryAddress->getRegionCode();
