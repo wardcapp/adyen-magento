@@ -36,7 +36,7 @@ class Adyen_Payment_Model_Cronjob {
 
     /**
      * This updates the notifications that are in the adyen event queue. This is called by the cronjob of Magento
-     * To enable the cronjob on your webserver see the following magento dcoumentation:
+     * To enable the cronjob on your webserver see the following magento documentation:
      * http://www.magentocommerce.com/wiki/1_-_installation_and_configuration/how_to_setup_a_cron_job
      */
     public function updateNotificationQueue()
