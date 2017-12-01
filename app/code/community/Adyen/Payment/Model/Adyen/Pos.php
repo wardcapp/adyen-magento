@@ -101,7 +101,7 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
      * @desc Called just after asssign data
      */
     public function prepareSave() {
-        parent::prepareSave();
+        return parent::prepareSave();
     }
 
     /**

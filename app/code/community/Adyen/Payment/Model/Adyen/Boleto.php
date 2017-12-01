@@ -75,7 +75,7 @@ class Adyen_Payment_Model_Adyen_Boleto extends Adyen_Payment_Model_Adyen_Abstrac
      */
     public function prepareSave() {
         //@todo encryption or so
-        parent::prepareSave();
+        return parent::prepareSave();
     }
 
     public function getUseTaxvat() {

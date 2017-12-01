@@ -136,7 +136,7 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
      */
     public function prepareSave() {
         //@todo encryption or so
-        parent::prepareSave();
+        return parent::prepareSave();
     }
 
     public function canCreateAdyenSubscription() {

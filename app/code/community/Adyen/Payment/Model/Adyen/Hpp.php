@@ -124,7 +124,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
      */
     public function prepareSave()
     {
-        parent::prepareSave();
+        return parent::prepareSave();
     }
 
 
