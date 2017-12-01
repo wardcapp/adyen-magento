@@ -37,10 +37,10 @@ class Adyen_Payment_Model_Observer {
             $store = Mage::app()->getStore();
         }
 
-        // by default disable adyen_ideal only if IDeal is in directoryLookup result show this payment method
-        $store->setConfig('payment/adyen_ideal/active', 0);
-
         if (Mage::getStoreConfigFlag('payment/adyen_hpp/active', $store)) {
+            // by default disable adyen_ideal only if IDeal is in directoryLookup result show this payment method
+            $store->setConfig('payment/adyen_ideal/active', 0);
+
             try {
                 $this->_addHppMethodsToConfig($store);
             } catch (Exception $e) {
