@@ -112,22 +112,6 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
         return $this;
     }
 
-
-    public function validate()
-    {
-        parent::validate();
-    }
-
-
-    /**
-     * @desc Called just after asssign data
-     */
-    public function prepareSave()
-    {
-        return parent::prepareSave();
-    }
-
-
     /**
      * @desc Get current quote
      *

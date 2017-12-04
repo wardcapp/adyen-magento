@@ -129,16 +129,6 @@ class Adyen_Payment_Model_Adyen_Sepa extends Adyen_Payment_Model_Adyen_Abstract
         }
     }
 
-    /**
-     * Called just after asssign data
-     *
-     * @return Mage_Payment_Model_Abstract
-     */
-    public function prepareSave() {
-        //@todo encryption or so
-        return parent::prepareSave();
-    }
-
     public function canCreateAdyenSubscription() {
 
         // validate if recurringType is correctly configured
