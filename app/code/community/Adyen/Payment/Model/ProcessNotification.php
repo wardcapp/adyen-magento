@@ -510,7 +510,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
                     }
                 } else {
                     // do nothing (this is a backwards-compatible notification that can be ignored
-                    $this->_debugData[$this->_count]['_processNotification info'] = 'Ignore this refund already done processing on AUTHROISATION';
+                    $this->_debugData[$this->_count]['_processNotification info'] = 'Ignore this refund already done processing on AUTHORISATION';
                 }
                 break;
             case Adyen_Payment_Model_Event::ADYEN_EVENT_OFFER_CLOSED:
@@ -796,6 +796,11 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
         if ($amount == $orderAmount) {
             $status = $this->_getConfigData('refund_authorized', 'adyen_abstract', $order->getStoreId());
             $this->_debugData[$this->_count]['_setRefundAuthorized full'] = 'This is a full refund. Status selected is:' . $status;
+            /*
+             * When a credit memo is generated and contains the full refund,
+             * in Magento the State should be on CLOSED, the setData is the only way to force the State to be closed
+             */
+            $order->setData('state', Mage_Sales_Model_Order::STATE_CLOSED);
         } else {
             $status = $this->_getConfigData('refund_partial_authorized', 'adyen_abstract', $order->getStoreId());
             $this->_debugData[$this->_count]['_setRefundAuthorized partial'] = 'This is a partial refund. Status selected is:' . $status;
