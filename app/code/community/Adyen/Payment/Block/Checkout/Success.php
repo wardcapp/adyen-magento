@@ -76,26 +76,4 @@ class Adyen_Payment_Block_Checkout_Success extends Mage_Checkout_Block_Onepage_S
 
         return false;
     }
-
-    /**
-     * @return array
-     */
-    public function getMultibanco()
-    {
-        $this->order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId());
-
-        $additionalInformation = $this->order->getPayment()->getAdditionalInformation();
-
-        $additionalInformation['comprafacil.deadline_date'] = $this->helper('core')->formatDate($this->order->getCreatedAtStoreDate());
-
-        if ($additionalInformation['comprafacil.deadline'] > 0) {
-            $zendDate = new Zend_Date($this->order->getCreatedAtStoreDate());
-
-            $zendDate->addDay($additionalInformation['comprafacil.deadline']);
-
-            $additionalInformation['comprafacil.deadline_date'] = $this->helper('core')->formatDate($zendDate);
-        }
-
-        return $additionalInformation;
-    }
 }
