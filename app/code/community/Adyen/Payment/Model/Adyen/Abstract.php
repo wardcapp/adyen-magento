@@ -568,6 +568,23 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                     // multibanco
                     if (preg_match('/comprafacil/', $additionalDataResult->key)) {
                         $payment->setAdditionalInformation($additionalDataResult->key, $additionalDataResult->value);
+
+                        if ($additionalDataResult->key == 'comprafacil.deadline') {
+                            /** @var Mage_Sales_Model_Order $salesOrder */
+                            $salesOrder = $payment->getOrder();
+
+                            $deadlineDate = 'comprafacil.deadline_date';
+
+                            if ($additionalDataResult->value > 0) {
+                                $zendDate = new Zend_Date($salesOrder->getCreatedAtStoreDate());
+
+                                $zendDate->addDay($additionalDataResult->value);
+
+                                $payment->setAdditionalInformation($deadlineDate, Mage::helper('core')->formatDate($zendDate));
+                            } else {
+                                $payment->setAdditionalInformation($deadlineDate, Mage::helper('core')->formatDate($salesOrder->getCreatedAtStoreDate()));
+                            }
+                        }
                     }
                 }
                 $this->_addStatusHistory($payment, $responseCode, $pspReference, false, $pdfUrl);
