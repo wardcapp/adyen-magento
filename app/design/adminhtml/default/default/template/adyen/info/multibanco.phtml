@@ -19,7 +19,8 @@
         <?php echo Mage::helper('adyen')->__('Acquirer reference: %s', $this->htmlEscape($this->getInfo()->getAdyenAcquirerReference())) ?><br/>
     <?php endif; ?>
 <?php endif;?>
-<?php if ($multibanco = $this->getMultibanco()):  ?>
+<?php $multibanco = $this->getInfo()->getAdditionalInformation(); ?>
+<?php if (isset($multibanco['comprafacil.entity'])): ?>
     <?php echo $this->__('Entity Number') ?>: <?php echo $multibanco['comprafacil.entity'] ?><br/>
     <?php echo $this->__('Reference') ?>: <?php echo $multibanco['comprafacil.reference'] ?><br/>
     <?php echo $this->__('Payable Amount Value') ?>: <?php echo Mage::helper('core')->currency($multibanco['comprafacil.amount'], true, false) ?><br/>
