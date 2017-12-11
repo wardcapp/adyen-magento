@@ -37,8 +37,9 @@ class Adyen_Payment_Block_Checkout_Success extends Mage_Checkout_Block_Onepage_S
 	{
 		$this->order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId());
 		
-		if ($this->order->getPayment() && $this->order->getPayment()->getMethod() == "adyen_boleto")
-			return true;
+		if ($this->order->getPayment() && $this->order->getPayment()->getMethod() == "adyen_boleto") {
+            return true;
+        }
 		
 		return false;
 	}
@@ -51,13 +52,28 @@ class Adyen_Payment_Block_Checkout_Success extends Mage_Checkout_Block_Onepage_S
 		$result = "";
 		
 		// if isBoletoPayment is not called first load the order
-		if($this->order == null)
-			$this->order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId());
+		if($this->order == null) {
+            $this->order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId());
+        }
 				
-		if ($this->order->getPayment()->getMethod() == "adyen_boleto")
-			$result = $this->order->getAdyenBoletoPdf();
+		if ($this->order->getPayment()->getMethod() == "adyen_boleto") {
+            $result = $this->order->getAdyenBoletoPdf();
+        }
 				
 		return $result;
 	}
-		
+
+    /*
+     * check if payment method is multibanco
+     */
+    public function isMultibancoPayment()
+    {
+        $this->order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId());
+
+        if ($this->order->getPayment() && $this->order->getPayment()->getMethod() == 'adyen_multibanco') {
+            return true;
+        }
+
+        return false;
+    }
 }

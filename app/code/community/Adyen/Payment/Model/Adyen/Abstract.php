@@ -252,13 +252,13 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         /*
          * Do not send a email notification when order is created.
          * Only do this on the AUHTORISATION notification.
-         * For Boleto send it on order creation
+         * For Boleto and Multibanco send it on order creation
          */
-        if($this->getCode() != 'adyen_boleto') {
+        if(!in_array($this->getCode(), array('adyen_boleto', 'adyen_multibanco'))) {
             $order->setCanSendNewEmailFlag(false);
         }
 
-        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || substr($this->getCode(), 0, 14) == 'adyen_oneclick' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay') {
+        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || substr($this->getCode(), 0, 14) == 'adyen_oneclick' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay' || $this->getCode() == 'adyen_multibanco') {
 
             if(substr($this->getCode(), 0, 14) == 'adyen_oneclick') {
 
@@ -561,8 +561,31 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 $pdfUrl = null;
                 $additionalDataResults = $response->paymentResult->additionalData->entry;
                 foreach($additionalDataResults as $additionalDataResult) {
-                    if($additionalDataResult->key == "boletobancario.url") {
+                    if ($additionalDataResult->key == "boletobancario.url") {
                         $pdfUrl = $additionalDataResult->value;
+                    }
+
+                    // multibanco
+                    if (preg_match('/comprafacil/', $additionalDataResult->key)) {
+                        $payment->setAdditionalInformation($additionalDataResult->key, $additionalDataResult->value);
+                    }
+
+                    // multibanco
+                    if ($additionalDataResult->key == 'comprafacil.deadline') {
+                        /** @var Mage_Sales_Model_Order $salesOrder */
+                        $salesOrder = $payment->getOrder();
+
+                        $deadlineDate = 'comprafacil.deadline_date';
+
+                        if ($additionalDataResult->value > 0) {
+                            $zendDate = new Zend_Date($salesOrder->getCreatedAtStoreDate());
+
+                            $zendDate->addDay($additionalDataResult->value);
+
+                            $payment->setAdditionalInformation($deadlineDate, Mage::helper('core')->formatDate($zendDate));
+                        } else {
+                            $payment->setAdditionalInformation($deadlineDate, Mage::helper('core')->formatDate($salesOrder->getCreatedAtStoreDate()));
+                        }
                     }
                 }
                 $this->_addStatusHistory($payment, $responseCode, $pspReference, false, $pdfUrl);

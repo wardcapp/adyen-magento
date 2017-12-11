@@ -839,8 +839,8 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
 
         $_paymentCode = $this->_paymentMethodCode($order);
 
-        // for boleto confirmation mail is send on order creation
-        if ($payment_method != "adyen_boleto") {
+        // for boleto and multibanco confirmation mail is send on order creation
+        if (!in_array($payment_method, array('adyen_boleto', 'adyen_multibanco'))) {
             // send order confirmation mail after invoice creation so merchant can add invoicePDF to this mail
             $order->sendNewOrderEmail(); // send order email
         }
@@ -1099,7 +1099,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
                 $_paymentCode == "adyen_pos" ||
                 $isBankTransfer == true ||
                 (($_paymentCode == "adyen_sepa" || ($_paymentCode == "adyen_oneclick" && strcmp($this->_paymentMethod, 'sepadirectdebit') === 0)) && $sepaFlow != "authcap") ||
-                $_paymentCode == "adyen_boleto"
+                $_paymentCode == "adyen_boleto" || $_paymentCode == "adyen_multibanco"
             ) {
                 $this->_debugData[$this->_count]['_isAutoCapture result'] = 'openinvoice capture mode is set to auto capture because payment method does not allow manual capture';
                 return true;

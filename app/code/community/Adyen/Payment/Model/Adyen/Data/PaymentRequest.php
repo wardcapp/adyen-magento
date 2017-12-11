@@ -138,6 +138,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
             case "apple_pay":
             case "cc":
             case "oneclick":
+            case "multibanco":
                 
                 $this->bankAccount = null;
 
@@ -278,6 +279,14 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->installments = new Adyen_Payment_Model_Adyen_Data_Installments();
                     $this->installments->value = $payment->getAdditionalInformation('number_of_installments');
                 }
+
+            if ($paymentMethod == "multibanco") {
+                $this->card = $this->deliveryAddress = $this->recurring = $this->additionalData = null;
+
+                $this->selectedBrand = $paymentMethod;
+
+                $this->deliveryDate = $payment->getAdditionalInformation('delivery_date');
+            }
 
                 // add observer to have option to overrule and or add request data
                 Mage::dispatchEvent('adyen_payment_card_payment_request', array('order' => $order, 'paymentMethod' => $paymentMethod, 'paymentRequest' => $this));

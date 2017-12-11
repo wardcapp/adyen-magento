@@ -488,6 +488,14 @@
                 <show_outside_of_checkout>1</show_outside_of_checkout>
                 <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
             </adyen_apple_pay>
+            <adyen_multibanco>
+                <model>adyen/adyen_multibanco</model>
+                <group>adyen</group>
+                <active>0</active>
+                <title>Adyen Multibanco</title>
+                <sort_order>100</sort_order>
+                <visible_type>both</visible_type>
+            </adyen_multibanco>
         </payment>
         <adyen>
             <payment>
