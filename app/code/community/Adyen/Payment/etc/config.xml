@@ -151,78 +151,6 @@
                     </adyen_payment_capture>
                 </observers>
             </sales_order_payment_capture>
-            <controller_action_predispatch_checkout>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch_checkout>
-            <controller_action_predispatch_firecheckout>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch_firecheckout>
-            <controller_action_predispatch_onestepcheckout>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch_onestepcheckout>
-            <controller_action_predispatch_opc>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch_opc>
-            <controller_action_predispatch_streamcheckout>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch_streamcheckout>
-            <controller_action_predispatch_gomage_checkout>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch_gomage_checkout>
             <sales_order_shipment_save_before>
                 <observers>
                     <adyen_payment_capture_invoice_on_shipment>
@@ -294,18 +222,6 @@
             </modules>
         </translate>
         <events>
-            <controller_action_predispatch_adminhtml>
-                <observers>
-                    <adyen_payment_hpp>
-                        <class>adyen/observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_hpp>
-                    <adyen_payment_billing_agreement>
-                        <class>adyen/billing_agreement_observer</class>
-                        <method>addMethodsToConfig</method>
-                    </adyen_payment_billing_agreement>
-                </observers>
-            </controller_action_predispatch_adminhtml>
             <sales_order_payment_cancel>
                 <observers>
                     <adyen_payment>
