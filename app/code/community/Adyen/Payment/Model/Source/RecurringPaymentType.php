@@ -27,17 +27,28 @@
  */
 class Adyen_Payment_Model_Source_RecurringPaymentType {
 
+    const RECURRING_CARDS = 'RECURRING_CARDS';
+    const RECURRING = 'RECURRING';
+    const ONECLICK = 'ONECLICK';
+
     public function toOptionArray() {
         $options = array();
         foreach (Mage::helper('adyen')->getRecurringTypes() as $code => $name) {
             // only use ONECLICK and RECURRING
-            if($code == "ONECLICK" || $code == "RECURRING") {
+            if($code == self::ONECLICK || $code == self::RECURRING) {
                 $options[] = array(
                     'value' => $code,
                     'label' => $name
                 );
             }
         }
+
+        // add option to show recurring but only the cards
+        $options[] = array(
+            'value' => self::RECURRING_CARDS,
+            'label' => 'RECURRING ONLY CARDS'
+        );
+
         return $options;
     }
 
