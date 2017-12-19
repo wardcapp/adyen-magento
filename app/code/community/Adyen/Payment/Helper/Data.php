@@ -583,4 +583,16 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         }
         return $session;
     }
+
+
+    public function getUnprocessedNotifications()
+    {
+        // get collection of unprocessed notifications
+        $collection = Mage::getModel('adyen/event_queue')->getCollection()
+            ->addFieldToFilter('created_at', array(
+                'to' => strtotime('-10 minutes', time()),
+                'datetime' => true));
+
+        return $collection->getSize();
+    }
 }

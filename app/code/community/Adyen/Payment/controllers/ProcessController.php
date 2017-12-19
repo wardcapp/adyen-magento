@@ -498,30 +498,35 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
     }
 
     public function jsonAction() {
-
         try {
             $notificationItems = json_decode(file_get_contents('php://input'), true);
 
             $notificationMode = isset($notificationItems['live']) ? $notificationItems['live'] : "";
 
-            if($notificationMode != "" && $this->_validateNotificationMode($notificationMode))
-            {
-                foreach($notificationItems['notificationItems'] as $notificationItem)
-                {
+            if ($notificationMode != "" && $this->_validateNotificationMode($notificationMode)) {
+                foreach ($notificationItems['notificationItems'] as $notificationItem) {
                     $status = $this->processNotification($notificationItem['NotificationRequestItem']);
-                    if($status == "401"){
+                    if ($status == "401") {
                         $this->_return401();
                         return;
                     }
                 }
+                $acceptedMessage = "[accepted]";
+                $cronCheckTest = $notificationItems['notificationItems'][0]['NotificationRequestItem']['pspReference'];
+                // Run the query for checking unprocessed notifications, do this only for test notifications coming from the Adyen Customer Area
+                if ($this->_isTestNotification($cronCheckTest)) {
+                    $unprocessedNotifications = Mage::helper('adyen')->getUnprocessedNotifications();
+                    if ($unprocessedNotifications > 0) {
+                        $acceptedMessage .= "\nYou have " . $unprocessedNotifications . " unprocessed notifications.";
+                    }
+                }
                 $this->getResponse()
-	                ->clearHeader('Content-Type')
+                    ->clearHeader('Content-Type')
                     ->setHeader('Content-Type', 'text/html')
-                    ->setBody("[accepted]");
+                    ->setBody($acceptedMessage);
                 return;
-            } else
-            {
-                if($notificationMode == "") {
+            } else {
+                if ($notificationMode == "") {
                     $this->_return401();
                     return;
                 }
@@ -530,9 +535,8 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                     Mage::helper('adyen')->__('Mismatch between Live/Test modes of Magento store and the Adyen platform')
                 );
             }
-
-
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             Mage::logException($e);
         }
         return $this;
@@ -624,6 +628,22 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
      */
     protected function _getConfigData($code, $paymentMethodCode = null, $storeId = null) {
         return Mage::helper('adyen')->_getConfigData($code, $paymentMethodCode, $storeId);
+    }
+
+    /**
+     * If notification is a test notification from Adyen Customer Area
+     ** @param $pspReference
+     * @return bool
+     */
+    protected function _isTestNotification($pspReference)
+     {
+         if (strpos(strtolower($pspReference), "test_") !== false
+             || strpos(strtolower($pspReference), "testnotification_") !== false
+         ) {
+             return true;
+         } else {
+                return false;
+         }
     }
 
 }
