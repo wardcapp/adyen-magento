@@ -178,12 +178,11 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $billingAddressType = $viewDetails['billing_address_type'];
         $deliveryAddressType = $viewDetails['shipping_address_type'];
         $shopperType = $viewDetails['customer_info'];
-        
+
         // set Shopper, Billing and DeliveryAddress
         $shopperInfo =  $this->getHppShopperDetails($order->getBillingAddress(), $order->getCustomerGender(), $order->getCustomerDob());
         $billingAddress = $this->getHppBillingAddressDetails($order->getBillingAddress());
         $deliveryAddress = $this->getHppDeliveryAddressDetails($order->getShippingAddress());
-
         $openInvoiceData = $this->getOpenInvoiceData($incrementId, $order);
         
 
@@ -562,12 +561,12 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     public function getHppBillingAddressDetails($billingAddress)
     {
         $billingAddressRequest = [
-            'street' => 'NA',
-            'houseNumberOrName' => 'NA',
-            'city' => 'NA',
-            'postalCode' => 'NA',
-            'stateOrProvince' => 'NA',
-            'country' => 'NA'
+            'street' => 'N/A',
+            'houseNumberOrName' => 'N/A',
+            'city' => 'N/A',
+            'postalCode' => 'N/A',
+            'stateOrProvince' => 'N/A',
+            'country' => 'N/A'
         ];
 
         if(trim($this->getStreet($billingAddress,true)->getName()) != "") {
@@ -608,19 +607,19 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     public function getHppDeliveryAddressDetails($deliveryAddress)
     {
-        $deliveryAddressRequest = [
-            'street' => 'NA',
-            'houseNumberOrName' => 'NA',
-            'city' => 'NA',
-            'postalCode' => 'NA',
-            'stateOrProvince' => 'NA',
-            'country' => 'NA'
-        ];
-
+        // Gift Cards and downloadable products don't have delivery addresses
         if (!is_object($deliveryAddress)) {
-            // Gift Cards don't have delivery addresses, this prevents member function calls on non-object errors
-            return $deliveryAddressRequest;
+            return null;
         }
+
+        $deliveryAddressRequest = [
+            'street' => 'N/A',
+            'houseNumberOrName' => 'N/A',
+            'city' => 'N/A',
+            'postalCode' => 'N/A',
+            'stateOrProvince' => 'N/A',
+            'country' => 'N/A'
+        ];
 
         if(trim($this->getStreet($deliveryAddress,true)->getName() != "")) {
             $deliveryAddressRequest['street'] = trim($this->getStreet($deliveryAddress,true)->getName());
