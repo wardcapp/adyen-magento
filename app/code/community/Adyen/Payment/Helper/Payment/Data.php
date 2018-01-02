@@ -129,8 +129,8 @@ class Adyen_Payment_Helper_Payment_Data extends Mage_Payment_Helper_Data {
         $observer = new Adyen_Payment_Model_Observer();
         $billingAgreementObserver = new Adyen_Payment_Model_Billing_Agreement_Observer();
 
-        $observer->addMethodsToConfig(null);
-        $billingAgreementObserver->addMethodsToConfig(null);
+        $observer->addMethodsToConfig(new Varien_Event_Observer());
+        $billingAgreementObserver->addMethodsToConfig(new Varien_Event_Observer());
 
         return parent::getPaymentMethods($store);
     }
