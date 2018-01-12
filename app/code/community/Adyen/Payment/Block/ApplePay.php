@@ -52,7 +52,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
      */
     public function getSubTotal()
     {
-        $subtotal = [];
+        $subtotal = array();
 
         if ($this->getProduct() && $this->getProduct()->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
             $product = $this->_getData('product');
@@ -146,7 +146,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
                 $rates = $address->collectShippingRates()
                     ->getGroupedAllShippingRates();
 
-                $costs = [];
+                $costs = array();
                 foreach ($rates as $carrier) {
                     foreach ($carrier as $rate) {
 
@@ -167,7 +167,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
             }
         }
 
-        return [];
+        return array();
     }
 
     /**
@@ -220,7 +220,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
      */
     public function getCustomerData()
     {
-        $customCustomerData = ['isLoggedIn' => Mage::getSingleton('customer/session')->isLoggedIn()];
+        $customCustomerData = array('isLoggedIn' => Mage::getSingleton('customer/session')->isLoggedIn());
 
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
 
@@ -249,7 +249,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
                     $administrativeArea = $billingAddress->getRegion(); // open field
                 }
 
-                $customCustomerData['billingContact'] = [
+                $customCustomerData['billingContact'] = array(
                     'emailAddress' => $customer->getEmail(),
                     'phoneNumber' => $billingAddress->getTelephone(),
                     'familyName' => $lastName,
@@ -260,7 +260,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
                     'administrativeArea' => $administrativeArea, // state
                     'country' => $countryName,
                     'countryCode' => $billingAddress->getCountryId()
-                ];
+                );
             }
 
             $shippingAddressId = $customer->getDefaultShipping();
@@ -283,7 +283,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
                     $administrativeArea = $shippingAddress->getRegion(); // open field
                 }
 
-                $customCustomerData['shippingContact'] = [
+                $customCustomerData['shippingContact'] = array(
                     'emailAddress' => $customer->getEmail(),
                     'phoneNumber' => $shippingAddress->getTelephone(),
                     'familyName' => $lastName,
@@ -294,7 +294,7 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
                     'administrativeArea' => $administrativeArea, // state
                     'country' => $countryName,
                     'countryCode' => $shippingAddress->getCountryId()
-                ];
+                );
             }
         }
         return $customCustomerData;

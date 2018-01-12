@@ -227,7 +227,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                             $order->getPayment()->setAdditionalInformation('3d_successful', true);
                             $order->save();
 
-                            $this->_redirect('checkout/onepage/success',['utm_nooverride' => '1']);
+                            $this->_redirect('checkout/onepage/success',array('utm_nooverride' => '1'));
                         }
                         else {
                             // only cancel if 3D secure was not already successful
@@ -237,7 +237,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                                 $this->cancel();
                             } else {
                                 // already succesfull so turn back to the success page
-                                $this->_redirect('checkout/onepage/success',['utm_nooverride' => '1']);
+                                $this->_redirect('checkout/onepage/success',array('utm_nooverride' => '1'));
                             }
                         }
                     }
@@ -280,7 +280,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                 Mage::logException($e);
                 $this->cancel();
             } else {
-                $this->_redirect('checkout/onepage/success', ['utm_nooverride' => '1']);
+                $this->_redirect('checkout/onepage/success', array('utm_nooverride' => '1'));
             }
         }
     }
@@ -301,7 +301,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
                 $session->unsAdyenRealOrderId();
                 $session->setQuoteId($session->getAdyenQuoteId(true));
                 $session->getQuote()->setIsActive(false)->save();
-                $this->_redirect('checkout/onepage/success' ,['utm_nooverride' => '1']);
+                $this->_redirect('checkout/onepage/success' ,array('utm_nooverride' => '1'));
             } else {
                 $this->cancel();
             }
@@ -321,7 +321,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
         $session->unsAdyenRealOrderId();
         $session->setQuoteId($session->getAdyenQuoteId(true));
         $session->getQuote()->setIsActive(false)->save();
-        $this->_redirect('checkout/onepage/success', ['utm_nooverride' => '1']);
+        $this->_redirect('checkout/onepage/success', array('utm_nooverride' => '1'));
     }
 
     /**
@@ -558,7 +558,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action 
             $session->unsAdyenRealOrderId();
             $session->setQuoteId($session->getAdyenQuoteId(true));
             $session->getQuote()->setIsActive(false)->save();
-            $this->_redirect('checkout/onepage/success', ['utm_nooverride' => '1']);
+            $this->_redirect('checkout/onepage/success', array('utm_nooverride' => '1'));
         } else {
             $this->cancel();
         }

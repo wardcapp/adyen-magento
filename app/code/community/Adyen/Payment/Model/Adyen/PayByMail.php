@@ -95,7 +95,7 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
      * @param array $fields
      * @return string
      */
-    public function getFormUrl($fields = [])
+    public function getFormUrl($fields = array())
     {
         $isConfigDemoMode = $this->getConfigDataDemoMode();
 
@@ -129,7 +129,7 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
             $order->getGrandTotal(),
             $order->getCustomerEmail(),
             $order->getCustomerId(),
-            [],
+            array(),
             $order->getStoreId(),
             Mage::getStoreConfig('general/locale/code', $order->getStoreId()),
             $billingCountryCode,
