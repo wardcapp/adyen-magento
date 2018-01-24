@@ -59,7 +59,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
         if (empty($response)) {
             $this->_debugData['error'] = 'Response is empty, please check your webserver that the result url accepts parameters';
             $this->_debug($storeId);
-            return "401";
+            return array('response' => '401');
         }
 
         // Log the results in log file and adyen_debug table
@@ -76,10 +76,10 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
 
         // authenticate result url
         $authStatus = Mage::getModel('adyen/authenticate')->authenticate($actionName, $params);
-        if (!$authStatus) {
+        if (!$authStatus['authentication']) {
             $this->_debugData['error'] = 'Autentication failure please check your notification username and password. This must be the same in Magento as in the Adyen platform';
             $this->_debug($storeId);
-            return "401";
+            return array('response' => '401', 'message' => $authStatus['message']);
         }
 
         // skip notification if notification is REPORT_AVAILABLE
