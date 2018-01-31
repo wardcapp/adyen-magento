@@ -34,7 +34,7 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
      */
     protected $_debugData = array();
 
-    public function processPosResponse($response)
+    public function processPosResponse($params)
     {
         $storeId = null;
         $returnResult = false;
@@ -43,23 +43,18 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
 
         $helper = Mage::helper('adyen');
 
-        $this->_debugData['POS Response'] = $response;
+        $this->_debugData['POS Response'] = $params;
 
-        $params = new Varien_Object();
-        foreach ($response as $code => $value) {
-            $params->setData($code, $value);
-        }
 
         $actionName = $this->_getRequest()->getActionName();
-        $result = $params->getData('result');
+        $result = $params['result'];
 
         // check if result comes from POS device comes from POS and validate Checksum
         if($actionName == "successPos" && $result != "" && $this->_validateChecksum($params)) {
 
             //get order && payment objects
             $order = Mage::getModel('sales/order');
-            //$incrementId = $params->getData('merchantReference');
-            $incrementId = $params->getData('originalCustomMerchantReference');
+            $incrementId = $params['originalCustomMerchantReference'];
 
             if($incrementId) {
                 $order = Mage::getModel('sales/order')->loadByIncrementId($incrementId);
@@ -126,16 +121,16 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
 
     protected function _validateChecksum($params)
     {
-        $checksum = $params->getData('cs');
-        $result = $params->getData('result');
-        $amount = $params->getData('originalCustomAmount');
-        $currency = $params->getData('originalCustomCurrency');
-        $sessionId = $params->getData('sessionId');
+        $checksum = $params['cs'];
+        $result = $params['result'];
+        $amount = $params['originalCustomAmount'];
+        $currency = $params['originalCustomCurrency'];
+        $sessionId = $params['sessionId'];
 
 
         // for android sessionis is with low i
         if($sessionId == "") {
-            $sessionId = $params->getData('sessionid');
+            $sessionId = $params['sessionid'];
         }
 
         // calculate amount checksum

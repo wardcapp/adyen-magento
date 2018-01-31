@@ -249,15 +249,15 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
 
         // eventHandler to overwrite the adyFields without changing module code
         $adyFields = new Varien_Object($adyFields);
-        Mage::dispatchEvent('adyen_payment_prepare_fields', [
+        Mage::dispatchEvent('adyen_payment_prepare_fields', array(
             'fields' => $adyFields
-        ]);
+        ));
 
         // @deprecated in favor of above event, this one is left in for backwards compatibility
-        Mage::dispatchEvent('adyen_payment_hpp_fields', [
+        Mage::dispatchEvent('adyen_payment_hpp_fields', array(
             'order' => $order,
             'fields' => $adyFields
-        ]);
+        ));
         $adyFields = $adyFields->getData();
 
         return $adyFields;
@@ -321,7 +321,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
         $dfValue = null
     )
     {
-        $adyFields = [
+        $adyFields = array(
             'merchantAccount' => $merchantAccount,
             'merchantReference' => $merchantReference,
             'paymentAmount' => (int)$amount,
@@ -345,7 +345,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             'billingAddressType' => $billingAddressType,
             'deliveryAddressType' => $deliveryAddressType,
             'shopperType' => $shopperType
-        ];
+        );
 
         // explode details for request
         $adyFields = $this->explodeArrayToRequestFields($adyFields, 'shopper', $shopperInfo);
@@ -423,7 +423,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     {
         ksort($adyFields, SORT_STRING);
 
-        $signData = implode(":", array_map([$this, 'escapeString'], array_merge(
+        $signData = implode(":", array_map(array($this, 'escapeString'), array_merge(
             array_keys($adyFields),
             array_values($adyFields)
         )));
@@ -489,11 +489,11 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             $deliveryAddressType = $hasDeliveryAddress ? "2" : "";
         }
 
-        return [
+        return array(
             'billing_address_type' => $billingAddressType,
             'shipping_address_type' => $deliveryAddressType,
             'customer_info' => $shopperType
-        ];
+        );
     }
 
 
@@ -507,7 +507,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     {
         $middleName = trim($billingAddress->getMiddlename());
 
-        $shopperInfo = [];
+        $shopperInfo = array();
         $shopperInfo['firstName'] = trim($billingAddress->getFirstname());
         $shopperInfo['infix'] = $middleName != "" ? trim($middleName) : "";
         $shopperInfo['lastName'] = trim($billingAddress->getLastname());
@@ -560,14 +560,14 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      */
     public function getHppBillingAddressDetails($billingAddress)
     {
-        $billingAddressRequest = [
+        $billingAddressRequest = array(
             'street' => 'N/A',
             'houseNumberOrName' => 'N/A',
             'city' => 'N/A',
             'postalCode' => 'N/A',
             'stateOrProvince' => 'N/A',
             'country' => 'N/A'
-        ];
+        );
 
         if(trim($this->getStreet($billingAddress,true)->getName()) != "") {
             $billingAddressRequest['street'] = trim($this->getStreet($billingAddress,true)->getName());
@@ -612,14 +612,14 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
             return null;
         }
 
-        $deliveryAddressRequest = [
+        $deliveryAddressRequest = array(
             'street' => 'N/A',
             'houseNumberOrName' => 'N/A',
             'city' => 'N/A',
             'postalCode' => 'N/A',
             'stateOrProvince' => 'N/A',
             'country' => 'N/A'
-        ];
+        );
 
         if(trim($this->getStreet($deliveryAddress,true)->getName() != "")) {
             $deliveryAddressRequest['street'] = trim($this->getStreet($deliveryAddress,true)->getName());
@@ -659,7 +659,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     {
         $count = 0;
         $currency = $order->getOrderCurrencyCode();
-        $openInvoiceData = [];
+        $openInvoiceData = array();
 
         // loop through items
         foreach ($order->getItemsCollection() as $item) {

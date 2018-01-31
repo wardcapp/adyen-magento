@@ -28,18 +28,18 @@
 /* @var $installer Mage_Sales_Model_Resource_Setup */
 $installer = new Mage_Sales_Model_Resource_Setup('core_setup');
 
-$entities = [
+$entities = array(
     'quote_item',
     'quote_address_item',
     'order_item'
-];
+);
 
 foreach ($entities as $entity) {
-    $installer->addAttribute($entity, 'adyen_pre_order', [
+    $installer->addAttribute($entity, 'adyen_pre_order', array(
         'type'     => Varien_Db_Ddl_Table::TYPE_BOOLEAN,
         'visible'  => false,
         'required' => false
-    ]);
+    ));
 }
 
 $installer->endSetup();

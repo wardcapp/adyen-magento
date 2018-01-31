@@ -28,19 +28,19 @@
 
 class Adyen_Payment_Model_Source_POS_IpFilter {
     public function toOptionArray() {
-        $_options = [
-            [ 'value' => '0', 'label' => 'Disabled' ],
-            [ 'value' => '1', 'label' => 'Specific IPs' ],
-            [ 'value' => '2', 'label' => 'IP Range' ],
-        ];
+        $_options = array(
+            array( 'value' => '0', 'label' => 'Disabled' ),
+            array( 'value' => '1', 'label' => 'Specific IPs' ),
+            array( 'value' => '2', 'label' => 'IP Range' ),
+        );
         return $_options;
     }
 
     public function toOptionHash() {
-        return [
+        return array(
             '0' => 'Disabled',
             '1' => 'Specific IPs', 
             '2' => 'IP Range',
-        ];
+        );
     }
 }

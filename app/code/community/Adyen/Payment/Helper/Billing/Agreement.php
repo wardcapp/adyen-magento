@@ -27,12 +27,7 @@
  
 class Adyen_Payment_Helper_Billing_Agreement extends Mage_Core_Helper_Abstract
 {
-
-    public function getCustomerReference(Mage_Customer_Model_Customer $customer)
-    {
-        var_dump($customer);exit;
-    }
-
+    
     /**
      * @return Mage_Customer_Model_Customer|null
      */

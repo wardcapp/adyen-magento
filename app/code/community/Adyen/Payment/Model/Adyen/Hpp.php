@@ -157,7 +157,7 @@ class Adyen_Payment_Model_Adyen_Hpp extends Adyen_Payment_Model_Adyen_Abstract
             $order->getGrandTotal(),
             $order->getCustomerEmail(),
             $order->getCustomerId(),
-            [],
+            array(),
             $order->getStoreId(),
             Mage::getStoreConfig('general/locale/code', $order->getStoreId()),
             $billingCountryCode,

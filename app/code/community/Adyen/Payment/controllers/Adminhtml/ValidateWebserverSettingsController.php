@@ -79,8 +79,12 @@ class Adyen_Payment_Adminhtml_ValidateWebserverSettingsController extends Mage_A
             $result = true;
         }
 
-        echo $result;
-        return;
+        $this->getResponse()
+            ->setHttpResponseCode(200)
+            ->setHeader('Content-type', 'application/html', true)
+            ->setBody($result);
+
+        return $this;
     }
 
     /**
