@@ -37,42 +37,42 @@ $connection->dropTable($adyenOrderPaymentTable);
 
 $table = $connection
     ->newTable($adyenOrderPaymentTable)
-    ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 11, [
+    ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 11, array(
         'unsigned'  => true,
         'nullable'  => false,
         'primary'   => true,
         'auto_increment' => true,
-    ], 'Adyen Payment ID')
-    ->addColumn('pspreference', Varien_Db_Ddl_Table::TYPE_VARCHAR, 55, [
+    ), 'Adyen Payment ID')
+    ->addColumn('pspreference', Varien_Db_Ddl_Table::TYPE_VARCHAR, 55, array(
         'unsigned'  => true,
         'nullable'  => false,
-    ], 'Pspreference')
-    ->addColumn('merchant_reference', Varien_Db_Ddl_Table::TYPE_INTEGER, 11, [
+    ), 'Pspreference')
+    ->addColumn('merchant_reference', Varien_Db_Ddl_Table::TYPE_INTEGER, 11, array(
         'unsigned'  => true,
         'nullable'  => true,
-    ], 'Merchant Reference')
-    ->addColumn('payment_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 11, [
+    ), 'Merchant Reference')
+    ->addColumn('payment_id', Varien_Db_Ddl_Table::TYPE_INTEGER, 11, array(
         'unsigned'  => true,
         'nullable'  => true,
-    ], 'Order Payment Id')
-    ->addColumn('payment_method', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, [
+    ), 'Order Payment Id')
+    ->addColumn('payment_method', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
         'unsigned'  => true,
         'nullable'  => false,
-    ], 'Payment Method')
-    ->addColumn('amount', Varien_Db_Ddl_Table::TYPE_DECIMAL, '11,2', [
+    ), 'Payment Method')
+    ->addColumn('amount', Varien_Db_Ddl_Table::TYPE_DECIMAL, '11,2', array(
         'unsigned'  => true,
         'nullable'  => false,
-    ], 'Amount')
-    ->addColumn('total_refunded', Varien_Db_Ddl_Table::TYPE_DECIMAL, '11,2', [
+    ), 'Amount')
+    ->addColumn('total_refunded', Varien_Db_Ddl_Table::TYPE_DECIMAL, '11,2', array(
         'unsigned'  => true,
         'nullable'  => false,
-    ], 'Total Refunded')
-    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, [
+    ), 'Total Refunded')
+    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
         'nullable' => false,
-    ], 'Date')
-    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, [
+    ), 'Date')
+    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_TIMESTAMP, null, array(
         'nullable' => false,
-    ], 'Date')
+    ), 'Date')
     ->addForeignKey(
         $installer->getFkName(
             'adyen/order_payment',

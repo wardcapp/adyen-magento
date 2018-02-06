@@ -52,9 +52,9 @@ ORDER BY
   `table_name`, `ordinal_position`
         ");
 
-        $rows = [];
+        $rows = array();
         foreach ($results as $row) {
-            $rows[] = ['value' => $row['column_name'], 'label' => $row['column_name']];
+            $rows[] = array('value' => $row['column_name'], 'label' => $row['column_name']);
         }
 
         return $rows;

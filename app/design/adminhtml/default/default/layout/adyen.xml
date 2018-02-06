@@ -74,4 +74,10 @@
         </reference>
     </adminhtml_sales_order_create_index>
 
+    <default>
+        <reference name="notifications">
+            <block type="adyen/adminhtml_notifications" name="adyen_notifications" template="adyen/payment/notifications.phtml"/>
+            <block type="adyen/adminhtml_messageversion" name="adyen_messageversion" template="adyen/payment/messageversion.phtml"/>
+        </reference>
+    </default>
 </layout>

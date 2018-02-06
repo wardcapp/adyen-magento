@@ -31,12 +31,12 @@ class Adyen_Payment_Model_Source_ApplePayShippingType {
      * @return array
      */
     public function toOptionArray() {
-        return [
-            ['value' => 'shipping', 'label' => Mage::helper('adyen')->__('Shipping Method')],
-            ['value' => 'delivery', 'label' => Mage::helper('adyen')->__('Delivery Method')],
-            ['value' => 'storePickup', 'label' => Mage::helper('adyen')->__('Store Pickup Method')],
-            ['value' => 'servicePickup', 'label' => Mage::helper('adyen')->__('Service Pickup Method')]
-        ];
+        return array(
+            array('value' => 'shipping', 'label' => Mage::helper('adyen')->__('Shipping Method')),
+            array('value' => 'delivery', 'label' => Mage::helper('adyen')->__('Delivery Method')),
+            array('value' => 'storePickup', 'label' => Mage::helper('adyen')->__('Store Pickup Method')),
+            array('value' => 'servicePickup', 'label' => Mage::helper('adyen')->__('Service Pickup Method'))
+        );
     }
 
 }

@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -27,30 +27,30 @@
  */
 
 
-
 /**
  * Class Adyen_Payment_Block_Form_Ideal
  * @method Adyen_Payment_Model_Adyen_Ideal getMethod()
  */
-class Adyen_Payment_Block_Form_Ideal extends Adyen_Payment_Block_Form_Hpp {
+class Adyen_Payment_Block_Form_Ideal extends Adyen_Payment_Block_Form_Hpp
+{
 
     protected function _construct()
     {
         parent::_construct();
-        $this->setTemplate('adyen/form/ideal.phtml');
+        if ($this->getShowIdealLogos()) {
+            $this->setTemplate('adyen/form/ideal.phtml');
+        } else {
+            $this->setTemplate('adyen/form/hpp.phtml');
+        }
     }
 
     public function getShowIdealLogos()
     {
-        return $this->getMethod()->getShowIdealLogos();
+        return Mage::helper('adyen')->_getConfigData('show_ideal_logos', 'adyen_ideal');
     }
 
-    public function getIssuers()
+    public function getIssuerImageUrl($issuer)
     {
-        return $this->getMethod()->getIssuers();
-    }
-
-    public function getIssuerImageUrl($issuer) {
         $_bankFile = strtoupper(str_replace(" ", '', $issuer['label']));
         return $this->getSkinUrl("images/adyen/$_bankFile.png");
     }

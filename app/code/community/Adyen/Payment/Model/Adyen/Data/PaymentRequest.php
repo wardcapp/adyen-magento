@@ -138,6 +138,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
             case "apple_pay":
             case "cc":
             case "oneclick":
+            case "multibanco":
                 
                 $this->bankAccount = null;
 
@@ -155,8 +156,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->shopperName->lastName = trim($billingAddress->getLastname());
 
                     $this->billingAddress = new Adyen_Payment_Model_Adyen_Data_BillingAddress();
-                    $this->billingAddress->street = $helper->getStreet($billingAddress)->getName();
-                    $this->billingAddress->houseNumberOrName = $helper->getStreet($billingAddress)->getHouseNumber();
+                    $this->billingAddress->street = $billingAddress->getStreet(1);
+                    $this->billingAddress->houseNumberOrName = '';
                     $this->billingAddress->city = $billingAddress->getCity();
                     $this->billingAddress->postalCode = $billingAddress->getPostcode();
                     $this->billingAddress->stateOrProvince = $billingAddress->getRegionCode();
@@ -167,8 +168,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 if($deliveryAddress)
                 {
                     $this->deliveryAddress = new Adyen_Payment_Model_Adyen_Data_DeliveryAddress();
-                    $this->deliveryAddress->street = $helper->getStreet($deliveryAddress)->getName();
-                    $this->deliveryAddress->houseNumberOrName = $helper->getStreet($deliveryAddress)->getHouseNumber();
+                    $this->deliveryAddress->street = $deliveryAddress->getStreet(1);
+                    $this->deliveryAddress->houseNumberOrName = '';
                     $this->deliveryAddress->city = $deliveryAddress->getCity();
                     $this->deliveryAddress->postalCode = $deliveryAddress->getPostcode();
                     $this->deliveryAddress->stateOrProvince = $deliveryAddress->getRegionCode();
@@ -278,6 +279,14 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->installments = new Adyen_Payment_Model_Adyen_Data_Installments();
                     $this->installments->value = $payment->getAdditionalInformation('number_of_installments');
                 }
+
+            if ($paymentMethod == "multibanco") {
+                $this->card = $this->deliveryAddress = $this->recurring = $this->additionalData = null;
+
+                $this->selectedBrand = $paymentMethod;
+
+                $this->deliveryDate = $payment->getAdditionalInformation('delivery_date');
+            }
 
                 // add observer to have option to overrule and or add request data
                 Mage::dispatchEvent('adyen_payment_card_payment_request', array('order' => $order, 'paymentMethod' => $paymentMethod, 'paymentRequest' => $this));

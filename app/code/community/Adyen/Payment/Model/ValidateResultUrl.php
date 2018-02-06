@@ -125,12 +125,6 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
         $comment = Mage::helper('adyen')
             ->__('%s <br /> authResult: %s <br /> pspReference: %s <br /> paymentMethod: %s', $type, $authResult, $pspReference, $paymentMethod);
 
-        $history = Mage::getModel('sales/order_status_history')
-                    ->setComment($comment)
-                    ->setEntityName("order")
-                    ->setOrder($order);
-        $history->save();
-
         switch ($authResult) {
 
             case Adyen_Payment_Model_Event::ADYEN_EVENT_AUTHORISED:
@@ -143,6 +137,19 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
                 break;
             case Adyen_Payment_Model_Event::ADYEN_EVENT_PENDING:
                 // do nothing wait for the notification
+                if (strpos($paymentMethod,"bankTransfer") !== false){
+                    $comment .= "<br /><br />Waiting for the customer to transfer the money.";
+                }
+                elseif($paymentMethod == "sepadirectdebit"){
+                    $comment .= "<br /><br />This request will be send to the bank at the end of the day.";
+                }
+                else {
+                    $comment .= "<br /><br />The payment result is not confirmed (yet).
+                                 <br />Once the payment is authorised, the order status will be updated accordingly. 
+                                 <br />If the order is stuck on this status, the payment can be seen as unsuccessful. 
+                                 <br />The order can be automatically cancelled based on the OFFER_CLOSED notification. Please contact Adyen Support to enable this.";
+
+                }
                 $this->_debugData['Step4'] = 'Do nothing wait for the notification';
                 break;
             case Adyen_Payment_Model_Event::ADYEN_EVENT_CANCELLED:
@@ -164,6 +171,13 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
                 $result = false;
                 break;
         }
+
+        $history = Mage::getModel('sales/order_status_history')
+            ->setComment($comment)
+            ->setEntityName("order")
+            ->setOrder($order);
+        $history->save();
+
         return $result;
     }
 

@@ -546,7 +546,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
      */
     public function isOpenInvoice($paymentMethod)
     {
-        if( strcmp($paymentMethod, self::KLARNA) === 0 ||
+        if( $this->isKlarna($paymentMethod)  ||
             strcmp($paymentMethod, self::RATEPAY) === 0 ||
             $this->isAfterPay($paymentMethod))
         {
@@ -570,6 +570,18 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     }
 
     /**
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function isKlarna($paymentMethod)
+    {
+        if(strcmp(substr($paymentMethod, 0, 6), self::KLARNA) === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Defines if it need to use the admin session or checkout session
      *
      * @return mixed
@@ -582,5 +594,17 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
             $session = Mage::getSingleton('checkout/session');
         }
         return $session;
+    }
+
+
+    public function getUnprocessedNotifications()
+    {
+        // get collection of unprocessed notifications
+        $collection = Mage::getModel('adyen/event_queue')->getCollection()
+            ->addFieldToFilter('created_at', array(
+                'to' => strtotime('-10 minutes', time()),
+                'datetime' => true));
+
+        return $collection->getSize();
     }
 }
