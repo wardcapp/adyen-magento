@@ -136,6 +136,7 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
             $shopperIP,
             $this->getInfoInstance()->getCcType(),
             $this->getInfoInstance()->getMethod(),
+
             trim($this->getInfoInstance()->getPoNumber()),
             $this->_code,
             $hasDeliveryAddress,

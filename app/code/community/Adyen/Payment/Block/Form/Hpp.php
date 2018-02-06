@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,14 +26,17 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Form_Hpp extends Mage_Payment_Block_Form {
+class Adyen_Payment_Block_Form_Hpp extends Mage_Payment_Block_Form
+{
 
-    protected function _construct() {
+    protected function _construct()
+    {
         parent::_construct();
         $this->setTemplate('adyen/form/hpp.phtml');
 
         if (Mage::getStoreConfig('payment/adyen_abstract/title_renderer')
-            == Adyen_Payment_Model_Source_Rendermode::MODE_TITLE_IMAGE) {
+            == Adyen_Payment_Model_Source_Rendermode::MODE_TITLE_IMAGE
+        ) {
             $this->setMethodTitle('');
         }
     }
@@ -40,12 +44,13 @@ class Adyen_Payment_Block_Form_Hpp extends Mage_Payment_Block_Form {
     public function getMethodLabelAfterHtml()
     {
         if (Mage::getStoreConfig('payment/adyen_abstract/title_renderer')
-            == Adyen_Payment_Model_Source_Rendermode::MODE_TITLE) {
+            == Adyen_Payment_Model_Source_Rendermode::MODE_TITLE
+        ) {
             return '';
         }
 
-        if (! $this->hasData('_method_label_html')) {
-            if(!$this->getHppOptionsDisabled()) {
+        if (!$this->hasData('_method_label_html')) {
+            if (!$this->getHppOptionsDisabled()) {
 
                 $imgFileName = substr($this->getMethod()->getCode(), 10);
                 $result = Mage::getDesign()->getFilename("images/adyen/{$imgFileName}.png", array('_type' => 'skin'));
@@ -57,23 +62,23 @@ class Adyen_Payment_Block_Form_Hpp extends Mage_Payment_Block_Form {
                     $adyenUrl = "https://live.adyen.com";
                 }
 
-                if (file_exists($result)){
+                if (file_exists($result)) {
                     $imageUrl = $this->getSkinUrl("images/adyen/{$imgFileName}.png");
-                }else{
-                    if  ($this->getMethod()->getCode() != 'adyen_ideal') {
+                } else {
+                    if ($this->getMethod()->getCode() != 'adyen_ideal') {
                         $imageUrl = "{$adyenUrl}/hpp/img/pm/{$imgFileName}.png";
-                    }else{
+                    } else {
                         $imageUrl = $this->getSkinUrl("images/adyen/img_trans.gif");
                     }
-                }      
-                
+                }
+
             } else {
                 $imageUrl = $this->getSkinUrl("images/adyen/img_trans.gif");
             }
 
             $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
                 'template' => 'adyen/payment/payment_method_label.phtml',
-                'payment_method_icon' =>  $imageUrl,
+                'payment_method_icon' => $imageUrl,
                 'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
                 'payment_method_class' => $this->getMethod()->getCode()
             ));
@@ -87,10 +92,16 @@ class Adyen_Payment_Block_Form_Hpp extends Mage_Payment_Block_Form {
 
     /**
      * @since 0.1.0.4
-     * @return type 
+     * @return type
      */
     public function getHppOptionsDisabled()
     {
         return $this->getMethod()->getHppOptionsDisabled();
     }
+
+    public function getIssuers()
+    {
+        return $this->getMethod()->getIssuers();
+    }
+
 }
