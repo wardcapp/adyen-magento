@@ -27,11 +27,11 @@
 
 // NEW WAY
 if($this->getInfo()->getAdditionalInformation('iban')) {
-    $sepaDetails = [
+    $sepaDetails = array(
         'account_name' => $this->getInfo()->getAdditionalInformation('account_name'),
         'iban' => $this->getInfo()->getAdditionalInformation('iban'),
         'country' => $this->getInfo()->getAdditionalInformation('country')
-    ];
+    );
 } else {
     // older versions saved it into the PoNumber to be backwards compatible leave this in
     $sepaDetails = unserialize($this->getInfo()->getPoNumber());
