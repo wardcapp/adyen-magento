@@ -88,7 +88,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 
 		$stores = Mage::getModel('core/store')->getCollection();
 		if ((int)$storeId) {
-            $stores->addFieldToFilter('store_id', ['in' => [0, $storeId]]);
+            $stores->addFieldToFilter('store_id', array('in' => array(0, $storeId)));
 		}
 
 		foreach ($stores as $store) {
@@ -98,12 +98,12 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 			$customerCollection = Mage::getResourceModel('customer/customer_collection');
 			$customerCollection->addFieldToFilter('store_id', $store->getId());
 			if (isset($dateCreated)) {
-				$customerCollection->addFieldToFilter('created_at', ['gteq' => $dateCreated]);
+				$customerCollection->addFieldToFilter('created_at', array('gteq' => $dateCreated));
 			}
 			
 			$select = $customerCollection->getSelect();
 			$select->reset(Varien_Db_Select::COLUMNS);
-			$select->columns(['e.entity_id','e.increment_id']);
+			$select->columns(array('e.entity_id','e.increment_id'));
 			$customerCollection->joinAttribute(
 				'adyen_customer_ref',
 				'customer/adyen_customer_ref',
@@ -127,7 +127,7 @@ class Adyen_Payments_Shell extends Mage_Shell_Abstract
 				$billingAgreementCollection = Mage::getResourceModel('adyen/billing_agreement_collection')
 					->addCustomerFilter($customerId)
 					->addStoreFilter($store)
-                    ->addFieldToFilter('method_code', ['like' => 'adyen_%']);
+                    ->addFieldToFilter('method_code', array('like' => 'adyen_%'));
 
 				//Update the billing agreements
 				foreach ($recurringContracts as $recurringContract) {
