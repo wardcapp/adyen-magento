@@ -261,7 +261,7 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
         }
 
         // override shippingContact and DeliveryContact
-        if($payment->billingContact && $payment->shippingContact) {
+        if(!empty($payment->billingContact) && !empty($payment->shippingContact)) {
             try {
                 $this->updateBillingAddress($quote, $payment->billingContact, $payment->shippingContact);
             } catch(Exception $e) {
