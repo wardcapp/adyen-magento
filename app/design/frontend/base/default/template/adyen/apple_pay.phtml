@@ -1,6 +1,9 @@
 <?php
 if ($this->hasApplePayEnabled()):
     $subtotal = $this->getSubTotal();
+    if(empty($subtotal)){
+        return;
+    }
     $productId = $subtotal['productId'];
     $finalPrice = ($subtotal['amount'] > 0) ? $subtotal['amount'] : '0';
     $productTitle = $subtotal['label'];
