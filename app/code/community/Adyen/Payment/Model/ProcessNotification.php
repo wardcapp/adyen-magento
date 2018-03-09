@@ -566,10 +566,25 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
 
                     $this->_debugData[$this->_count]['process recurring contract exists'] = 'Billing agreement for recurring contract already exists so update it';
 
+                    $contractDetail = null;
+                    // get currenct Contract details and get list of all current ones
+                    $recurringReferencesList = array();
+
+                    $listRecurringContracts = Mage::getSingleton('adyen/api')->listRecurringContracts($agreement->getCustomerReference(), $agreement->getStoreId());
+
+                    foreach ($listRecurringContracts as $rc) {
+                        $recurringReferencesList[] = $rc['recurringDetailReference'];
+                        if (isset($rc['recurringDetailReference']) && $rc['recurringDetailReference'] == $recurringDetailReference) {
+                            $contractDetail = $rc;
+                        }
+                    }
+
+                    $agreement->parseRecurringContractData($contractDetail);
                     $agreement->addOrderRelation($order);
                     $agreement->setStatus($agreement::STATUS_ACTIVE);
                     $agreement->setIsObjectChanged(true);
                     $order->addRelatedObject($agreement);
+
                     $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.', $agreement->getReferenceId());
 
                 } else {
