@@ -585,7 +585,6 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
                     $agreement->setStatus($agreement::STATUS_ACTIVE);
                     $agreement->setIsObjectChanged(true);
 
-
                     $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.',
                         $agreement->getReferenceId());
 
@@ -676,18 +675,16 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
      */
     protected function _updateExistingBillingAgreementsStatus($customerReference, $recurringReferencesList)
     {
-
         $billingAgreements = Mage::getResourceModel('adyen/billing_agreement_collection')
             ->addFieldToFilter('customer_id', $customerReference);
 
         foreach ($billingAgreements as $billingAgreement) {
             if (!in_array($billingAgreement->getReferenceId(), $recurringReferencesList)) {
                 $billingAgreement->setStatus(Adyen_Payment_Model_Billing_Agreement::STATUS_CANCELED);
-                $billingAgreement->save();
             } else {
                 $billingAgreement->setStatus(Adyen_Payment_Model_Billing_Agreement::STATUS_ACTIVE);
-                $billingAgreement->save();
             }
+            $billingAgreement->save();
         }
     }
 
