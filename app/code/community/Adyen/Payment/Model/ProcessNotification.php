@@ -1276,18 +1276,16 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
          */
         if ($captureOnShipment && !$autoCapture) {
             // if capture on shipment is enabled and it is a manual capture payment method do not update the order
-        } else {
-            if (!$createPendingInvoice ||
-                ($createPendingInvoice && $autoCapture) ||
-                ($createPendingInvoice && !$autoCapture && $captureNotification)
-            ) {
-                $status = $this->_getConfigData('payment_authorized', 'adyen_abstract', $order->getStoreId());
+        } elseif (!$createPendingInvoice ||
+            ($createPendingInvoice && $autoCapture) ||
+            ($createPendingInvoice && !$autoCapture && $captureNotification)
+        ) {
+            $status = $this->_getConfigData('payment_authorized', 'adyen_abstract', $order->getStoreId());
 
-                $this->_debugData[$this->_count]['_setPaymentAuthorized selected status'] = 'The status that is selected is:' . $status;
+            $this->_debugData[$this->_count]['_setPaymentAuthorized selected status'] = 'The status that is selected is:' . $status;
 
-                // set the state to processing
-                $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
-            }
+            // set the state to processing
+            $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
         }
 
         // virtual order can have different status
