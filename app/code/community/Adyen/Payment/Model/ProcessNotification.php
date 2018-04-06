@@ -544,17 +544,15 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
                 } else {
                     if ($order->isCanceled() || $order->getState() === Mage_Sales_Model_Order::STATE_HOLDED) {
                         $this->_debugData[$this->_count]['_processNotification info'] = 'Order is already cancelled or holded so do nothing';
+                    } elseif ($order->canCancel() || $order->canHold()) {
+                        $this->_debugData[$this->_count]['_processNotification info'] = 'try to cancel the order';
+                        $this->_holdCancelOrder($order, true);
                     } else {
-                        if ($order->canCancel() || $order->canHold()) {
-                            $this->_debugData[$this->_count]['_processNotification info'] = 'try to cancel the order';
-                            $this->_holdCancelOrder($order, true);
-                        } else {
-                            $this->_debugData[$this->_count]['_processNotification info'] = 'try to refund the order';
-                            // refund
-                            $this->_refundOrder($order);
-                            //refund completed
-                            $this->_setRefundAuthorized($order);
-                        }
+                        $this->_debugData[$this->_count]['_processNotification info'] = 'try to refund the order';
+                        // refund
+                        $this->_refundOrder($order);
+                        //refund completed
+                        $this->_setRefundAuthorized($order);
                     }
                 }
                 break;
