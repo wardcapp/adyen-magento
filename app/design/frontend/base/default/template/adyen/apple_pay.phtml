@@ -11,9 +11,6 @@ if ($this->hasApplePayEnabled()):
     $_customerData = $this->getCustomerData();
     $merchantIdentifier = $this->getMerchantIdentifier();
     $reviewStep = $this->onReviewStep();
-    echo $this->getDiscountAmount();
-
-
 
     // shippingMethods not needed in review step
     if (!$reviewStep) {
