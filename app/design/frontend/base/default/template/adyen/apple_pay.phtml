@@ -11,6 +11,9 @@ if ($this->hasApplePayEnabled()):
     $_customerData = $this->getCustomerData();
     $merchantIdentifier = $this->getMerchantIdentifier();
     $reviewStep = $this->onReviewStep();
+    echo $this->getDiscountAmount();
+
+
 
     // shippingMethods not needed in review step
     if (!$reviewStep) {
@@ -103,6 +106,7 @@ if ($this->hasApplePayEnabled()):
                 amount: amount
             };
 
+           
             <?php if(!$reviewStep):?>
                 if(shippingMethods.length > 0){
 
@@ -169,6 +173,23 @@ if ($this->hasApplePayEnabled()):
                 <?php endif; ?>
             <?php endif; ?>
 
+            <?php if($this->getDiscountAmount() != 0): ?>
+
+                var discountAmount = <?php echo $this->getDiscountAmount() ?>;
+
+                lineItems.push(
+                    {
+                        type: "final",
+                        label: "<?php echo $this->__('discount') ?>",
+                        amount: discountAmount
+                    }
+                );
+
+                var totalAmount = window.AdyenApplePayTotalAmount;
+                var newAmount = totalAmount + discountAmount;
+                // TODO: optimize below to support all currencies
+                window.AdyenApplePayTotalAmount = newAmount.toFixed(2);
+            <?php endif; ?>
 
             var billingAddresLines = [];
             <?php if($_customerData && isset($_customerData['billingContact'])): ?>
