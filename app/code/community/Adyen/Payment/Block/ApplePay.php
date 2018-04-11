@@ -329,7 +329,8 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
      */
     public function getShippingMethodAmount()
     {
-        return Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getShippingAmount();
+
+        return Mage::getSingleton('checkout/session')->getQuote()->getShippingAddress()->getShippingInclTax();
     }
 
     /**
