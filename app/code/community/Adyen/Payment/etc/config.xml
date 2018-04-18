@@ -346,6 +346,7 @@
                 <send_email_bank_sepa_on_pending>0</send_email_bank_sepa_on_pending>
                 <title_renderer>title_image</title_renderer>
                 <ignore_refund_notification>0</ignore_refund_notification>
+                <multiple_merchants>1</multiple_merchants>
                 <split_payments_refund_strategy>1</split_payments_refund_strategy>
             </adyen_abstract>
             <adyen_hpp translate="title" module="adyen">
