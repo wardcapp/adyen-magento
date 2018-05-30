@@ -32,9 +32,11 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest3d extends Adyen_Payment_Mode
     public $md;
     public $paResponse;
     public $shopperIP;
+    public $additionalData;
     
     public function __construct() {
         $this->browserInfo = new Adyen_Payment_Model_Adyen_Data_BrowserInfo();
+        $this->additionalData = new Adyen_Payment_Model_Adyen_Data_AdditionalData();
     }
 	
     public function create(Varien_Object $payment, $merchantAccount)
@@ -45,6 +47,19 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest3d extends Adyen_Payment_Mode
         $this->shopperIP = $_SERVER['REMOTE_ADDR'];
 		$this->md = $payment->getAdditionalInformation('md');
 		$this->paResponse = $payment->getAdditionalInformation('paResponse');
+
+        if(
+            is_array($payment->getAdditionalInformation('mpiResponseData'))
+            && !empty($payment->getAdditionalInformation('mpiResponseData'))
+            && !empty($payment->getAdditionalInformation(Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE))
+        ) {
+            $mpiResponseData = $payment->getAdditionalInformation('mpiResponseData');
+            $mpiImplementationType = $payment->getAdditionalInformation(Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE);
+            $this->additionalData->addEntry(Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE, $mpiImplementationType);
+            foreach ($mpiResponseData as $key => $value) {
+                $this->additionalData->addEntry($key, $value);
+            }
+        }
         return $this;
-    }    
+    }
 }

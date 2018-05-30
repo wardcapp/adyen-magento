@@ -68,15 +68,15 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
     /**
      * Internal objects and arrays for SOAP communication
      */
-    protected $_service = NULL;
-    protected $_accountData = NULL;
+    protected $_service = null;
+    protected $_accountData = null;
 
     /**
      * Payment Modification Request
      * @var unknown_type
      */
-    protected $_paymentRequest = NULL;
-    protected $_optionalData = NULL;
+    protected $_paymentRequest = null;
+    protected $_optionalData = null;
     protected $_testModificationUrl = 'https://pal-test.adyen.com/pal/adapter/httppost';
     protected $_liveModificationUrl = 'https://pal-live.adyen.com/pal/adapter/httppost';
     protected $_paymentMethodType = 'api';
@@ -145,7 +145,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
             if ($orderPaymentCollection->getSize()) {
                 // loop over payment methods and refund them all
                 foreach ($orderPaymentCollection as $splitPayment) {
-                    $order->getPayment()->getMethodInstance()->SendCancelOrRefund($payment, $splitPayment->getPspreference());
+                    $order->getPayment()->getMethodInstance()->SendCancelOrRefund($payment,
+                        $splitPayment->getPspreference());
                 }
             } else {
                 $order->getPayment()->getMethodInstance()->SendCancelOrRefund($payment, $pspReference);
@@ -156,7 +157,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
             if ($orderPaymentCollection->getSize() > 1) {
 
                 // loop over payments and refund based on refund strategy
-                $refundStrategy = $this->_getConfigData('split_payments_refund_strategy', 'adyen_abstract', $order->getStoreId());
+                $refundStrategy = $this->_getConfigData('split_payments_refund_strategy', 'adyen_abstract',
+                    $order->getStoreId());
                 $ratio = null;
 
                 if ($refundStrategy == "1") {
@@ -179,7 +181,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                         if ($ratio) {
                             // refund based on ratio calculate refund amount
                             $amount = $ratio * ($splitPayment->getAmount() - $splitPayment->getTotalRefunded());
-                            $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $amount, $splitPayment->getPspreference());
+                            $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $amount,
+                                $splitPayment->getPspreference());
                         } else {
                             // total authorised amount of the split payment
                             $splitPaymentAmount = $splitPayment->getAmount() - $splitPayment->getTotalRefunded();
@@ -191,9 +194,11 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
 
                             // if refunded amount is greather then split payment amount do a full refund
                             if ($amount >= $splitPaymentAmount) {
-                                $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $splitPaymentAmount, $splitPayment->getPspreference());
+                                $order->getPayment()->getMethodInstance()->sendRefundRequest($payment,
+                                    $splitPaymentAmount, $splitPayment->getPspreference());
                             } else {
-                                $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $amount, $splitPayment->getPspreference());
+                                $order->getPayment()->getMethodInstance()->sendRefundRequest($payment, $amount,
+                                    $splitPayment->getPspreference());
                             }
                             // update amount with rest of the available amount
                             $amount = $amount - $splitPaymentAmount;
@@ -225,7 +230,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
 
         // check if a zero auth should be done for this order
         $useZeroAuth = (bool)Mage::helper('adyen')->getConfigData('use_zero_auth', null, $order->getStoreId());
-        $zeroAuthDateField = (bool)Mage::helper('adyen')->getConfigData('base_zero_auth_on_date', null, $order->getStoreId());
+        $zeroAuthDateField = (bool)Mage::helper('adyen')->getConfigData('base_zero_auth_on_date', null,
+            $order->getStoreId());
 
         if ($useZeroAuth) { // zero auth should be used
 
@@ -263,7 +269,9 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
             $order->setCanSendNewEmailFlag(false);
         }
 
-        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || substr($this->getCode(), 0, 14) == 'adyen_oneclick' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay' || $this->getCode() == 'adyen_multibanco') {
+        if ($this->getCode() == 'adyen_boleto' || $this->getCode() == 'adyen_cc' || substr($this->getCode(), 0,
+                14) == 'adyen_oneclick' || $this->getCode() == 'adyen_sepa' || $this->getCode() == 'adyen_apple_pay' || $this->getCode() == 'adyen_multibanco'
+        ) {
 
             if (substr($this->getCode(), 0, 14) == 'adyen_oneclick') {
 
@@ -280,7 +288,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                     $agreement->addOrderRelation($order);
                     $agreement->setIsObjectChanged(true);
                     $order->addRelatedObject($agreement);
-                    $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.', $agreement->getReferenceId());
+                    $message = Mage::helper('adyen')->__('Used existing billing agreement #%s.',
+                        $agreement->getReferenceId());
 
                     $comment = $order->addStatusHistoryComment($message);
                     $order->addRelatedObject($comment);
@@ -394,7 +403,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
             switch ($request) {
                 case "authorise":
                     $requestData = Mage::getModel('adyen/adyen_data_paymentRequest')
-                        ->create($payment, $amount, $this->_paymentMethod, $merchantAccount, $recurringType, $recurringPaymentType, $enableMoto);
+                        ->create($payment, $amount, $this->_paymentMethod, $merchantAccount, $recurringType,
+                            $recurringPaymentType, $enableMoto);
 
                     $response = $this->_service->authorise(array('paymentRequest' => $requestData));
                     break;
@@ -407,22 +417,26 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 case "capture":
                     $response = $this->_service->capture(array(
                         'modificationRequest' => $requestData,
-                        'modificationResult' => $modificationResult));
+                        'modificationResult' => $modificationResult
+                    ));
                     break;
                 case "refund":
                     $response = $this->_service->refund(array(
                         'modificationRequest' => $requestData,
-                        'modificationResult' => $modificationResult));
+                        'modificationResult' => $modificationResult
+                    ));
                     break;
                 case "cancel_or_refund":
                     $response = $this->_service->cancelorrefund(array(
                         'modificationRequest' => $requestData,
-                        'modificationResult' => $modificationResult));
+                        'modificationResult' => $modificationResult
+                    ));
                     break;
                 case "cancel":
                     $response = $this->_service->cancel(array(
                         'modificationRequest' => $requestData,
-                        'modificationResult' => $modificationResult));
+                        'modificationResult' => $modificationResult
+                    ));
                     break;
             }
         } catch (SoapFault $e) {
@@ -472,8 +486,12 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      * @return $this|bool
      * @throws Adyen_Payment_Exception
      */
-    protected function _processResponse(Varien_Object $payment, $response, $request = null, $originalPspReference = null)
-    {
+    protected function _processResponse(
+        Varien_Object $payment,
+        $response,
+        $request = null,
+        $originalPspReference = null
+    ) {
         if (!($response instanceof stdClass)) {
             return false;
         }
@@ -514,8 +532,6 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         }
         switch ($responseCode) {
             case "RedirectShopper":
-
-
                 $paRequest = $response->paymentResult->paRequest;
                 $md = $response->paymentResult->md;
                 $issuerUrl = $response->paymentResult->issuerUrl;
@@ -524,6 +540,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                     $payment->setAdditionalInformation('paRequest', $response->paymentResult->paRequest);
                     $payment->setAdditionalInformation('md', $response->paymentResult->md);
                     $payment->setAdditionalInformation('issuerUrl', $response->paymentResult->issuerUrl);
+                    $this->storeMpiData($payment, $response->paymentResult->additionalData);
                 } else {
                     // log exception
                     $errorMsg = Mage::helper('adyen')->__('3D secure is not valid');
@@ -561,7 +578,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 }
 
                 $errorMsg = new Varien_Object(array('error_message' => $errorMsg));
-                Mage::dispatchEvent('adyen_payment_authorize_refused_error', array('responseResult' => $response->paymentResult, 'error' => $errorMsg));
+                Mage::dispatchEvent('adyen_payment_authorize_refused_error',
+                    array('responseResult' => $response->paymentResult, 'error' => $errorMsg));
                 $errorMsg = $errorMsg->getErrorMessage();
 
                 $this->resetReservedOrderId();
@@ -595,9 +613,11 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
 
                             $zendDate->addDay($additionalDataResult->value);
 
-                            $payment->setAdditionalInformation($deadlineDate, Mage::helper('core')->formatDate($zendDate));
+                            $payment->setAdditionalInformation($deadlineDate,
+                                Mage::helper('core')->formatDate($zendDate));
                         } else {
-                            $payment->setAdditionalInformation($deadlineDate, Mage::helper('core')->formatDate($salesOrder->getCreatedAtStoreDate()));
+                            $payment->setAdditionalInformation($deadlineDate,
+                                Mage::helper('core')->formatDate($salesOrder->getCreatedAtStoreDate()));
                         }
                     }
                 }
@@ -648,8 +668,14 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      * @param unknown_type $request
      * @param unknown_type $pspReference
      */
-    protected function _addStatusHistory(Varien_Object $payment, $responseCode, $pspReference, $status = false, $boletoPDF = null, $originalPspReference = null)
-    {
+    protected function _addStatusHistory(
+        Varien_Object $payment,
+        $responseCode,
+        $pspReference,
+        $status = false,
+        $boletoPDF = null,
+        $originalPspReference = null
+    ) {
 
         if ($boletoPDF) {
             $payment->getOrder()->setAdyenBoletoPdf($boletoPDF);
@@ -662,7 +688,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         }
 
         $type = 'Adyen Result URL Notification(s):';
-        $comment = Mage::helper('adyen')->__('%s <br /> authResult: %s <br /> pspReference: %s <br /> %s', $type, $responseCode, $pspReference, $originalPspReferenceText);
+        $comment = Mage::helper('adyen')->__('%s <br /> authResult: %s <br /> pspReference: %s <br /> %s', $type,
+            $responseCode, $pspReference, $originalPspReferenceText);
         $payment->getOrder()->setAdyenEventCode($responseCode);
         $payment->getOrder()->addStatusHistoryComment($comment, $status);
         $payment->setAdyenEventCode($responseCode);
@@ -700,7 +727,8 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
                 'use' => SOAP_LITERAL,
                 'location' => $location,
                 'trace' => 1,
-                'classmap' => $classmap));
+                'classmap' => $classmap
+            ));
         } catch (SoapFault $fault) {
             $this->writeLog("Adyen SOAP Fault: (faultcode: {$fault->faultcode}, faultstring: {$fault->faultstring})");
             Mage::throwException(Mage::helper('adyen')->__('Can not connect payment service. Please try again later.'));
@@ -1032,5 +1060,48 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         $agreement->parseRecurringContractData($recurringContractDetail);
 
         return $recurringContractDetail;
+    }
+
+    private function additionalDataToArray($soapAdditionalData) {
+        $additionalData = array();
+
+        if(!is_array($soapAdditionalData->entry)) {
+            return $additionalData;
+        }
+
+        foreach($soapAdditionalData->entry as $kv) {
+            if(!empty($kv->key)) {
+                $additionalData[$kv->key] = $kv->value;
+            }
+        }
+
+        return $additionalData;
+    }
+
+    private function storeMpiData($payment, $soapAdditionalData)
+    {
+        if (empty($soapAdditionalData)) {
+            return;
+        }
+
+        $additionalData = $this->additionalDataToArray($soapAdditionalData);
+        if (empty($additionalData[Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE])) {
+            return;
+        }
+
+        // Constructing additional data prefix as mpiImplementationType + .
+        $mpiImplementationType = $additionalData[Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE];
+        $mpiPrefix = $mpiImplementationType . ".";
+
+        $mpiData = array();
+        foreach ($additionalData as $key => $value) {
+            // filter only additional data that their keys start with mpiPrefix
+            if (strpos($key, $mpiPrefix) === 0) {
+                $mpiData[substr($key, strlen($mpiPrefix))] = $value;
+            }
+        }
+
+        $payment->setAdditionalInformation('mpiRequestData', $mpiData);
+        $payment->setAdditionalInformation(Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE, $mpiImplementationType);
     }
 }

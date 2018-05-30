@@ -185,6 +185,11 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         $adyFields = array();
         $adyFields['PaReq'] = $payment->getAdditionalInformation('paRequest');
         $adyFields['MD'] = $payment->getAdditionalInformation('md');
+
+        $mpiData = $payment->getAdditionalInformation('mpiRequestData');
+        if(is_array($mpiData)) {
+            $adyFields = array_merge($adyFields, $mpiData);
+        }
         $adyFields['TermUrl'] = Mage::getUrl('adyen/process/validate3d');
 
         return $adyFields;

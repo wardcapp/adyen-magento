@@ -27,6 +27,21 @@
  */
 class Adyen_Payment_Model_Adyen_Data_AdditionalData extends Adyen_Payment_Model_Adyen_Data_Abstract {
 
-	public $entry;
+	public $entry = array();
 
+    public function addEntry($key, $value) {
+        $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
+        $kv->key = new SoapVar($key, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
+        $kv->value = new SoapVar($value, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
+        $this->entry[] = $kv;
+    }
+
+    public function toArray() {
+        $data = array();
+        foreach($this->entry as $kv) {
+            $data[$kv->key] = $kv->value;
+        }
+
+        return $data;
+    }
 }

@@ -32,6 +32,8 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     const RATEPAY = "ratepay";
     const AFTERPAY = "afterpay";
 
+    const MPI_IMPLEMENTATION_TYPE = "mpiImplementationType";
+
     /**
      * @return array
      */

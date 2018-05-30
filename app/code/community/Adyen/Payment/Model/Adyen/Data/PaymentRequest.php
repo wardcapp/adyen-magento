@@ -215,10 +215,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                         Mage::throwException(Mage::helper('adyen')->__('Missing token'));
                     }
 
-                    $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                    $kv->key = new SoapVar("payment.token", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                    $kv->value = new SoapVar(base64_encode($token), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                    $this->additionalData->entry = $kv;
+                    $this->additionalData->addEntry("payment.token", base64_encode($token));
                 } else if (Mage::getModel('adyen/adyen_cc')->isCseEnabled()) {
 
                     $this->card = null;
@@ -228,10 +225,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $encryptedData = $session->getData('encrypted_data_'.$info->getCode());
 
                     if($encryptedData != "" && $encryptedData != "false" ) {
-                        $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                        $kv->key = new SoapVar("card.encrypted.json", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kv->value = new SoapVar($encryptedData, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $this->additionalData->entry = $kv;
+                        $this->additionalData->addEntry("card.encrypted.json", $encryptedData);
                     } else {
                         if($paymentMethod == 'cc') {
 

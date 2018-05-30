@@ -191,6 +191,8 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                 if ($request->isPost() && !empty($requestMD) && !empty($requestPaRes)) {
                     if ($requestMD == $md) {
                         $payment->setAdditionalInformation('paResponse', $requestPaRes);
+                        $this->fillMpiData($payment, $this->getRequest());
+
                         // send autorise3d request, catch exception in case of 'Refused'
                         try {
                             $result = $payment->getMethodInstance()->authorise3d($payment, $order->getGrandTotal());
@@ -636,6 +638,28 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
         } else {
             return false;
         }
+    }
+
+    private function fillMpiData($payment, $request) {
+        $mpiImplementationType = $payment->getAdditionalInformation(Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE);
+        if(empty($mpiImplementationType)) {
+            return;
+        }
+
+        $mpiData = [];
+        $postParams = $request->getPost();
+        if(!is_array($postParams)) {
+            return;
+        }
+
+        foreach ($postParams as $key => $value) {
+            // filter out MD
+            if(strcmp(strtolower($key), "md") != 0) {
+                $mpiData[$mpiImplementationType . "." . $key] = $value;
+            }
+        }
+
+        $payment->setAdditionalInformation('mpiResponseData', $mpiData);
     }
 
 }
