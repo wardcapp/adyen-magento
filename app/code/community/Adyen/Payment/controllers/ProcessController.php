@@ -175,11 +175,10 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                 throw new Exception('No payment information available');
             }
 
-            $paRequest = $payment->getAdditionalInformation('paRequest');
             $md = $payment->getAdditionalInformation('md');
             $issuerUrl = $payment->getAdditionalInformation('issuerUrl');
 
-            $infoAvailable = $payment && !empty($paRequest) && !empty($md) && !empty($issuerUrl);
+            $infoAvailable = $payment && !empty($md) && !empty($issuerUrl);
 
             // check adyen status and check if all information is available
             if (!empty($adyenStatus) && $adyenStatus == 'RedirectShopper' && $infoAvailable) {
@@ -188,9 +187,11 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                 $requestPaRes = $request->getPost('PaRes');
 
                 // authorise the payment if the user is back from the external URL
-                if ($request->isPost() && !empty($requestMD) && !empty($requestPaRes)) {
+                if ($request->isPost() && !empty($requestMD)) {
                     if ($requestMD == $md) {
-                        $payment->setAdditionalInformation('paResponse', $requestPaRes);
+                        if(!empty($requestPaRes)) {
+                            $payment->setAdditionalInformation('paResponse', $requestPaRes);
+                        }
                         $this->fillMpiData($payment, $this->getRequest());
 
                         // send autorise3d request, catch exception in case of 'Refused'

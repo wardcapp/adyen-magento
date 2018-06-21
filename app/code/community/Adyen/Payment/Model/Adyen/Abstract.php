@@ -532,14 +532,15 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         }
         switch ($responseCode) {
             case "RedirectShopper":
-                $paRequest = $response->paymentResult->paRequest;
                 $md = $response->paymentResult->md;
                 $issuerUrl = $response->paymentResult->issuerUrl;
 
-                if (!empty($paRequest) && !empty($md) && !empty($issuerUrl)) {
+                if (!empty($response->paymentResult->paRequest)) {
                     $payment->setAdditionalInformation('paRequest', $response->paymentResult->paRequest);
-                    $payment->setAdditionalInformation('md', $response->paymentResult->md);
-                    $payment->setAdditionalInformation('issuerUrl', $response->paymentResult->issuerUrl);
+                }
+                if (!empty($md) && !empty($issuerUrl)) {
+                    $payment->setAdditionalInformation('md', $md);
+                    $payment->setAdditionalInformation('issuerUrl', $issuerUrl);
                     $this->storeMpiData($payment, $response->paymentResult->additionalData);
                 } else {
                     // log exception

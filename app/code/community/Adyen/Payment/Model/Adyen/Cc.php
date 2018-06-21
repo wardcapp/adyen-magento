@@ -183,7 +183,11 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         $payment = $order->getPayment();
 
         $adyFields = array();
-        $adyFields['PaReq'] = $payment->getAdditionalInformation('paRequest');
+
+        $paReq = $payment->getAdditionalInformation('paRequest');
+        if (!empty($paReq)) {
+            $adyFields['PaReq'] = $paReq;
+        }
         $adyFields['MD'] = $payment->getAdditionalInformation('md');
 
         $mpiData = $payment->getAdditionalInformation('mpiRequestData');
