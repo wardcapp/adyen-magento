@@ -1,5 +1,3 @@
-<!-- Original:  Simon Tneoh (tneohcb@pc.jaring.my) -->
-
 /*Cardtype format: name, starting numbers ( , separated, (is not a range)), number of digits ( , separated)  */
 var Cards = new makeArray(34);
 Cards[0] = new CardType("MC", "51,52,53,54,55,22,23,24,25,26,27", "16");
