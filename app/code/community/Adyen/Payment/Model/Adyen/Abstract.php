@@ -876,6 +876,9 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
      */
     public function getConfigDataDemoMode($storeId = null)
     {
+        if($storeId == null && Mage::app()->getStore()->isAdmin()) {
+            $storeId = $this->getInfoInstance()->getOrder()->getStoreId();
+        }
         return Mage::helper('adyen')->getConfigDataDemoMode($storeId);
     }
 
