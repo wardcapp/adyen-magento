@@ -147,12 +147,12 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
         // If notification is test check if fields are correct if not return error
         if (strtolower(substr($response->getData('pspReference'), 0, 17)) == "testnotification_" || strtolower(substr($response->getData('pspReference'), 0, 5)) == "test_") {
             if ($accountCmp != 0) {
-                Mage::log('MerchantAccount in notification is not the same as in Magento settings', Zend_Log::DEBUG, "adyen_notification.log", true);
-                $result['message'] =  'MerchantAccount in notification is not the same as in Magento settings';
+                $result['message'] = "MerchantAccount in notification is not the same as in Magento settings and Allow multiple merchants option is not enabled";
             } elseif ($usernameCmp != 0 || $passwordCmp != 0) {
-                Mage::log('username (PHP_AUTH_USER) and\or password (PHP_AUTH_PW) are not the same as Magento settings', Zend_Log::DEBUG, "adyen_notification.log", true);
-                $result['message'] = 'username (PHP_AUTH_USER) and\or password (PHP_AUTH_PW) are not the same as Magento settings';
+                $result['message'] = "username (PHP_AUTH_USER) and/or password (PHP_AUTH_PW) are not the same as Magento settings";
             }
+
+            Mage::log($result['message'], Zend_Log::DEBUG, "adyen_notification.log", true);
         }
 
         return $result;

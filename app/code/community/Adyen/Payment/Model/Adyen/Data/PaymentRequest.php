@@ -226,8 +226,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $session = Mage::helper('adyen')->getSession();
                     $info = $payment->getMethodInstance();
                     $encryptedData = $session->getData('encrypted_data_'.$info->getCode());
-                    // remove it from the session
-                    $session->setData('encrypted_data_'.$info->getCode(), null);
 
                     if($encryptedData != "" && $encryptedData != "false" ) {
                         $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();

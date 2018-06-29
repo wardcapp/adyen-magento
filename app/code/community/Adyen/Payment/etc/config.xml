@@ -29,7 +29,7 @@
 <config>
     <modules>
         <Adyen_Payment>
-            <version>2.10.0</version>
+            <version>2.11.0</version>
         </Adyen_Payment>
     </modules>
     <global>
@@ -223,6 +223,18 @@
                     </adyen_payment_billing_agreement>
                 </observers>
             </controller_action_predispatch_gomage_checkout>
+            <controller_action_predispatch_amscheckoutfront>
+                <observers>
+                    <adyen_payment_hpp>
+                        <class>adyen/observer</class>
+                        <method>addMethodsToConfig</method>
+                    </adyen_payment_hpp>
+                    <adyen_payment_billing_agreement>
+                        <class>adyen/billing_agreement_observer</class>
+                        <method>addMethodsToConfig</method>
+                    </adyen_payment_billing_agreement>
+                </observers>
+            </controller_action_predispatch_amscheckoutfront>
             <sales_order_shipment_save_before>
                 <observers>
                     <adyen_payment_capture_invoice_on_shipment>
@@ -346,6 +358,7 @@
                 <send_email_bank_sepa_on_pending>0</send_email_bank_sepa_on_pending>
                 <title_renderer>title_image</title_renderer>
                 <ignore_refund_notification>0</ignore_refund_notification>
+                <multiple_merchants>1</multiple_merchants>
                 <split_payments_refund_strategy>1</split_payments_refund_strategy>
             </adyen_abstract>
             <adyen_hpp translate="title" module="adyen">
