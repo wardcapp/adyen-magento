@@ -1285,7 +1285,10 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
             $this->_debugData[$this->_count]['_setPaymentAuthorized selected status'] = 'The status that is selected is:' . $status;
 
             // set the state to processing
-            $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
+            // if state is pending - do not change holded orders
+            if($order->getState() == 'pending') {
+              $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
+            }
         }
 
         // virtual order can have different status
