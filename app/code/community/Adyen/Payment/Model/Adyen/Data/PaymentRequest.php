@@ -226,6 +226,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                     if($encryptedData != "" && $encryptedData != "false" ) {
                         $this->additionalData->addEntry("card.encrypted.json", $encryptedData);
+                        // Add returnUrl for custom MPI
+                        $this->additionalData->addEntry("returnUrl", Mage::getUrl('adyen/process/validate3d'));
                     } else {
                         if($paymentMethod == 'cc') {
 
