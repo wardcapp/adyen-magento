@@ -434,7 +434,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
 
             $notificationMode = isset($response['live']) ? $response['live'] : "";
 
-            if ($notificationMode != "" || $notificationMode !== "" && $this->_validateNotificationMode($notificationMode)) {
+            if ($notificationMode !== "" && $this->_validateNotificationMode($notificationMode)) {
                 // add HTTP POST attributes as an array so it is the same as JSON and SOAP result
                 foreach ($response as $key => $value) {
                     if (strpos($key, '_') !== false) {
@@ -490,7 +490,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
 
             $notificationMode = isset($notificationItems['live']) ? $notificationItems['live'] : "";
 
-            if ($notificationMode != "" || $notificationMode !== "" && $this->_validateNotificationMode($notificationMode)) {
+            if ($notificationMode !== "" && $this->_validateNotificationMode($notificationMode)) {
                 foreach ($notificationItems['notificationItems'] as $notificationItem) {
                     $result = $this->processNotification($notificationItem['NotificationRequestItem']);
                        if (!empty($result['response']) && $result['response'] == "401") {
