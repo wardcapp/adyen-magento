@@ -46,6 +46,8 @@ class Adyen_Payment_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
             return '';
         }
 
+        $this->getMethod()->originKeys();
+
         if (! $this->hasData('_method_label_html')) {
             $imgFileName = 'creditcard';
             $result = Mage::getDesign()->getFilename("images/adyen/{$imgFileName}.png", array('_type' => 'skin'));

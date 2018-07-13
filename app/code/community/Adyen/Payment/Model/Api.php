@@ -216,6 +216,47 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         return true;
     }
 
+    public function originKeys($store = null)
+    {
+
+        $cacheId = "origin_keys";
+        $request = array(
+            "originDomains" => array(Mage::getBaseUrl())
+        );
+
+        //check if our example_id cache contains any data - load() method will return false if cache is empty
+        if (($cacheData = Mage::app()->getCache()->load($cacheId))) {
+            //if cache was found then unserialize it and assign to our variable
+            $result = unserialize($cacheData);
+            Mage::log("was cached!!", null, 'adyen_api.log');
+            Mage::log($result, null, 'adyen_api.log');
+        }
+        else {
+            //if not then normally assign data to the variable
+//            $data_to_be_cached = $exampleObject->exampleMethod();
+            $result = $this->_doRequestOriginKey($request, $store);
+
+            //then serialize and save it
+            Mage::app()->getCache()->save(serialize($result), $cacheId, array(Mage_Core_Model_Config::CACHE_TAG));
+
+            Mage::log("is now cached!!", null, 'adyen_api.log');
+            Mage::log($result, null, 'adyen_api.log');
+        }
+
+
+
+        // convert result to utf8 characters
+        $result = utf8_encode(urldecode($result));
+
+//        if ($result != "disableResult.response=[detail-successfully-disabled]") {
+//            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__($result));
+//        }
+
+        return true;
+    }
+
+
+
 
     /**
      * Do the actual API request
@@ -248,9 +289,51 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         curl_setopt($ch, CURLOPT_POST, count($request));
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        Mage::log($ch, null, 'adyen_api.log');
+        $result = curl_exec($ch);
+        $error = curl_error($ch);
+
+        if ($result === false) {
+            Adyen_Payment_Exception::throwException($error);
+        }
+
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpStatus != 200) {
+            Adyen_Payment_Exception::throwException(
+                Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
+            );
+        }
+
+        curl_close($ch);
+
+        return $result;
+    }
+
+    protected function _doRequestOriginKey(array $request, $storeId)
+    {
+        if ($storeId instanceof Mage_Core_model_Store) {
+            $storeId = $storeId->getId();
+        }
+
+        $requestUrl = $this->_helper()->getConfigDataDemoMode()
+            ? "https://checkout-test.adyen.com/v1/originKeys"
+            : "https://checkout-live.adyen.com/v1/originKeys";
+        $apiKey = $this->_helper()->getConfigDataApiKey($storeId);
+
+        Mage::log($request, null, 'adyen_api.log');
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $requestUrl);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','x-api-key: ' .$apiKey));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $result = curl_exec($ch);
         $error = curl_error($ch);
+
+        Mage::log($result, null, 'adyen_api.log');
+        Mage::log($error, null, 'adyen_api.log');
 
         if ($result === false) {
             Adyen_Payment_Exception::throwException($error);
