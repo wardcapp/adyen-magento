@@ -1039,7 +1039,6 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
 
     public function originKeys()
     {
-        $this->_api()->originKeys();
-        return true;
+        return $this->_api()->originKeys();
     }
 }

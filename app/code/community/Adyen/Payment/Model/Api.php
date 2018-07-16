@@ -221,38 +221,23 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
         $cacheId = "origin_keys";
         $request = array(
-            "originDomains" => array(Mage::getBaseUrl())
+            "originDomains" => array(substr(Mage::getBaseUrl(),0,-1))
         );
 
-        //check if our example_id cache contains any data - load() method will return false if cache is empty
+//        //check if our example_id cache contains any data - load() method will return false if cache is empty
         if (($cacheData = Mage::app()->getCache()->load($cacheId))) {
-            //if cache was found then unserialize it and assign to our variable
+//            //if cache was found then unserialize it and assign to our variable
             $result = unserialize($cacheData);
-            Mage::log("was cached!!", null, 'adyen_api.log');
-            Mage::log($result, null, 'adyen_api.log');
         }
         else {
             //if not then normally assign data to the variable
-//            $data_to_be_cached = $exampleObject->exampleMethod();
             $result = $this->_doRequestOriginKey($request, $store);
 
             //then serialize and save it
             Mage::app()->getCache()->save(serialize($result), $cacheId, array(Mage_Core_Model_Config::CACHE_TAG));
-
-            Mage::log("is now cached!!", null, 'adyen_api.log');
-            Mage::log($result, null, 'adyen_api.log');
         }
 
-
-
-        // convert result to utf8 characters
-        $result = utf8_encode(urldecode($result));
-
-//        if ($result != "disableResult.response=[detail-successfully-disabled]") {
-//            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__($result));
-//        }
-
-        return true;
+        return $result;
     }
 
 
