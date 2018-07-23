@@ -356,19 +356,12 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
     }
 
     /**
-     * Gets the Shipping Country Code from the customer's quote
-     * or the default country if not.
+     * Gets the Shipping Country Code from Magento Admin.
      * @return String
      */
     public function getShippingCountry() {
       
       $shippingCountry = Mage::getStoreConfig('general/country/default');
-
-      $shippingAddress = Mage::getSingleton('checkout/cart')->getQuote()->getShippingAddress();
-
-      if($quoteCountry = $shippingAddress->getCountryId()) {
-        $shippingCountry = $quoteCountry;
-      }
 
       return strtoupper($shippingCountry);
     }
