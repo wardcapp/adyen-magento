@@ -12,9 +12,9 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
@@ -30,19 +30,13 @@
 $_code = $this->getMethodCode();
 $originKey = $this->getOriginKeys();
 ?>
-<script type="text/javascript" src="https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.1.1.min.js"></script>
-<script type="text/javascript">
-    var secf = document.createElement("script");
-secf.type = "text/javascript";
-secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.1.1.min.js";
-    document.body.appendChild(secf);
-</script>
 <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li class="adyen_payment_creditcard_labels">
         <?php $count = 0;
         foreach ($this->getCcAvailableTypes() as $_typeCode => $_data): ?>
             <?php $_filename = $this->getSkinUrl('images/adyen/' . strtolower($_data['code_alt']) . '_small.png'); ?>
-            <img id="cc_type_<?php echo $count; ?>" width="40" height="22" src="<?php echo $_filename; ?>" alt="" class="mid" />
+            <img id="cc_type_<?php echo $count; ?>" width="40" height="22" src="<?php echo $_filename; ?>" alt=""
+                 class="mid"/>
             <?php ++$count;
         endforeach; ?>
         <input type="hidden" id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" value=""/>
@@ -51,7 +45,10 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
     <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">
         <label for="creditCardHolderName" class="required"><em>*</em><?php echo $this->__('Name on Card') ?></label>
         <div class="input-box">
-            <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry" autocomplete="cc-name" id="<?php echo $_code ?>_cc_owner" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_owner]\"" : "data-encrypted-name=\"holderName\""); ?> value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>" maxlength="100" />
+            <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry"
+                   autocomplete="cc-name"
+                   id="<?php echo $_code ?>_cc_owner" <?php echo(!$this->isCseEnabled() ? "name=\"payment[cc_owner]\"" : "data-encrypted-name=\"holderName\""); ?>
+                   value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>" maxlength="100"/>
         </div>
     </li>
 
@@ -59,52 +56,54 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
     <?php echo $this->getChildHtml() ?>
 
 
-    <?php if($this->hasInstallments()): ?>
-    <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_installments">
-        <label for="<?php echo $_code ?>_installments" class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
-        <div class="input-box">
-            <div class="v-fix">
-                <select id="<?php echo $_code ?>_installments" name="payment[additional_data]" class="number required-entry">
-                    <?php foreach ($this->getPossibleInstallments() as $k=>$v): ?>
-                        <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
-                    <?php endforeach ?>
-                </select>
+    <?php if ($this->hasInstallments()): ?>
+        <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_installments">
+            <label for="<?php echo $_code ?>_installments"
+                   class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
+            <div class="input-box">
+                <div class="v-fix">
+                    <select id="<?php echo $_code ?>_installments" name="payment[additional_data]"
+                            class="number required-entry">
+                        <?php foreach ($this->getPossibleInstallments() as $k => $v): ?>
+                            <option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </div>
             </div>
-        </div>
-    </li>
-    <?php endif;?>
+        </li>
+    <?php endif; ?>
 
-    <?php if($this->canCreateBillingAgreement()): ?>
+    <?php if ($this->canCreateBillingAgreement()): ?>
 
-    <script type="text/javascript">
-        // don't show save cc for quest checkout. Only possible to detect with javascript
-        if ($('login:guest') && $('login:guest').checked) {
-            $('adyen-cc-remember-these-details').hide();
-        }
-    </script>
+        <script type="text/javascript">
+            // don't show save cc for guest checkout. Only possible to detect with javascript
+            if ($('login:guest') && $('login:guest').checked) {
+                $('adyen-cc-remember-these-details').hide();
+            }
+        </script>
     <?php endif; ?>
 
 
     <script type="text/javascript">
-        var group_types = <?php echo json_encode(array_keys($this->getCcAvailableTypes())); ?>;
+        var alt_types = <?php echo  json_encode(array_column($this->getCcAvailableTypes(), 'code_alt')); ?>;
 
         card_previousCardNumber = "";
 
         function selectBrand() {
-            cardNumber = (document.getElementById( '<?php echo $_code ?>_cc_number' ).value);
+            cardNumber = (document.getElementById('<?php echo $_code ?>_cc_number').value);
             dontHideErrorFrame = null;
 
             // empty card field - reset all
             if (cardNumber.length == 0) {
                 card_previousCardNumber = cardNumber;
-                cardSetCardBrand(null, false, group_types);
+                cardSetCardBrand(null, false, alt_types);
                 return;
             }
 
             // When editing the card (but not adding digits at the end), don't reformat the number
-            var l=0;
-            while(l < card_previousCardNumber.length && l < cardNumber.length) {
-                if(cardNumber[l] != card_previousCardNumber[l]) {
+            var l = 0;
+            while (l < card_previousCardNumber.length && l < cardNumber.length) {
+                if (cardNumber[l] != card_previousCardNumber[l]) {
                     card_previousCardNumber = cardNumber;
                     return;
                 }
@@ -113,18 +112,18 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
 
             // remove all whitespace
             reg = /\s+/g;
-            cardNumber = cardNumber.replace(reg,'');
+            cardNumber = cardNumber.replace(reg, '');
 
             nrOfDigits = cardNumber.length;
-            if(nrOfDigits > 19){
+            if (nrOfDigits > 19) {
                 return;
             }
 
             baseCard = getBaseCard(cardNumber, group_types);
 
-            if(baseCard != null) {
+            if (baseCard != null) {
                 cardSetCardBrand(baseCard, true, group_types);
-            } else if(nrOfDigits > 4) {
+            } else if (nrOfDigits > 4) {
                 cardSetCardBrand(null, true, group_types);
             } else {
                 cardSetCardBrand(null, false, group_types);
@@ -134,20 +133,19 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
             result = cardNumber.replace(/(\d{4})/g, '$1 ');
             result = result.replace(/\s+$/, ''); //remove trailing spaces
             card_previousCardNumber = result;
-            document.getElementById( '<?php echo $_code ?>_cc_number' ).value = result;
+            document.getElementById('<?php echo $_code ?>_cc_number').value = result;
         }
 
-        function cardSetCardBrand(selectedCard, greyInactive, group_types) {
-
-            for(var i = 0; i < group_types.length; ++i) {
-                var imageId =  'cc_type_'  + i;
-                if(selectedCard != null && group_types[i] == selectedCard.cardtype) {
+        function cardSetCardBrand(selectedCard, greyInactive, alt_types) {
+            for (var i = 0; i < alt_types.length; ++i) {
+                var imageId = 'cc_type_' + i;
+                if (selectedCard != null && alt_types[i] == selectedCard) {
                     // remove class
                     $(imageId).removeClassName('grey');
                     // set hidden field cc type for installments
-                    $('<?php echo $_code ?>_cc_type').setValue(selectedCard.cardtype);
+                    $('<?php echo $_code ?>_cc_type').setValue(selectedCard);
                 } else {
-                    if(greyInactive) {
+                    if (greyInactive) {
                         // add class
                         $(imageId).addClassName('grey');
                     } else {
@@ -155,34 +153,34 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
                         $(imageId).removeClassName('grey');
                     }
                 }
-                document.getElementById(imageId).style.display="inline";
+                document.getElementById(imageId).style.display = "inline";
             }
 
             <?php if($this->hasInstallments()): ?>
-            if(selectedCard != null ) {
+            if (selectedCard != null) {
                 var interval = setInterval(getInstallments(selectedCard.cardtype), 500);
             }
             <?php endif; ?>
 
             cardSetCvcElementselectedCardType(selectedCard != null ? selectedCard.cardtype : null);
 
-            cardSetCVCRequired(selectedCard != null ? selectedCard.cardtype : null);
+//            cardSetCVCRequired(selectedCard != null ? selectedCard.cardtype : null);
         }
 
         function cardSetCvcElementselectedCardType(selectedCardType) {
-            var cvcCodeElem = document.getElementById( '<?php echo $_code; ?>_cc_cid' );
+            var cvcCodeElem = document.getElementById('<?php echo $_code; ?>_cc_cid');
 
             // first remove classnames
-            if(cvcCodeElem != null) {
+            if (cvcCodeElem != null) {
                 cvcCodeElem.removeClassName('maximum-length-3');
                 cvcCodeElem.removeClassName('minimum-length-3');
                 cvcCodeElem.removeClassName('maximum-length-4');
                 cvcCodeElem.removeClassName('minimum-length-4');
             }
 
-            if(selectedCardType == null) {
+            if (selectedCardType == null) {
                 // error do nothing
-            } else if(selectedCardType == "AE") {
+            } else if (selectedCardType == "AE") {
                 cvcCodeElem.maxLength = 4;
                 cvcCodeElem.addClassName('maximum-length-4');
                 cvcCodeElem.addClassName('minimum-length-4');
@@ -195,21 +193,21 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
 
         function cardSetCVCRequired(selectedCardType) {
             <?php if($this->hasVerification()): ?>
-                var cvcCodeElem = document.getElementById( '<?php echo $_code; ?>_cc_cid');
-                var cvcCodeElemLabel = document.getElementById( '<?php echo $_code; ?>_cc_cid_label');
-                var cvcCodeElemLabelEm = document.getElementById( '<?php echo $_code; ?>_cc_cid_label_em');
-            
-                if(selectedCardType != null && selectedCardType == "SM") {
-                    // cvc not required
-                    cvcCodeElem.removeClassName('required-entry');
-                    cvcCodeElemLabel.removeClassName('required');
-                    cvcCodeElemLabelEm.hide();
-                } else {
-                    // cvc required
-                    cvcCodeElem.addClassName('required-entry');
-                    cvcCodeElemLabel.addClassName('required');
-                    cvcCodeElemLabelEm.show();
-                }
+            var cvcCodeElem = document.getElementById('<?php echo $_code; ?>_cc_cid');
+            var cvcCodeElemLabel = document.getElementById('<?php echo $_code; ?>_cc_cid_label');
+            var cvcCodeElemLabelEm = document.getElementById('<?php echo $_code; ?>_cc_cid_label_em');
+
+            if (selectedCardType != null && selectedCardType == "SM") {
+                // cvc not required
+                cvcCodeElem.removeClassName('required-entry');
+                cvcCodeElemLabel.removeClassName('required');
+                cvcCodeElemLabelEm.hide();
+            } else {
+                // cvc required
+                cvcCodeElem.addClassName('required-entry');
+                cvcCodeElemLabel.addClassName('required');
+                cvcCodeElemLabelEm.show();
+            }
             <?php endif; ?>
         }
 
@@ -220,17 +218,17 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
             // get the installments for this cardtype
             var ccType = variant;
 
-            var url = '<?php echo $this->getUrl('adyen/GetInstallments', array('_secure'=>true)); ?>';
+            var url = '<?php echo $this->getUrl('adyen/GetInstallments', array('_secure' => true)); ?>';
 
-            if(ajaxReq && ajaxReq.readystate != 4){
+            if (ajaxReq && ajaxReq.readystate != 4) {
                 ajaxReq.transport.abort();
             }
 
             ajaxReq = new Ajax.Request(url, {
                 parameters: {ccType: ccType, isAjax: 1, method: 'POST'},
-                onSuccess: function(transport) {
+                onSuccess: function (transport) {
 
-                    if(transport.status == 200) {
+                    if (transport.status == 200) {
 
                         // get current selected installment
                         var currentSelectedInstallment = document.getElementById('<?php echo $_code ?>_installments').getValue();
@@ -248,87 +246,114 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
                             opt.text = response[key]
                             opt.value = key;
                             // check if selected installment is still available
-                            if(currentSelectedInstallment == key) {
+                            if (currentSelectedInstallment == key) {
                                 sel = true;
                             }
                             $('<?php echo $_code ?>_installments').options.add(opt);
                         }
 
-                        if(sel == true && currentSelectedInstallment) {
-                            document.getElementById('adyen_cc_installments').value=currentSelectedInstallment;
+                        if (sel == true && currentSelectedInstallment) {
+                            document.getElementById('adyen_cc_installments').value = currentSelectedInstallment;
                         }
                     }
                 },
-                onFailure: function(){
+                onFailure: function () {
                     alert('<?php echo $this->jsQuoteEscape($this->__('Server Error. Please try again.')) ?>');
                 }
             });
         }
-
-        // default
-        window.onload = function(){
-            var cseInit = function() {
-                var securedFields = csf(
-                    {
-                        configObject : {
-                            originKey : "<?php echo $originKey;?>"
-                        },
-                        rootNode: '.form-div'
+        var cseInit = function () {
+            var styleObject = {
+                base: {
+                    color: 'black',
+                    fontSize: '16px',
+                    fontSmoothing: 'antialiased',
+                    fontFamily: 'Helvetica'
+                },
+                error: {
+                    color: 'red'
+                },
+                placeholder: {
+                    color: '#d8d8d8'
+                },
+                validated: {
+                    color: 'green'
+                }
+            };
+            var securedFields = csf(
+                {
+                    configObject: {
+                        originKey: "<?php echo $originKey;?>"
+                    },
+                    rootNode: '.form-div',
+                    paymentMethods : {
+                        card : {
+                            sfStyles : styleObject,
+                            placeholders: {
+                                hostedCardNumberField : '4111 1111 1111 1111',
+                                hostedExpiryDateField : '08/18',
+                                hostedSecurityCodeField : '737'
+                            }
+                        }
                     }
-                );
-//                debugger;;
-            }
+                }
+            );
+            securedFields.onBrand( function ( brandObject ) {
+                if ( brandObject.brand ) {
+                    console.log(brandObject.brand);
+                    cardSetCardBrand(brandObject.brand, true, alt_types);
+                }
+            } );
+        };
 
-            cseInit();
-        }
-//        window.onload = function(){
-//            cardSetCardBrand(null, false, group_types);
-//        }
-
-        // observers
-//        Event.observe($('<?php //echo $_code ?>//_cc_number'), 'change', selectBrand);
-//        Event.observe($('<?php //echo $_code ?>//_cc_number'), 'keyup', selectBrand);
+        cseInit();
 
     </script>
 
     <?php if ($this->isCseEnabled()): ?>
-        <input type="hidden" id="payment_encrypted_data" name="payment[encrypted_data]" value=""/>
-        <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>" data-encrypted-name="generationtime" />
+<!--        <input type="hidden" id="payment_encrypted_data" name="payment[encrypted_data]" value=""/>-->
+        <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime"
+               value="<?php echo date("c"); ?>" data-encrypted-name="generationtime"/>
         <script type="text/javascript">
 
 
         </script>
-    <?php endif;?>
+    <?php endif; ?>
 
-    <li>
-        <div class="checkout-container">
+    <div class="checkout-container">
             <div class="form-div">
-                <form class="payment-div">
-<!--                    <span class="brand-container"><img src="" class="brand-container__image" alt="brand"></span>-->
+                <form class="form-list">
+                    <!--                    <span class="brand-container"><img src="" class="brand-container__image" alt="brand"></span>-->
                     <input type="hidden" name="txvariant" value="card"/>
                     <div class="form">
-                        <div class="input-box">
+                     <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">
                             <span class="input-label">Card number:</span>
-                            <span class="input-box" data-hosted-id="hostedCardNumberField" data-cse="encryptedCardNumber"></span>
-                        </div>
+                            <span class="adyen_payment_input_fields" data-hosted-id="hostedCardNumberField"
+                                  data-cse="payment[encrypted_number]"></span>
+                        </li>
                         <div class="input-container">
                             <span class="input-label">Expiry date:</span>
-                            <span class="input-field" data-hosted-id="hostedExpiryDateField" data-cse="encryptedExpiryDate"></span>
+                            <span class="input-field" data-hosted-id="hostedExpiryDateField"
+                                  data-cse="encryptedExpiryDate"></span>
                         </div>
                         <div class="input-container">
                             <span class="input-label label-security-code">Security code:</span>
-                            <span class="input-field" data-hosted-id="hostedSecurityCodeField" data-cse="encryptedSecurityCode"></span>
+                            <span class="input-field" data-hosted-id="hostedSecurityCodeField"
+                                  data-cse="payment[encryptedcvc]"></span>
+                        </div>
+                        <div class="input-box">
+                            <div class="v-fix">
+                                <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc"
+                                       value="1" checked/>
+                                <label for="<?php echo $_code ?>_store_cc"><em>*</em><?php echo $this->__('Remember these details') ?>
+                                </label>
+                            </div>
                         </div>
 
-        <div class="input-box">
-            <div class="v-fix">
-                <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc" value="1" checked />
-                <label for="<?php echo $_code ?>_store_cc"><em>*</em><?php echo $this->__('Remember these details') ?></label>
-            </div>
-        </div>
-
                     </div>
-                    <button id="payBtn" class="button--pay disabled" type="button" onclick="authorizePayment();">Submit data to Adyen</button>
+                    <button id="payBtn" class="button--pay disabled" type="button" onclick="authorizePayment();">Submit
+                        data to Adyen
+                    </button>
                 </form>
             </div>
         </div>
@@ -337,21 +362,7 @@ secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk
 
 
 
-            var cseInit = function() {
-                var securedFields = csf(
-                    {
-                        configObject : {
-                            originKey : "<?php echo $originKey;?>"
-                        },
-                        rootNode: '.form-div'
-                    }
-                );
-//                debugger;;
-            };
-
-            cseInit();
 
         </script>
-    </li>
 
 </ul>
