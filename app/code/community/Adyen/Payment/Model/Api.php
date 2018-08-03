@@ -12,11 +12,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	    Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package        Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -26,7 +27,7 @@
  */
 class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 {
-    const RECURRING_TYPE_ONECLICK  = 'ONECLICK';
+    const RECURRING_TYPE_ONECLICK = 'ONECLICK';
     const RECURRING_TYPE_RECURRING = 'RECURRING';
     const RECURRING_TYPE_ONECLICK_RECURRING = 'ONECLICK,RECURRING';
 
@@ -39,8 +40,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
 
     /**
-     * @param string                         $shopperReference
-     * @param string                         $recurringDetailReference
+     * @param string $shopperReference
+     * @param string $recurringDetailReference
      * @param int|Mage_Core_model_Store|null $store
      * @return bool
      */
@@ -60,7 +61,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
      * Get all the stored Credit Cards and other billing agreements stored with Adyen.
      *
      * @param string $shopperReference
-     * @param int|Mage_Core_model_Store|null   $store
+     * @param int|Mage_Core_model_Store|null $store
      * @return array
      */
     public function listRecurringContracts($shopperReference, $store = null)
@@ -70,16 +71,17 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         foreach ($this->_recurringTypes as $recurringType) {
             try {
                 // merge ONECLICK and RECURRING into one record with recurringType ONECLICK,RECURRING
-                $listRecurringContractByType = $this->listRecurringContractByType($shopperReference, $store, $recurringType);
+                $listRecurringContractByType = $this->listRecurringContractByType($shopperReference, $store,
+                    $recurringType);
 
-                foreach($listRecurringContractByType as $recurringContract) {
+                foreach ($listRecurringContractByType as $recurringContract) {
 
-                    if(isset($recurringContract['recurringDetailReference'])) {
+                    if (isset($recurringContract['recurringDetailReference'])) {
                         $recurringDetailReference = $recurringContract['recurringDetailReference'];
                         // check if recurring reference is already in array
-                        if(isset($recurringContracts[$recurringDetailReference])) {
+                        if (isset($recurringContracts[$recurringDetailReference])) {
                             // recurring reference already exists so recurringType is possible for ONECLICK and RECURRING
-                            $recurringContracts[$recurringDetailReference]['recurring_type']= "ONECLICK,RECURRING";
+                            $recurringContracts[$recurringDetailReference]['recurring_type'] = "ONECLICK,RECURRING";
                         } else {
                             $recurringContracts[$recurringDetailReference] = $recurringContract;
                         }
@@ -87,7 +89,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                 }
             } catch (Adyen_Payment_Exception $e) {
                 Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__(
-                    "Error retrieving the Billing Agreement for shopperReference %s with recurringType #%s Error: %s", $shopperReference, $recurringType, $e->getMessage()
+                    "Error retrieving the Billing Agreement for shopperReference %s with recurringType #%s Error: %s",
+                    $shopperReference, $recurringType, $e->getMessage()
                 ));
             }
         }
@@ -107,8 +110,9 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         // rest call to get list of recurring details
         $request = array(
             "action" => "Recurring.listRecurringDetails",
-            "recurringDetailsRequest.merchantAccount"    => $this->_helper()->getConfigData('merchantAccount', null, $store),
-            "recurringDetailsRequest.shopperReference"   => $shopperReference,
+            "recurringDetailsRequest.merchantAccount" => $this->_helper()->getConfigData('merchantAccount', null,
+                $store),
+            "recurringDetailsRequest.shopperReference" => $shopperReference,
             "recurringDetailsRequest.recurring.contract" => $recurringType,
         );
 
@@ -122,7 +126,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
         $recurringContracts = array();
         $recurringContractExtra = array();
-        foreach($resultArr as $key => $value) {
+        foreach ($resultArr as $key => $value) {
             // strip the key
             $key = str_replace("recurringDetailsResult_details_", "", $key);
             $key2 = strstr($key, '_');
@@ -130,7 +134,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             $keyAttribute = substr($key2, 1);
 
             // set ideal to sepadirectdebit because it is and we want to show sepadirectdebit logo
-            if($keyAttribute == "variant" && $value == "ideal") {
+            if ($keyAttribute == "variant" && $value == "ideal") {
                 $value = 'sepadirectdebit';
             }
 
@@ -186,8 +190,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
     /**
      * Disable a recurring contract
      *
-     * @param string                         $recurringDetailReference
-     * @param string                         $shopperReference
+     * @param string $recurringDetailReference
+     * @param string $shopperReference
      * @param int|Mage_Core_model_Store|null $store
      *
      * @throws Adyen_Payment_Exception
@@ -221,15 +225,14 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
         $cacheId = "origin_keys";
         $request = array(
-            "originDomains" => array(substr(Mage::getBaseUrl(),0,-1))
+            "originDomains" => array(substr(Mage::getBaseUrl(), 0, -1))
         );
 
 //        //check if our example_id cache contains any data - load() method will return false if cache is empty
         if (($cacheData = Mage::app()->getCache()->load($cacheId))) {
 //            //if cache was found then unserialize it and assign to our variable
             $result = unserialize($cacheData);
-        }
-        else {
+        } else {
             //if not then normally assign data to the variable
             $result = $this->_doRequestOriginKey($request, $store);
 
@@ -239,8 +242,6 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
         return $result;
     }
-
-
 
 
     /**
@@ -270,13 +271,48 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         curl_setopt($ch, CURLOPT_URL, $requestUrl);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $username.":".$password);
+        curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
         curl_setopt($ch, CURLOPT_POST, count($request));
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         Mage::log($ch, null, 'adyen_api.log');
         $result = curl_exec($ch);
         $error = curl_error($ch);
+
+        if ($result === false) {
+            Adyen_Payment_Exception::throwException($error);
+        }
+
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpStatus != 200) {
+            Adyen_Payment_Exception::throwException(
+                Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
+            );
+        }
+
+        curl_close($ch);
+
+        return $result;
+    }
+
+    protected function _doRequestJson(array $request, $requestUrl, $storeId)
+    {
+        $apiKey = $this->_helper()->getConfigDataApiKey($storeId);
+
+        Mage::log($request, null, 'adyen_api.log');
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $requestUrl);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'x-api-key: ' . $apiKey));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
+        $error = curl_error($ch);
+
+        Mage::log($result, null, 'adyen_api.log');
+        Mage::log($error, null, 'adyen_api.log');
 
         if ($result === false) {
             Adyen_Payment_Exception::throwException($error);
@@ -303,37 +339,27 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $requestUrl = $this->_helper()->getConfigDataDemoMode()
             ? "https://checkout-test.adyen.com/v1/originKeys"
             : "https://checkout-live.adyen.com/v1/originKeys";
-        $apiKey = $this->_helper()->getConfigDataApiKey($storeId);
+        return $this->_doRequestJson($request, $requestUrl, $storeId);
+    }
 
-        Mage::log($request, null, 'adyen_api.log');
+    protected function _doRequestPayments(array $request, $storeId)
+    {
+        $requestUrl = $this->_helper()->getConfigDataDemoMode()
+            ? "https://checkout-test.adyen.com/v32/payments"
+            : "https://checkout-live.adyen.com/v32/payments";
+        //TODO build payment request from SecuredFields
+        /*
+         * "paymentMethod": {
+            "type": "scheme",
+            "encryptedCardNumber": "adyenjs_0_1_18$MT6ppy0FAMVMLH...",
+            "encryptedExpiryMonth": "adyenjs_0_1_18$MT6ppy0FAMVMLH...",
+            "encryptedExpiryYear": "adyenjs_0_1_18$MT6ppy0FAMVMLH...",
+            "encryptedSecurityCode": "adyenjs_0_1_18$MT6ppy0FAMVMLH..."
+            },
+         */
+        return $this->_doRequestJson($request, $requestUrl, $storeId);
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $requestUrl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','x-api-key: ' .$apiKey));
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $result = curl_exec($ch);
-        $error = curl_error($ch);
-
-        Mage::log($result, null, 'adyen_api.log');
-        Mage::log($error, null, 'adyen_api.log');
-
-        if ($result === false) {
-            Adyen_Payment_Exception::throwException($error);
-        }
-
-        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($httpStatus != 200) {
-            Adyen_Payment_Exception::throwException(
-                Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
-            );
-        }
-
-        curl_close($ch);
-
-        return $result;
     }
 
 

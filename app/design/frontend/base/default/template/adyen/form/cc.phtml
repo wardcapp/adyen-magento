@@ -47,7 +47,7 @@ $originKey = $this->getOriginKeys();
         <div class="input-box">
             <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry"
                    autocomplete="cc-name"
-                   id="<?php echo $_code ?>_cc_owner" <?php echo(!$this->isCseEnabled() ? "name=\"payment[cc_owner]\"" : "data-encrypted-name=\"holderName\""); ?>
+                   id="<?php echo $_code ?>_cc_owner" <?php echo("name=\"payment[cc_owner]\""); ?>
                    value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>" maxlength="100"/>
         </div>
     </li>
@@ -164,7 +164,6 @@ $originKey = $this->getOriginKeys();
 
             cardSetCvcElementselectedCardType(selectedCard != null ? selectedCard.cardtype : null);
 
-//            cardSetCVCRequired(selectedCard != null ? selectedCard.cardtype : null);
         }
 
         function cardSetCvcElementselectedCardType(selectedCardType) {
@@ -311,7 +310,6 @@ $originKey = $this->getOriginKeys();
     </script>
 
     <?php if ($this->isCseEnabled()): ?>
-<!--        <input type="hidden" id="payment_encrypted_data" name="payment[encrypted_data]" value=""/>-->
         <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime"
                value="<?php echo date("c"); ?>" data-encrypted-name="generationtime"/>
         <script type="text/javascript">
@@ -323,23 +321,26 @@ $originKey = $this->getOriginKeys();
     <div class="checkout-container">
             <div class="form-div">
                 <form class="form-list">
-                    <!--                    <span class="brand-container"><img src="" class="brand-container__image" alt="brand"></span>-->
                     <input type="hidden" name="txvariant" value="card"/>
                     <div class="form">
-                     <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">
+                        <div class="input-container">
                             <span class="input-label">Card number:</span>
                             <span class="adyen_payment_input_fields" data-hosted-id="hostedCardNumberField"
                                   data-cse="payment[encrypted_number]"></span>
-                        </li>
+                        </div>
                         <div class="input-container">
-                            <span class="input-label">Expiry date:</span>
-                            <span class="input-field" data-hosted-id="hostedExpiryDateField"
-                                  data-cse="encryptedExpiryDate"></span>
+                            <span class="input-label">Expiry month:</span>
+                            <span class="input-field" data-hosted-id="hostedExpiryMonthField"
+                                  data-cse="payment[encrypted_expiry_month]"></span>
+                        </div> <div class="input-container">
+                            <span class="input-label">Expiry year:</span>
+                            <span class="input-field" data-hosted-id="hostedExpiryYearField"
+                                  data-cse="payment[encrypted_expiry_year]"></span>
                         </div>
                         <div class="input-container">
                             <span class="input-label label-security-code">Security code:</span>
                             <span class="input-field" data-hosted-id="hostedSecurityCodeField"
-                                  data-cse="payment[encryptedcvc]"></span>
+                                  data-cse="payment[encrypted_cvc]"></span>
                         </div>
                         <div class="input-box">
                             <div class="v-fix">

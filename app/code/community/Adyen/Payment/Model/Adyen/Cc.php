@@ -45,10 +45,15 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
      */
     public function assignData($data) {
 
+
+
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
+        Mage::log("data?: " . $data->toJson(), null, 'adyen_api.log');
         $info = $this->getInfoInstance();
+        Mage::log("info?: " . $info->toJson(), null, 'adyen_api.log');
+        Mage::log("datasencrypted?: " . $data->getEncryptedNumber(), null, 'adyen_api.log');
 
         // set number of installements
         $info->setAdditionalInformation('number_of_installments', $data->getAdditionalData());
@@ -58,14 +63,14 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
 
         if ($this->isCseEnabled()) {
             $info->setCcType($data->getCcType());
-
-            if($data->getEncryptedData() == "false" || $data->getEncryptedData() == "") {
-                Mage::throwException(Mage::helper('adyen')->__('Invalid credit number card.'));
-            } else if($data->getEncryptedData()) {
+//              PW-502 commented temporarily
+//            if($data->getEncryptedData() == "false" || $data->getEncryptedData() == "") {
+//                Mage::throwException(Mage::helper('adyen')->__('Invalid credit number card.'));
+//            } else if($data->getEncryptedData()) {
                 $session = Mage::helper('adyen')->getSession();
                 $method = $this->getCode();
                 $session->setData('encrypted_data_'.$method, $data->getEncryptedData());
-            }
+//            }
         } else {
             $info->setCcType($data->getCcType())
                 ->setCcOwner($data->getCcOwner())
