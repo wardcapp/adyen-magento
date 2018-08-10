@@ -46,7 +46,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest3d extends Adyen_Payment_Mode
         $this->browserInfo->userAgent = $_SERVER['HTTP_USER_AGENT'];
         $this->shopperIP = $_SERVER['REMOTE_ADDR'];
 		$this->md = $payment->getAdditionalInformation('md');
-		$this->paResponse = $payment->getAdditionalInformation('paResponse');
 
         if(
             is_array($payment->getAdditionalInformation('mpiResponseData'))
@@ -59,6 +58,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest3d extends Adyen_Payment_Mode
             foreach ($mpiResponseData as $key => $value) {
                 $this->additionalData->addEntry($key, $value);
             }
+        } else {
+            $this->paResponse = $payment->getAdditionalInformation('paResponse');
         }
         return $this;
     }

@@ -187,8 +187,10 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                 $requestPaRes = $request->getPost('PaRes');
 
                 // authorise the payment if the user is back from the external URL
-                if ($request->isPost() && !empty($requestMD)) {
-                    if ($requestMD == $md) {
+                if ($request->isPost()) {
+                    $mpiImplementationType = $payment->getAdditionalInformation(Adyen_Payment_Helper_Data::MPI_IMPLEMENTATION_TYPE);
+                    // Either custom MPI or MD should match
+                    if(!empty($mpiImplementationType) || ($requestMD == $md)) {
                         if(!empty($requestPaRes)) {
                             $payment->setAdditionalInformation('paResponse', $requestPaRes);
                         }
@@ -654,10 +656,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
         }
 
         foreach ($postParams as $key => $value) {
-            // filter out MD
-            if(strcmp(strtolower($key), "md") != 0) {
-                $mpiData[$mpiImplementationType . "." . $key] = $value;
-            }
+            $mpiData[$mpiImplementationType . "." . $key] = $value;
         }
 
         $payment->setAdditionalInformation('mpiResponseData', $mpiData);
