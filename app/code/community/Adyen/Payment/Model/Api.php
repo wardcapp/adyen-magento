@@ -228,15 +228,10 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             "originDomains" => array(substr(Mage::getBaseUrl(), 0, -1))
         );
 
-//        //check if our example_id cache contains any data - load() method will return false if cache is empty
         if (($cacheData = Mage::app()->getCache()->load($cacheId))) {
-//            //if cache was found then unserialize it and assign to our variable
             $result = unserialize($cacheData);
         } else {
-            //if not then normally assign data to the variable
             $result = $this->_doRequestOriginKey($request, $store);
-
-            //then serialize and save it
             Mage::app()->getCache()->save(serialize($result), $cacheId, array(Mage_Core_Model_Config::CACHE_TAG));
         }
 
@@ -341,27 +336,6 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             : "https://checkout-live.adyen.com/v1/originKeys";
         return $this->_doRequestJson($request, $requestUrl, $storeId);
     }
-
-    protected function _doRequestPayments(array $request, $storeId)
-    {
-        $requestUrl = $this->_helper()->getConfigDataDemoMode()
-            ? "https://checkout-test.adyen.com/v32/payments"
-            : "https://checkout-live.adyen.com/v32/payments";
-        //TODO build payment request from SecuredFields
-        /*
-         * "paymentMethod": {
-            "type": "scheme",
-            "encryptedCardNumber": "adyenjs_0_1_18$MT6ppy0FAMVMLH...",
-            "encryptedExpiryMonth": "adyenjs_0_1_18$MT6ppy0FAMVMLH...",
-            "encryptedExpiryYear": "adyenjs_0_1_18$MT6ppy0FAMVMLH...",
-            "encryptedSecurityCode": "adyenjs_0_1_18$MT6ppy0FAMVMLH..."
-            },
-         */
-        return $this->_doRequestJson($request, $requestUrl, $storeId);
-
-
-    }
-
 
     /**
      * @return Adyen_Payment_Helper_Data
