@@ -282,7 +282,8 @@ $originKey = $this->getOriginKeys();
             var securedFields = csf(
                 {
                     configObject: {
-                        originKey: "<?php echo $originKey;?>"
+                        originKey: "<?php echo $originKey;?>",
+                        cardGroupTypes : alt_types
                     },
                     rootNode: '.form-div',
                     paymentMethods : {
