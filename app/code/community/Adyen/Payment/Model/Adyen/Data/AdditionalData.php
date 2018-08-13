@@ -27,6 +27,6 @@
  */
 class Adyen_Payment_Model_Adyen_Data_AdditionalData extends Adyen_Payment_Model_Adyen_Data_Abstract {
 
-	public $entry;
+	public $entry = array();
 
 }
