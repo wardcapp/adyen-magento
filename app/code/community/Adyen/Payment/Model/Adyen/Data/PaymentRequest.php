@@ -240,22 +240,10 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->card->holderName = $ccOwner;
 
                     if($encryptedNumber != "" && $encryptedNumber != "false" ) {
-                        $kvNumber = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                        $kvNumber->key = new SoapVar("encryptedCardNumber", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kvNumber->value = new SoapVar($encryptedNumber, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kvExpiryMonth = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                        $kvExpiryMonth->key = new SoapVar("encryptedExpiryMonth", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kvExpiryMonth->value = new SoapVar($encryptedExpiryMonth, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kvExpiryYear = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                        $kvExpiryYear->key = new SoapVar("encryptedExpiryYear", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kvExpiryYear->value = new SoapVar($encryptedExpiryYear, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kvCvc = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                        $kvCvc->key = new SoapVar("encryptedSecurityCode", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kvCvc->value = new SoapVar($encryptedCvc, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        array_push($this->additionalData->entry, $kvNumber);
-                        array_push($this->additionalData->entry, $kvExpiryMonth);
-                        array_push($this->additionalData->entry, $kvExpiryYear);
-                        array_push($this->additionalData->entry, $kvCvc);
+                        $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
+                        $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
+                        $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
+                        $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
                     } else {
                         if($paymentMethod == 'cc') {
 

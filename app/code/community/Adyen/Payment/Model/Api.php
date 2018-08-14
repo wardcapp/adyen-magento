@@ -222,10 +222,13 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
     public function originKeys($store = null)
     {
-
         $cacheId = "origin_keys";
+        $originUrl = Mage::getBaseUrl();
+        if (substr($originUrl, -1) == '/') {
+            $originUrl = substr($originUrl, 0, -1);
+        }
         $request = array(
-            "originDomains" => array(substr(Mage::getBaseUrl(), 0, -1))
+            "originDomains" => array($originUrl)
         );
 
         if (($cacheData = Mage::app()->getCache()->load($cacheId))) {
@@ -270,7 +273,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         curl_setopt($ch, CURLOPT_POST, count($request));
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        Mage::log($ch, null, 'adyen_api.log');
+
         $result = curl_exec($ch);
         $error = curl_error($ch);
 
@@ -306,15 +309,18 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $result = curl_exec($ch);
         $error = curl_error($ch);
 
-        Mage::log($result, null, 'adyen_api.log');
-        Mage::log($error, null, 'adyen_api.log');
-
         if ($result === false) {
             Adyen_Payment_Exception::throwException($error);
         }
 
         $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($httpStatus != 200) {
+
+        if ($httpStatus == 403) {
+            Adyen_Payment_Exception::throwException(
+                Mage::helper('adyen')->__('Received Status code %s, please make sure your Checkout API key is correct.',
+                    $httpStatus)
+            );
+        } elseif ($httpStatus != 200) {
             Adyen_Payment_Exception::throwException(
                 Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
             );
