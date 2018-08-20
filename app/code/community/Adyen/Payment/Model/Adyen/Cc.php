@@ -45,8 +45,6 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
      */
     public function assignData($data) {
 
-
-
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
@@ -62,7 +60,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
             $info->setCcType($data->getCcType());
             $info->setCcOwner($data->getCcOwner());
 
-            if($data->getEncryptedNumber() == "false" || $data->getEncryptedNumber() == "") {
+            if(empty($data->getEncryptedNumber()) || empty($data->getEncryptedExpiryMonth()) || empty($data->getEncryptedExpiryYear())) {
                 Mage::throwException(Mage::helper('adyen')->__('Invalid credit number card.'));
             } else if($data->getEncryptedNumber()) {
                 $session = Mage::helper('adyen')->getSession();
@@ -70,7 +68,9 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
                 $session->setData('encrypted_number_'.$method, $data->getEncryptedNumber());
                 $session->setData('encrypted_expiry_month_'.$method, $data->getEncryptedExpiryMonth());
                 $session->setData('encrypted_expiry_year_'.$method, $data->getEncryptedExpiryYear());
-                $session->setData('encrypted_cvc_'.$method, $data->getEncryptedCvc());
+                if(!empty($data->getEncryptedCvc())) {
+                    $session->setData('encrypted_cvc_' . $method, $data->getEncryptedCvc());
+                }
                 $session->setData('cc_owner_'.$method, $data->getCcOwner());
             }
         } else {
@@ -248,7 +248,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
         } else {
             $disableZeroTotal = Mage::getStoreConfig('payment/adyen_cc/disable_zero_total');
         }
-        
+
         if (!is_null($quote) && $quote->getGrandTotal() <= 0 && $disableZeroTotal) {
             return false;
         }

@@ -243,7 +243,9 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                         $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
                         $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
                         $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
-                        $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
+                        if(!empty($encryptedCvc)) {
+                            $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
+                        }
                     } else {
                         if($paymentMethod == 'cc') {
 
