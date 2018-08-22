@@ -28,5 +28,5 @@ Make sure that your Magento cron is running every minute. We are using a cronjob
 ## Support
 You can create issues on our Magento Repository. In case of specific problems with your account, please contact <a href="mailto:support@adyen.com">support@adyen.com</a>.
 
-## Licence
+## License
 MIT license. For more information, see the LICENSE file.
