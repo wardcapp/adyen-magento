@@ -71,7 +71,6 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract
                 if(!empty($data->getEncryptedCvc())) {
                     $session->setData('encrypted_cvc_' . $method, $data->getEncryptedCvc());
                 }
-                $session->setData('cc_owner_'.$method, $data->getCcOwner());
             }
         } else {
             $info->setCcType($data->getCcType())

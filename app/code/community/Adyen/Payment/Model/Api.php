@@ -277,6 +277,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $result = curl_exec($ch);
         $error = curl_error($ch);
 
+        curl_close($ch);
+
         if ($result === false) {
             Adyen_Payment_Exception::throwException($error);
         }
@@ -287,8 +289,6 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                 Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
             );
         }
-
-        curl_close($ch);
 
         return $result;
     }
@@ -309,6 +309,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $result = curl_exec($ch);
         $error = curl_error($ch);
 
+        curl_close($ch);
+
         if ($result === false) {
             Adyen_Payment_Exception::throwException($error);
         }
@@ -326,7 +328,6 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             );
         }
 
-        curl_close($ch);
 
         return $result;
     }

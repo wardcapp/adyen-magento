@@ -236,8 +236,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $encryptedExpiryMonth = $session->getData('encrypted_expiry_month_'.$info->getCode());
                     $encryptedExpiryYear = $session->getData('encrypted_expiry_year_'.$info->getCode());
                     $encryptedCvc = $session->getData('encrypted_cvc_'.$info->getCode());
-                    $ccOwner = $session->getData('cc_owner_'.$info->getCode());
-                    $this->card->holderName = $ccOwner;
+                    $this->card->holderName = $payment->getCcOwner();
 
                     if($encryptedNumber != "" && $encryptedNumber != "false" ) {
                         $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
