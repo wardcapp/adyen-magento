@@ -1,1 +1,14 @@
 <script type="text/javascript" src="https://live.adyen.com/hpp/js/df.js?v=<?php echo date("Ymd"); ?>"></script>
+<script type="text/javascript">
+    var secf = document.createElement("script");
+<?php $adyenHelper = Mage::helper('adyen');
+
+?>
+    <?php if($adyenHelper->getConfigDataDemoMode()): ?>
+    secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.1.4.min.js";
+    <?php else : ?>
+    secf.src = "https://checkoutshopper-live.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.1.4.min.js";
+    <?php endif; ?>
+    secf.type = "text/javascript";
+    document.body.appendChild(secf);
+</script>

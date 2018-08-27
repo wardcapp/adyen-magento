@@ -12,9 +12,9 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
@@ -28,117 +28,82 @@
 <?php
 /** @var Adyen_Payment_Block_Form_Cc $this */
 $_code = $this->getMethodCode();
+$originKey = $this->getOriginKeys();
 ?>
-
 <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li class="adyen_payment_creditcard_labels">
         <?php $count = 0;
         foreach ($this->getCcAvailableTypes() as $_typeCode => $_data): ?>
             <?php $_filename = $this->getSkinUrl('images/adyen/' . strtolower($_data['code_alt']) . '_small.png'); ?>
-            <img id="cc_type_<?php echo $count; ?>" width="40" height="22" src="<?php echo $_filename; ?>" alt="" class="mid" />
+            <img id="cc_type_<?php echo $count; ?>" width="40" height="22" src="<?php echo $_filename; ?>" alt=""
+                 class="mid"/>
             <?php ++$count;
         endforeach; ?>
         <input type="hidden" id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" value=""/>
     </li>
-    <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_number">
-        <label for="creditCardNumber" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
-        <div class="input-box">
-            <input type="text" pattern="[0-9]*" autocomplete="cc-number" id="<?php echo $_code ?>_cc_number" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_number]\"" : " data-encrypted-name=\"number\""); ?> title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-type required-entry" value="" maxlength="23"/>
-        </div>
-    </li>
+
     <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">
         <label for="creditCardHolderName" class="required"><em>*</em><?php echo $this->__('Name on Card') ?></label>
         <div class="input-box">
-            <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry" autocomplete="cc-name" id="<?php echo $_code ?>_cc_owner" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_owner]\"" : "data-encrypted-name=\"holderName\""); ?> value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>" maxlength="100" />
+            <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry"
+                   autocomplete="cc-name"
+                   id="<?php echo $_code ?>_cc_owner" <?php echo("name=\"payment[cc_owner]\""); ?>
+                   value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>" maxlength="100"/>
         </div>
     </li>
-    <li class="adyen_payment_input_fields adyen_payment_input_fields_expiry">
-        <label for="<?php echo $_code ?>_expiration" class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
-        <div class="input-box">
-            <div class="v-fix adyen_expiry_month">
-                <select id="<?php echo $_code ?>_expiration" autocomplete="cc-exp-month" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_exp_month]\"" : "data-encrypted-name=\"expiryMonth\""); ?> class="month validate-cc-exp required-entry">
-                    <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
-                    <?php foreach ($this->getCcMonths() as $k=>$v): ?>
-                        <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
-                    <?php endforeach ?>
-                </select>
-            </div>
-            <div class="v-fix adyen_expiry_year">
-                <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
-                <select id="<?php echo $_code ?>_expiration_yr" autocomplete="cc-exp-year" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_exp_year]\"" : "data-encrypted-name=\"expiryYear\""); ?> class="year required-entry">
-                    <?php foreach ($this->getCcYears() as $k=>$v): ?>
-                        <option value="<?php echo $k?$k:'' ?>"<?php if($k==$_ccExpYear): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
-                    <?php endforeach ?>
-                </select>
-            </div>
-        </div>
-    </li>
+
+
     <?php echo $this->getChildHtml() ?>
 
-    <?php if($this->hasVerification()): ?>
-    <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_verify">
-        <label id="<?php echo $_code ?>_cc_cid_label" for="<?php echo $_code ?>_cc_cid" class="required"><em id="<?php echo $_code ?>_cc_cid_label_em">*</em><?php echo $this->__('Card Verification Number') ?></label>
-        <div class="input-box">
-            <div class="v-fix">
-                <input type="text" pattern="[0-9]{3,}" title="<?php echo $this->__('Card Verification Number') ?>" autocomplete="cc-csc" class="input-text cvv required-entry validate-digits validate-length" id="<?php echo $_code ?>_cc_cid" <?php echo (!$this->isCseEnabled() ? "name=\"payment[cc_cid]\"" : "data-encrypted-name=\"cvc\""); ?> value="" size="7" maxlength="4" />
-            </div>
-            <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
-        </div>
-    </li>
-    <?php endif; ?>
-    <?php if($this->hasInstallments()): ?>
-    <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_installments">
-        <label for="<?php echo $_code ?>_installments" class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
-        <div class="input-box">
-            <div class="v-fix">
-                <select id="<?php echo $_code ?>_installments" name="payment[additional_data]" class="number required-entry">
-                    <?php foreach ($this->getPossibleInstallments() as $k=>$v): ?>
-                        <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
-                    <?php endforeach ?>
-                </select>
-            </div>
-        </div>
-    </li>
-    <?php endif;?>
 
-    <?php if($this->canCreateBillingAgreement()): ?>
-    <li id="adyen-cc-remember-these-details" class="adyen_payment_input_fields">
-        <div class="input-box">
-            <div class="v-fix">
-                <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc" value="1" checked />
-                <label for="<?php echo $_code ?>_store_cc"><em>*</em><?php echo $this->__('Remember these details') ?></label>
+    <?php if ($this->hasInstallments()): ?>
+        <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_installments">
+            <label for="<?php echo $_code ?>_installments"
+                   class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
+            <div class="input-box">
+                <div class="v-fix">
+                    <select id="<?php echo $_code ?>_installments" name="payment[additional_data]"
+                            class="number required-entry">
+                        <?php foreach ($this->getPossibleInstallments() as $k => $v): ?>
+                            <option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </div>
             </div>
-        </div>
-    </li>
-    <script type="text/javascript">
-        // don't show save cc for quest checkout. Only possible to detect with javascript
-        if ($('login:guest') && $('login:guest').checked) {
-            $('adyen-cc-remember-these-details').hide();
-        }
-    </script>
+        </li>
     <?php endif; ?>
 
-    <script type="text/javascript">
+    <?php if ($this->canCreateBillingAgreement()): ?>
 
-        var group_types = <?php echo json_encode(array_keys($this->getCcAvailableTypes())); ?>;
+        <script type="text/javascript">
+            // don't show save cc for guest checkout. Only possible to detect with javascript
+            if ($('login:guest') && $('login:guest').checked) {
+                $('adyen-cc-remember-these-details').hide();
+            }
+        </script>
+    <?php endif; ?>
+
+
+    <script type="text/javascript">
+        var alt_types = <?php echo  json_encode(array_column($this->getCcAvailableTypes(), 'code_alt')); ?>;
 
         card_previousCardNumber = "";
 
         function selectBrand() {
-            cardNumber = (document.getElementById( '<?php echo $_code ?>_cc_number' ).value);
+            cardNumber = (document.getElementById('<?php echo $_code ?>_cc_number').value);
             dontHideErrorFrame = null;
 
             // empty card field - reset all
             if (cardNumber.length == 0) {
                 card_previousCardNumber = cardNumber;
-                cardSetCardBrand(null, false, group_types);
+                cardSetCardBrand(null, false, alt_types);
                 return;
             }
 
             // When editing the card (but not adding digits at the end), don't reformat the number
-            var l=0;
-            while(l < card_previousCardNumber.length && l < cardNumber.length) {
-                if(cardNumber[l] != card_previousCardNumber[l]) {
+            var l = 0;
+            while (l < card_previousCardNumber.length && l < cardNumber.length) {
+                if (cardNumber[l] != card_previousCardNumber[l]) {
                     card_previousCardNumber = cardNumber;
                     return;
                 }
@@ -147,18 +112,18 @@ $_code = $this->getMethodCode();
 
             // remove all whitespace
             reg = /\s+/g;
-            cardNumber = cardNumber.replace(reg,'');
+            cardNumber = cardNumber.replace(reg, '');
 
             nrOfDigits = cardNumber.length;
-            if(nrOfDigits > 19){
+            if (nrOfDigits > 19) {
                 return;
             }
 
             baseCard = getBaseCard(cardNumber, group_types);
 
-            if(baseCard != null) {
+            if (baseCard != null) {
                 cardSetCardBrand(baseCard, true, group_types);
-            } else if(nrOfDigits > 4) {
+            } else if (nrOfDigits > 4) {
                 cardSetCardBrand(null, true, group_types);
             } else {
                 cardSetCardBrand(null, false, group_types);
@@ -168,20 +133,19 @@ $_code = $this->getMethodCode();
             result = cardNumber.replace(/(\d{4})/g, '$1 ');
             result = result.replace(/\s+$/, ''); //remove trailing spaces
             card_previousCardNumber = result;
-            document.getElementById( '<?php echo $_code ?>_cc_number' ).value = result;
+            document.getElementById('<?php echo $_code ?>_cc_number').value = result;
         }
 
-        function cardSetCardBrand(selectedCard, greyInactive, group_types) {
-
-            for(var i = 0; i < group_types.length; ++i) {
-                var imageId =  'cc_type_'  + i;
-                if(selectedCard != null && group_types[i] == selectedCard.cardtype) {
+        function cardSetCardBrand(selectedCard, greyInactive, alt_types) {
+            for (var i = 0; i < alt_types.length; ++i) {
+                var imageId = 'cc_type_' + i;
+                if (selectedCard != null && alt_types[i] == selectedCard) {
                     // remove class
                     $(imageId).removeClassName('grey');
                     // set hidden field cc type for installments
-                    $('<?php echo $_code ?>_cc_type').setValue(selectedCard.cardtype);
+                    $('<?php echo $_code ?>_cc_type').setValue(selectedCard);
                 } else {
-                    if(greyInactive) {
+                    if (greyInactive) {
                         // add class
                         $(imageId).addClassName('grey');
                     } else {
@@ -189,34 +153,33 @@ $_code = $this->getMethodCode();
                         $(imageId).removeClassName('grey');
                     }
                 }
-                document.getElementById(imageId).style.display="inline";
+                document.getElementById(imageId).style.display = "inline";
             }
 
             <?php if($this->hasInstallments()): ?>
-            if(selectedCard != null ) {
+            if (selectedCard != null) {
                 var interval = setInterval(getInstallments(selectedCard.cardtype), 500);
             }
             <?php endif; ?>
 
             cardSetCvcElementselectedCardType(selectedCard != null ? selectedCard.cardtype : null);
 
-            cardSetCVCRequired(selectedCard != null ? selectedCard.cardtype : null);
         }
 
         function cardSetCvcElementselectedCardType(selectedCardType) {
-            var cvcCodeElem = document.getElementById( '<?php echo $_code; ?>_cc_cid' );
+            var cvcCodeElem = document.getElementById('<?php echo $_code; ?>_cc_cid');
 
             // first remove classnames
-            if(cvcCodeElem != null) {
+            if (cvcCodeElem != null) {
                 cvcCodeElem.removeClassName('maximum-length-3');
                 cvcCodeElem.removeClassName('minimum-length-3');
                 cvcCodeElem.removeClassName('maximum-length-4');
                 cvcCodeElem.removeClassName('minimum-length-4');
             }
 
-            if(selectedCardType == null) {
+            if (selectedCardType == null) {
                 // error do nothing
-            } else if(selectedCardType == "AE") {
+            } else if (selectedCardType == "AE") {
                 cvcCodeElem.maxLength = 4;
                 cvcCodeElem.addClassName('maximum-length-4');
                 cvcCodeElem.addClassName('minimum-length-4');
@@ -229,21 +192,21 @@ $_code = $this->getMethodCode();
 
         function cardSetCVCRequired(selectedCardType) {
             <?php if($this->hasVerification()): ?>
-                var cvcCodeElem = document.getElementById( '<?php echo $_code; ?>_cc_cid');
-                var cvcCodeElemLabel = document.getElementById( '<?php echo $_code; ?>_cc_cid_label');
-                var cvcCodeElemLabelEm = document.getElementById( '<?php echo $_code; ?>_cc_cid_label_em');
-            
-                if(selectedCardType != null && selectedCardType == "SM") {
-                    // cvc not required
-                    cvcCodeElem.removeClassName('required-entry');
-                    cvcCodeElemLabel.removeClassName('required');
-                    cvcCodeElemLabelEm.hide();
-                } else {
-                    // cvc required
-                    cvcCodeElem.addClassName('required-entry');
-                    cvcCodeElemLabel.addClassName('required');
-                    cvcCodeElemLabelEm.show();
-                }
+            var cvcCodeElem = document.getElementById('<?php echo $_code; ?>_cc_cid');
+            var cvcCodeElemLabel = document.getElementById('<?php echo $_code; ?>_cc_cid_label');
+            var cvcCodeElemLabelEm = document.getElementById('<?php echo $_code; ?>_cc_cid_label_em');
+
+            if (selectedCardType != null && selectedCardType == "SM") {
+                // cvc not required
+                cvcCodeElem.removeClassName('required-entry');
+                cvcCodeElemLabel.removeClassName('required');
+                cvcCodeElemLabelEm.hide();
+            } else {
+                // cvc required
+                cvcCodeElem.addClassName('required-entry');
+                cvcCodeElemLabel.addClassName('required');
+                cvcCodeElemLabelEm.show();
+            }
             <?php endif; ?>
         }
 
@@ -254,17 +217,17 @@ $_code = $this->getMethodCode();
             // get the installments for this cardtype
             var ccType = variant;
 
-            var url = '<?php echo $this->getUrl('adyen/GetInstallments', array('_secure'=>true)); ?>';
+            var url = '<?php echo $this->getUrl('adyen/GetInstallments', array('_secure' => true)); ?>';
 
-            if(ajaxReq && ajaxReq.readystate != 4){
+            if (ajaxReq && ajaxReq.readystate != 4) {
                 ajaxReq.transport.abort();
             }
 
             ajaxReq = new Ajax.Request(url, {
                 parameters: {ccType: ccType, isAjax: 1, method: 'POST'},
-                onSuccess: function(transport) {
+                onSuccess: function (transport) {
 
-                    if(transport.status == 200) {
+                    if (transport.status == 200) {
 
                         // get current selected installment
                         var currentSelectedInstallment = document.getElementById('<?php echo $_code ?>_installments').getValue();
@@ -282,94 +245,122 @@ $_code = $this->getMethodCode();
                             opt.text = response[key]
                             opt.value = key;
                             // check if selected installment is still available
-                            if(currentSelectedInstallment == key) {
+                            if (currentSelectedInstallment == key) {
                                 sel = true;
                             }
                             $('<?php echo $_code ?>_installments').options.add(opt);
                         }
 
-                        if(sel == true && currentSelectedInstallment) {
-                            document.getElementById('adyen_cc_installments').value=currentSelectedInstallment;
+                        if (sel == true && currentSelectedInstallment) {
+                            document.getElementById('adyen_cc_installments').value = currentSelectedInstallment;
                         }
                     }
                 },
-                onFailure: function(){
+                onFailure: function () {
                     alert('<?php echo $this->jsQuoteEscape($this->__('Server Error. Please try again.')) ?>');
                 }
             });
         }
+        var cseInit = function () {
+            var styleObject = {
+                base: {
+                    color: 'black',
+                    fontSize: '16px',
+                    fontSmoothing: 'antialiased',
+                    fontFamily: 'Helvetica'
+                },
+                error: {
+                    color: 'red'
+                },
+                placeholder: {
+                    color: '#d8d8d8'
+                },
+                validated: {
+                    color: 'green'
+                }
+            };
+            var securedFields = csf(
+                {
+                    configObject: {
+                        originKey: "<?php echo $originKey;?>",
+                        cardGroupTypes : alt_types
+                    },
+                    rootNode: '.form-div',
+                    paymentMethods : {
+                        card : {
+                            sfStyles : styleObject,
+                            placeholders: {
+                                hostedCardNumberField : '4111 1111 1111 1111',
+                                hostedExpiryDateField : '08/18',
+                                hostedSecurityCodeField : '737'
+                            }
+                        }
+                    }
+                }
+            );
+            securedFields.onBrand( function ( brandObject ) {
+                if ( brandObject.brand ) {
+                    console.log(brandObject.brand);
+                    cardSetCardBrand(brandObject.brand, true, alt_types);
+                }
+            } );
+        };
 
-        // default
-        window.onload = function(){
-            cardSetCardBrand(null, false, group_types);
-        }
-
-        // observers
-        Event.observe($('<?php echo $_code ?>_cc_number'), 'change', selectBrand);
-        Event.observe($('<?php echo $_code ?>_cc_number'), 'keyup', selectBrand);
+        cseInit();
 
     </script>
 
     <?php if ($this->isCseEnabled()): ?>
-        <input type="hidden" id="payment_encrypted_data" name="payment[encrypted_data]" value=""/>
-        <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>" data-encrypted-name="generationtime" />
+        <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime"
+               value="<?php echo date("c"); ?>" data-encrypted-name="generationtime"/>
         <script type="text/javascript">
 
-            // get closest form element
-            var element = $('payment_form_<?php echo $_code ?>');
-            var form =  element.match('form') ? element : element.up('form');
-            var cse_key = <?php echo json_encode($this->getCsePublicKey()); ?>;
-            var cse_options = {
-                name:  'payment_encrypted_data',
-                cvcIgnoreBins: '6703,50,56,57,58,6' // ignore CVC for maestro cards
-            };
 
-            var cseUpdate = function() {
-                try {
-                    form.cseForm = form.cseForm || adyen.encrypt.createEncryptedForm(form, cse_key, cse_options);
-                    // encrypt data directly because submit button is not always on the page
-                    form.cseForm.createEncryptedField(form.cseForm.encrypt());
-                } catch (e) {
-                    if (typeof console == "object") {
-                        console.error(e);
-                    } else {
-                        alert("Warning: Adyen Client Side Encryption cannot succeed.");
-                    }
-                }
-
-            };
-
-            var cseInit = function() {
-                if (typeof adyen === 'undefined') {
-                    var script = document.createElement("script");
-                    script.type = "text/javascript";
-                    script.src = "<?php echo $this->getJsUrl('adyen/payment/adyen.encrypt_0_1_18.js'); ?>";
-                    document.body.appendChild(script);
-                }
-
-                // if the browser does not support forach method implement it
-                if (!Array.prototype.forEach) {
-                    Array.prototype.forEach = function(fn, scope) {
-                        for(var i = 0, len = this.length; i < len; ++i) {
-                            fn.call(scope, this[i], i, this);
-                        }
-                    }
-                }
-
-                var fields = $$('#payment_form_<?php echo $_code ?> input, #payment_form_<?php echo $_code ?> textarea, #payment_form_<?php echo $_code ?> select');
-                fields.forEach(function(field) {
-                    field.observe('change', cseUpdate);
-
-                    // the creditcard field needs to be updated on keyup as well
-                    // old browsers don't allow keyup and change event and because the cardBrand logo is shown
-                    // on keyup we need to update the CSE as well on keyup for creditcard number
-                    if(field.id == "<?php echo $_code ?>_cc_number") {
-                        field.observe('keyup', cseUpdate);
-                    }
-                });
-            };
-
-            cseInit();
         </script>
-    <?php endif;?>
+    <?php endif; ?>
+
+    <div class="checkout-container">
+            <div class="form-div">
+                <form class="form-list">
+                    <input type="hidden" name="txvariant" value="card"/>
+                    <div class="form">
+                        <div class="input-container">
+                            <span class="input-label">Card number:</span>
+                            <span class="adyen_payment_input_fields" data-hosted-id="hostedCardNumberField"
+                                  data-cse="payment[encrypted_number]"></span>
+                        </div>
+                        <div class="input-container">
+                            <span class="input-label">Expiry month:</span>
+                            <span class="input-field" data-hosted-id="hostedExpiryMonthField"
+                                  data-cse="payment[encrypted_expiry_month]"></span>
+                        </div> <div class="input-container">
+                            <span class="input-label">Expiry year:</span>
+                            <span class="input-field" data-hosted-id="hostedExpiryYearField"
+                                  data-cse="payment[encrypted_expiry_year]"></span>
+                        </div>
+                        <div class="input-container">
+                            <span class="input-label label-security-code">Security code:</span>
+                            <span class="input-field" data-hosted-id="hostedSecurityCodeField"
+                                  data-cse="payment[encrypted_cvc]"></span>
+                        </div>
+                        <div class="input-box">
+                            <div class="v-fix">
+                                <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc"
+                                       value="1" checked/>
+                                <label for="<?php echo $_code ?>_store_cc"><em>*</em><?php echo $this->__('Remember these details') ?>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+
+
+
+        </script>
+
 </ul>

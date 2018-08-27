@@ -328,6 +328,19 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         return Mage::helper('core')->decrypt($this->getConfigData('ws_password_live', null, $storeId));
     }
 
+    /**
+     * @param null $storeId
+     *
+     * @return string
+     */
+    public function getConfigDataApiKey($storeId = null)
+    {
+        if ($this->getConfigDataDemoMode($storeId)) {
+            return Mage::helper('core')->decrypt($this->getConfigData('api_key_test', null, $storeId));
+        }
+        return Mage::helper('core')->decrypt($this->getConfigData('api_key_live', null, $storeId));
+    }
+
 
     /**
      * @param      $code

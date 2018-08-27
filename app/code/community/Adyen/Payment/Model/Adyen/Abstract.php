@@ -1036,4 +1036,12 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
 
         return $recurringContractDetail;
     }
+
+    public function originKeys()
+    {
+        // Gets the current store's id
+        $storeId = Mage::app()->getStore()->getStoreId();
+
+        return $this->_api()->originKeys($storeId);
+    }
 }

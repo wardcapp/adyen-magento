@@ -63,6 +63,16 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->bankAccount = new Adyen_Payment_Model_Adyen_Data_BankAccount(); // for SEPA
     }
 
+    /**
+     * @param Varien_Object $payment
+     * @param $amount
+     * @param null $paymentMethod
+     * @param null $merchantAccount
+     * @param null $recurringType
+     * @param null $recurringPaymentType
+     * @param null $enableMoto
+     * @return $this
+     */
     public function create(
         Varien_Object $payment,
         $amount,
@@ -220,18 +230,21 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $kv->value = new SoapVar(base64_encode($token), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
                     $this->additionalData->entry = $kv;
                 } else if (Mage::getModel('adyen/adyen_cc')->isCseEnabled()) {
-
-                    $this->card = null;
-
                     $session = Mage::helper('adyen')->getSession();
                     $info = $payment->getMethodInstance();
-                    $encryptedData = $session->getData('encrypted_data_'.$info->getCode());
+                    $encryptedNumber = $session->getData('encrypted_number_'.$info->getCode());
+                    $encryptedExpiryMonth = $session->getData('encrypted_expiry_month_'.$info->getCode());
+                    $encryptedExpiryYear = $session->getData('encrypted_expiry_year_'.$info->getCode());
+                    $encryptedCvc = $session->getData('encrypted_cvc_'.$info->getCode());
+                    $this->card->holderName = $payment->getCcOwner();
 
-                    if($encryptedData != "" && $encryptedData != "false" ) {
-                        $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                        $kv->key = new SoapVar("card.encrypted.json", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kv->value = new SoapVar($encryptedData, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $this->additionalData->entry = $kv;
+                    if($encryptedNumber != "" && $encryptedNumber != "false" ) {
+                        $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
+                        $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
+                        $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
+                        if(!empty($encryptedCvc)) {
+                            $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
+                        }
                     } else {
                         if($paymentMethod == 'cc') {
 
