@@ -220,9 +220,10 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         return true;
     }
 
-    public function originKeys($store = null)
+    public function originKeys($store)
     {
-        $cacheId = "origin_keys";
+        $cacheId = "adyen_origin_keys_".$store;
+
         $originUrl = Mage::getBaseUrl();
         if (substr($originUrl, -1) == '/') {
             $originUrl = substr($originUrl, 0, -1);
@@ -277,13 +278,14 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $result = curl_exec($ch);
         $error = curl_error($ch);
 
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
         curl_close($ch);
 
         if ($result === false) {
             Adyen_Payment_Exception::throwException($error);
         }
 
-        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpStatus != 200) {
             Adyen_Payment_Exception::throwException(
                 Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
@@ -309,13 +311,13 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $result = curl_exec($ch);
         $error = curl_error($ch);
 
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
         curl_close($ch);
 
         if ($result === false) {
             Adyen_Payment_Exception::throwException($error);
         }
-
-        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         if ($httpStatus == 403) {
             Adyen_Payment_Exception::throwException(
@@ -327,7 +329,6 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                 Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
             );
         }
-
 
         return $result;
     }
