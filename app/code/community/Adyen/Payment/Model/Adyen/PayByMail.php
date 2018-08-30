@@ -98,8 +98,9 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
     public function getFormUrl($fields = array())
     {
         $isConfigDemoMode = $this->getConfigDataDemoMode();
+        $paymentRoutine = Mage::getStoreConfig("payment/adyen_pay_by_mail/payment_routines");
 
-        return Mage::helper('adyen/payment')->prepareFieldsforUrl($fields, $isConfigDemoMode);
+        return Mage::helper('adyen/payment')->prepareFieldsforUrl($fields, $isConfigDemoMode, $paymentRoutine);
     }
 
     /**
