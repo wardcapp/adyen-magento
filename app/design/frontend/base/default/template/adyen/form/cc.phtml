@@ -42,15 +42,9 @@ $originKey = $this->getOriginKeys();
         <input type="hidden" id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" value=""/>
     </li>
 
-    <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">
-        <label for="creditCardHolderName" class="required"><em>*</em><?php echo $this->__('Name on Card') ?></label>
-        <div class="input-box">
-            <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry"
-                   autocomplete="cc-name"
-                   id="<?php echo $_code ?>_cc_owner" <?php echo("name=\"payment[cc_owner]\""); ?>
-                   value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>" maxlength="100"/>
-        </div>
-    </li>
+    <!--    <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">-->
+
+    <!--    </li>-->
 
 
     <?php echo $this->getChildHtml() ?>
@@ -76,16 +70,16 @@ $originKey = $this->getOriginKeys();
     <?php if ($this->canCreateBillingAgreement()): ?>
 
         <script type="text/javascript">
-            // don't show save cc for guest checkout. Only possible to detect with javascript
-            if ($('login:guest') && $('login:guest').checked) {
-                $('adyen-cc-remember-these-details').hide();
-            }
+//            // don't show save cc for guest checkout. Only possible to detect with javascript
+//            if ($('login:guest') && $('login:guest').checked) {
+//                $('adyen-cc-remember-these-details').hide();
+//            }
         </script>
     <?php endif; ?>
 
 
     <script type="text/javascript">
-        var alt_types = <?php echo  json_encode(array_column($this->getCcAvailableTypes(), 'code_alt')); ?>;
+        var alt_types = <?php echo json_encode(array_column($this->getCcAvailableTypes(), 'code_alt')); ?>;
 
         card_previousCardNumber = "";
 
@@ -283,27 +277,36 @@ $originKey = $this->getOriginKeys();
                 {
                     configObject: {
                         originKey: "<?php echo $originKey;?>",
-                        cardGroupTypes : alt_types
+                        cardGroupTypes: alt_types
                     },
                     rootNode: '.form-div',
-                    paymentMethods : {
-                        card : {
-                            sfStyles : styleObject,
+                    allowedDOMAccess: false,
+                    paymentMethods: {
+                        card: {
+                            sfStyles: styleObject,
                             placeholders: {
-                                hostedCardNumberField : '4111 1111 1111 1111',
-                                hostedExpiryDateField : '08/18',
-                                hostedSecurityCodeField : '737'
+                                hostedCardNumberField: '4111 1111 1111 1111',
+                                hostedExpiryDateField: '08/18',
+                                hostedSecurityCodeField: '737'
                             }
                         }
                     }
                 }
             );
-            securedFields.onBrand( function ( brandObject ) {
-                if ( brandObject.brand ) {
+            securedFields.onBrand(function (brandObject) {
+                if (brandObject.brand) {
                     console.log(brandObject.brand);
                     cardSetCardBrand(brandObject.brand, true, alt_types);
                 }
-            } );
+            });
+
+            securedFields.onFieldValid(function (result) {
+                if (result.valid) {
+                    document.getElementById(result.encryptedFieldName).value = result.blob;
+                }
+            });
+
+
         };
 
         cseInit();
@@ -320,47 +323,50 @@ $originKey = $this->getOriginKeys();
     <?php endif; ?>
 
     <div class="checkout-container">
-            <div class="form-div">
-                <form class="form-list">
-                    <input type="hidden" name="txvariant" value="card"/>
-                    <div class="form">
-                        <div class="input-container">
-                            <span class="input-label">Card number:</span>
-                            <span class="adyen_payment_input_fields" data-hosted-id="hostedCardNumberField"
-                                  data-cse="payment[encrypted_number]"></span>
-                        </div>
-                        <div class="input-container">
-                            <span class="input-label">Expiry month:</span>
-                            <span class="input-field" data-hosted-id="hostedExpiryMonthField"
-                                  data-cse="payment[encrypted_expiry_month]"></span>
-                        </div> <div class="input-container">
-                            <span class="input-label">Expiry year:</span>
-                            <span class="input-field" data-hosted-id="hostedExpiryYearField"
-                                  data-cse="payment[encrypted_expiry_year]"></span>
-                        </div>
-                        <div class="input-container">
-                            <span class="input-label label-security-code">Security code:</span>
-                            <span class="input-field" data-hosted-id="hostedSecurityCodeField"
-                                  data-cse="payment[encrypted_cvc]"></span>
-                        </div>
-                        <div class="input-box">
-                            <div class="v-fix">
-                                <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc"
-                                       value="1" checked/>
-                                <label for="<?php echo $_code ?>_store_cc"><em>*</em><?php echo $this->__('Remember these details') ?>
-                                </label>
-                            </div>
-                        </div>
+        <div class="form-div">
+            <div class="js-chckt-pm__pm-holder">
+                <input type="hidden" name="txvariant" value="card"/>
+                <div class="input-container">
+                    <span class="input-label"><?php echo $this->__('Name on Card') ?></span>
+                    <span class="input-field required-entry"> <input type="text"
+                                                                     title="<?php echo $this->__('Name on Card') ?>"
+                                                                     class="input-field required-entry"
+                                                                     autocomplete="cc-name"
+                                                                     id="<?php echo $_code ?>_cc_owner" <?php echo("name=\"payment[cc_owner]\""); ?>
+                                                                     value="<?php echo $this->htmlEscape($this->getInfoData('cc_owner')) ?>"
+                                                                     maxlength="100"/>  </span>
+
+                </div>
+                <div class="input-container">
+                    <span class="input-label">Card number:</span>
+                    <span class="input-field" data-cse="encryptedCardNumber"></span>
+                </div>
+                <div class="input-container">
+                    <span class="input-label">Expiry month:</span>
+                    <span class="input-field" data-cse="encryptedExpiryMonth"></span>
+                </div>
+                <div class="input-container">
+                    <span class="input-label">Expiry year:</span>
+                    <span class="input-field" data-cse="encryptedExpiryYear"></span>
+                </div>
+                <div class="input-container">
+                    <span class="input-label label-security-code">Security code:</span>
+                    <span class="input-field" data-cse="encryptedSecurityCode"</span>
+                </div>
+                <div class="input-box">
+                    <div class="v-fix">
+                        <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc"
+                               value="1" checked/>
+                        <label for="<?php echo $_code ?>_store_cc"><em>*</em><?php echo $this->__('Remember these details') ?>
+                        </label>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
-        <script type="text/javascript">
-
-
-
-
-        </script>
-
+        <input type="hidden" name="payment[encrypted_number]" id="encryptedCardNumber" value="">
+        <input type="hidden" name="payment[encrypted_expiry_month]" id="encryptedExpiryMonth" value="">
+        <input type="hidden" name="payment[encrypted_expiry_year]" id="encryptedExpiryYear" value="">
+        <input type="hidden" name="payment[encrypted_cvc]" id="encryptedSecurityCode" value="">
+    </div>
 </ul>
