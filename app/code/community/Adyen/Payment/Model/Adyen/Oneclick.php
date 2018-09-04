@@ -101,7 +101,8 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         if ($this->isCseEnabled()) {
             $method = $this->getCode();
             $encryptedData = $data->getData('encrypted_data_'.$method);
-            $session->setData('encrypted_data_'.$method, $encryptedData);
+//            $session->setData('encrypted_data_'.$method, $encryptedData);
+            $session->setData('encrypted_cvc_' . $method, $encryptedData);
         } else {
 
             // check if expiry month and year is changed

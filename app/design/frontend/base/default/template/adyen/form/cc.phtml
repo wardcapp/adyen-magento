@@ -70,10 +70,10 @@ $originKey = $this->getOriginKeys();
     <?php if ($this->canCreateBillingAgreement()): ?>
 
         <script type="text/javascript">
-//            // don't show save cc for guest checkout. Only possible to detect with javascript
-//            if ($('login:guest') && $('login:guest').checked) {
-//                $('adyen-cc-remember-these-details').hide();
-//            }
+            //            // don't show save cc for guest checkout. Only possible to detect with javascript
+            //            if ($('login:guest') && $('login:guest').checked) {
+            //                $('adyen-cc-remember-these-details').hide();
+            //            }
         </script>
     <?php endif; ?>
 
@@ -273,13 +273,15 @@ $originKey = $this->getOriginKeys();
                     color: 'green'
                 }
             };
+            debugger;
+            ;
             var securedFields = csf(
                 {
                     configObject: {
                         originKey: "<?php echo $originKey;?>",
                         cardGroupTypes: alt_types
                     },
-                    rootNode: '.form-div',
+                    rootNode: 'body',
                     allowedDOMAccess: false,
                     paymentMethods: {
                         card: {
@@ -302,7 +304,12 @@ $originKey = $this->getOriginKeys();
 
             securedFields.onFieldValid(function (result) {
                 if (result.valid) {
-                    document.getElementById(result.encryptedFieldName).value = result.blob;
+                    debugger;
+                    ;
+                    if (result.txVariant == 'card') {
+                        document.getElementById(result.encryptedFieldName).value = result.blob;
+                    }
+                    document.getElementById(result.txVariant).value = result.blob;
                 }
             });
 
