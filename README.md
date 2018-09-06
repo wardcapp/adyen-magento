@@ -25,6 +25,12 @@ composer require adyen/payment
 ## Setup Cron
 Make sure that your Magento cron is running every minute. We are using a cronjob to process the notifications, our webhook service. The cronjob will be executed every minute. It only executes the notifications that have been received at least 5 minutes ago. This is to ensure that Magento has created the order, and all save after events are executed. A handy tool to get insight into your cronjobs is AOE scheduler. You can download this tool through <a target="_blank" href="https://github.com/AOEpeople/Aoe_Scheduler/releases">GitHub</a>.
 
+## Caching / Varnish configuration
+In case you are using a caching layer such as Varnish, please exclude the following URL pattern from being cached
+```
+/adyen/process/*
+```
+
 ## Support
 You can create issues on our Magento Repository. In case of specific problems with your account, please contact <a href="mailto:support@adyen.com">support@adyen.com</a>.
 
