@@ -234,8 +234,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->additionalData->entry = $kv;
                 } else {
                     if (Mage::getModel('adyen/adyen_cc')->isCseEnabled()) {
-                        Mage::log("asdasdasd", null, "adyen_api.log");
-
                         $session = Mage::helper('adyen')->getSession();
                         $info = $payment->getMethodInstance();
                         $encryptedNumber = $session->getData('encrypted_number_' . $info->getCode());
@@ -246,6 +244,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                         if ($encryptedNumber != "" && $encryptedNumber != "false") {
                             $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
+                        }
+                        if($encryptedExpiryMonth != "" && $encryptedExpiryYear != ""){
                             $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
                             $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
                         }

@@ -42,13 +42,7 @@ $originKey = $this->getOriginKeys();
         <input type="hidden" id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" value=""/>
     </li>
 
-    <!--    <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_name">-->
-
-    <!--    </li>-->
-
-
     <?php echo $this->getChildHtml() ?>
-
 
     <?php if ($this->hasInstallments()): ?>
         <li class="adyen_payment_input_fields adyen_payment_input_fields_cc_installments">
@@ -70,65 +64,16 @@ $originKey = $this->getOriginKeys();
     <?php if ($this->canCreateBillingAgreement()): ?>
 
         <script type="text/javascript">
-            //            // don't show save cc for guest checkout. Only possible to detect with javascript
-            //            if ($('login:guest') && $('login:guest').checked) {
-            //                $('adyen-cc-remember-these-details').hide();
-            //            }
+            // don't show save cc for guest checkout. Only possible to detect with javascript
+            if ($('login:guest') && $('login:guest').checked) {
+                $('adyen-remember-details').hide();
+            }
         </script>
     <?php endif; ?>
 
 
     <script type="text/javascript">
         var alt_types = <?php echo json_encode(array_column($this->getCcAvailableTypes(), 'code_alt')); ?>;
-
-        card_previousCardNumber = "";
-
-        function selectBrand() {
-            cardNumber = (document.getElementById('<?php echo $_code ?>_cc_number').value);
-            dontHideErrorFrame = null;
-
-            // empty card field - reset all
-            if (cardNumber.length == 0) {
-                card_previousCardNumber = cardNumber;
-                cardSetCardBrand(null, false, alt_types);
-                return;
-            }
-
-            // When editing the card (but not adding digits at the end), don't reformat the number
-            var l = 0;
-            while (l < card_previousCardNumber.length && l < cardNumber.length) {
-                if (cardNumber[l] != card_previousCardNumber[l]) {
-                    card_previousCardNumber = cardNumber;
-                    return;
-                }
-                l++;
-            }
-
-            // remove all whitespace
-            reg = /\s+/g;
-            cardNumber = cardNumber.replace(reg, '');
-
-            nrOfDigits = cardNumber.length;
-            if (nrOfDigits > 19) {
-                return;
-            }
-
-            baseCard = getBaseCard(cardNumber, group_types);
-
-            if (baseCard != null) {
-                cardSetCardBrand(baseCard, true, group_types);
-            } else if (nrOfDigits > 4) {
-                cardSetCardBrand(null, true, group_types);
-            } else {
-                cardSetCardBrand(null, false, group_types);
-            }
-
-            //show value with white space after four numbers
-            result = cardNumber.replace(/(\d{4})/g, '$1 ');
-            result = result.replace(/\s+$/, ''); //remove trailing spaces
-            card_previousCardNumber = result;
-            document.getElementById('<?php echo $_code ?>_cc_number').value = result;
-        }
 
         function cardSetCardBrand(selectedCard, greyInactive, alt_types) {
             for (var i = 0; i < alt_types.length; ++i) {
@@ -156,54 +101,7 @@ $originKey = $this->getOriginKeys();
             }
             <?php endif; ?>
 
-            cardSetCvcElementselectedCardType(selectedCard != null ? selectedCard.cardtype : null);
-
         }
-
-        function cardSetCvcElementselectedCardType(selectedCardType) {
-            var cvcCodeElem = document.getElementById('<?php echo $_code; ?>_cc_cid');
-
-            // first remove classnames
-            if (cvcCodeElem != null) {
-                cvcCodeElem.removeClassName('maximum-length-3');
-                cvcCodeElem.removeClassName('minimum-length-3');
-                cvcCodeElem.removeClassName('maximum-length-4');
-                cvcCodeElem.removeClassName('minimum-length-4');
-            }
-
-            if (selectedCardType == null) {
-                // error do nothing
-            } else if (selectedCardType == "AE") {
-                cvcCodeElem.maxLength = 4;
-                cvcCodeElem.addClassName('maximum-length-4');
-                cvcCodeElem.addClassName('minimum-length-4');
-            } else {
-                cvcCodeElem.maxLength = 3;
-                cvcCodeElem.addClassName('maximum-length-3');
-                cvcCodeElem.addClassName('minimum-length-3');
-            }
-        }
-
-        function cardSetCVCRequired(selectedCardType) {
-            <?php if($this->hasVerification()): ?>
-            var cvcCodeElem = document.getElementById('<?php echo $_code; ?>_cc_cid');
-            var cvcCodeElemLabel = document.getElementById('<?php echo $_code; ?>_cc_cid_label');
-            var cvcCodeElemLabelEm = document.getElementById('<?php echo $_code; ?>_cc_cid_label_em');
-
-            if (selectedCardType != null && selectedCardType == "SM") {
-                // cvc not required
-                cvcCodeElem.removeClassName('required-entry');
-                cvcCodeElemLabel.removeClassName('required');
-                cvcCodeElemLabelEm.hide();
-            } else {
-                // cvc required
-                cvcCodeElem.addClassName('required-entry');
-                cvcCodeElemLabel.addClassName('required');
-                cvcCodeElemLabelEm.show();
-            }
-            <?php endif; ?>
-        }
-
 
         var ajaxReq;
         function getInstallments(variant) {
@@ -255,69 +153,33 @@ $originKey = $this->getOriginKeys();
                 }
             });
         }
-        var cseInit = function () {
-            var styleObject = {
-                base: {
-                    color: 'black',
-                    fontSize: '16px',
-                    fontSmoothing: 'antialiased',
-                    fontFamily: 'Helvetica'
-                },
-                error: {
-                    color: 'red'
-                },
-                placeholder: {
-                    color: '#d8d8d8'
-                },
-                validated: {
-                    color: 'green'
-                }
-            };
-            debugger;
-            ;
-            var securedFields = csf(
-                {
-                    configObject: {
-                        originKey: "<?php echo $originKey;?>",
-                        cardGroupTypes: alt_types
-                    },
-                    rootNode: 'body',
-                    allowedDOMAccess: false,
-                    paymentMethods: {
-                        card: {
-                            sfStyles: styleObject,
-                            placeholders: {
-                                hostedCardNumberField: '4111 1111 1111 1111',
-                                hostedExpiryDateField: '08/18',
-                                hostedSecurityCodeField: '737'
-                            }
-                        }
-                    }
-                }
-            );
-            securedFields.onBrand(function (brandObject) {
-                if (brandObject.brand) {
-                    console.log(brandObject.brand);
-                    cardSetCardBrand(brandObject.brand, true, alt_types);
-                }
-            });
 
-            securedFields.onFieldValid(function (result) {
-                if (result.valid) {
-                    debugger;
-                    ;
-                    if (result.txVariant == 'card') {
+        var securedFields =
+            {
+                originKey: "<?php echo $originKey;?>",
+                cardGroupTypes: alt_types,
+                rootNode: '#adyen-cc-checkout-container',
+                allowedDOMAccess: false,
+                securedFieldStyling: {
+                    placeholders: {
+                        encryptedCardNumber: '4111 1111 1111 1111',
+                        encryptedExpiryMonth: '10',
+                        encryptedExpiryYear: '20',
+                        encryptedSecurityCode: '737'
+                    }
+                },
+                callbacks: {
+                    onBrand: function (brandObject) {
+                        if (brandObject.brand) {
+                            cardSetCardBrand(brandObject.brand, true, alt_types);
+                        }
+                    },
+                    onFieldValid: function (result) {
                         document.getElementById(result.encryptedFieldName).value = result.blob;
                     }
-                    document.getElementById(result.txVariant).value = result.blob;
                 }
-            });
-
-
-        };
-
-        cseInit();
-
+            };
+        new csf(securedFields);
     </script>
 
     <?php if ($this->isCseEnabled()): ?>
@@ -329,7 +191,7 @@ $originKey = $this->getOriginKeys();
         </script>
     <?php endif; ?>
 
-    <div class="checkout-container">
+    <div class="checkout-container" id="adyen-cc-checkout-container">
         <div class="form-div">
             <div class="js-chckt-pm__pm-holder">
                 <input type="hidden" name="txvariant" value="card"/>
@@ -360,7 +222,7 @@ $originKey = $this->getOriginKeys();
                     <span class="input-label label-security-code">Security code:</span>
                     <span class="input-field" data-cse="encryptedSecurityCode"</span>
                 </div>
-                <div class="input-box">
+                <div class="input-box" id="adyen-remember-details">
                     <div class="v-fix">
                         <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc"
                                value="1" checked/>

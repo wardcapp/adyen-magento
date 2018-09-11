@@ -77,7 +77,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
 
         // get storeId
         $session = Mage::helper('adyen')->getSession();
-        
+
         if(Mage::app()->getStore()->isAdmin()) {
             $store = $session->getStore();
         } else {
@@ -100,9 +100,13 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
 
         if ($this->isCseEnabled()) {
             $method = $this->getCode();
-            $encryptedData = $data->getData('encrypted_data_'.$method);
-//            $session->setData('encrypted_data_'.$method, $encryptedData);
-            $session->setData('encrypted_cvc_' . $method, $encryptedData);
+            $encryptedMonth = $data->getData('encrypted_expiry_month');
+            $encryptedYear = $data->getData('encrypted_expiry_year');
+            $encryptedCvc = $data->getData('encrypted_data_'.$method);
+            $session->setData('encrypted_cvc_' . $method, $encryptedCvc);
+            $session->setData('encrypted_expiry_month_' . $method, $encryptedMonth);
+            $session->setData('encrypted_expiry_year_' . $method, $encryptedYear);
+
         } else {
 
             // check if expiry month and year is changed
@@ -289,7 +293,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         }
 
         if (isset($data['variant']) && $data['variant'] == 'paypal') {
-            
+
             $email = "";
             if (isset($data['tokenDetails']['tokenData']['EmailId'])) {
                 $email = $data['tokenDetails']['tokenData']['EmailId'];

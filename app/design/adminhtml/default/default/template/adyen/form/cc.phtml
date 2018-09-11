@@ -81,56 +81,27 @@ $originKey = $this->getOriginKeys();
         <input type="hidden" name="payment[encrypted_cvc]" id="encryptedSecurityCode" value="">
     </div>
 </ul>
-<?php if ($this->isCseEnabled()): ?>
-    <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>"
-           data-encrypted-name="generationtime"/>
-    <script type="text/javascript">
-        var cseInit = function () {
-            var styleObject = {
-                base: {
-                    color: 'black',
-                    fontSize: '16px',
-                    fontSmoothing: 'antialiased',
-                    fontFamily: 'Helvetica'
-                },
-                error: {
-                    color: 'red'
-                },
-                placeholder: {
-                    color: '#d8d8d8'
-                },
-                validated: {
-                    color: 'green'
+<input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>"
+       data-encrypted-name="generationtime"/>
+<script type="text/javascript">
+    var securedFields =
+        {
+            originKey: "<?php echo $originKey;?>",
+            rootNode: '.form-div',
+            allowedDOMAccess: false,
+            securedFieldStyling: {
+                placeholders: {
+                    encryptedCardNumber: '4111 1111 1111 1111',
+                    encryptedExpiryMonth: '10',
+                    encryptedExpiryYear: '20',
+                    encryptedSecurityCode: '737'
                 }
-            };
-            var securedFields = csf(
-                {
-                    configObject: {
-                        originKey: "<?php echo $originKey;?>",
-                        cardGroupTypes: ['visa', 'mc']
-                    },
-                    rootNode: '.form-div',
-                    allowedDOMAccess: false,
-                    paymentMethods: {
-                        card: {
-                            sfStyles: styleObject,
-                            placeholders: {
-                                hostedCardNumberField: '4111 1111 1111 1111',
-                                hostedExpiryDateField: '08/18',
-                                hostedSecurityCodeField: '737'
-                            }
-                        }
-                    }
-                }
-            );
-
-            securedFields.onFieldValid(function (result) {
-                if (result.valid) {
+            },
+            callbacks: {
+                onFieldValid: function (result) {
                     document.getElementById(result.encryptedFieldName).value = result.blob;
                 }
-            });
+            }
         };
-
-        cseInit();
-    </script>
-<?php endif; ?>
+    new csf(securedFields);
+</script>

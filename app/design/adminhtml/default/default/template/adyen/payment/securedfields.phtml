@@ -4,9 +4,9 @@
 
     ?>
     <?php if($adyenHelper->getConfigDataDemoMode()): ?>
-    secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.0.js";
+    secf.src = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.4.0.min.js";
     <?php else : ?>
-    secf.src = "https://checkoutshopper-live.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.0.js";
+    secf.src = "https://checkoutshopper-live.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.4.0.min.js";
     <?php endif; ?>
     secf.type = "text/javascript";
     document.body.appendChild(secf);
