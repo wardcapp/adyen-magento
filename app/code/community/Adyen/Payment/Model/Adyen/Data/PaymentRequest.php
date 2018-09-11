@@ -233,62 +233,25 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                         "http://www.w3.org/2001/XMLSchema");
                     $this->additionalData->entry = $kv;
                 } else {
-                    if (Mage::getModel('adyen/adyen_cc')->isCseEnabled()) {
-                        $session = Mage::helper('adyen')->getSession();
-                        $info = $payment->getMethodInstance();
-                        $encryptedNumber = $session->getData('encrypted_number_' . $info->getCode());
-                        $encryptedExpiryMonth = $session->getData('encrypted_expiry_month_' . $info->getCode());
-                        $encryptedExpiryYear = $session->getData('encrypted_expiry_year_' . $info->getCode());
-                        $encryptedCvc = $session->getData('encrypted_cvc_' . $info->getCode());
-                        $this->card->holderName = $payment->getCcOwner();
+                    $session = Mage::helper('adyen')->getSession();
+                    $info = $payment->getMethodInstance();
+                    $encryptedNumber = $session->getData('encrypted_number_' . $info->getCode());
+                    $encryptedExpiryMonth = $session->getData('encrypted_expiry_month_' . $info->getCode());
+                    $encryptedExpiryYear = $session->getData('encrypted_expiry_year_' . $info->getCode());
+                    $encryptedCvc = $session->getData('encrypted_cvc_' . $info->getCode());
+                    $this->card->holderName = $payment->getCcOwner();
 
-                        if ($encryptedNumber != "" && $encryptedNumber != "false") {
-                            $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
-                        }
-                        if($encryptedExpiryMonth != "" && $encryptedExpiryYear != ""){
-                            $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
-                            $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
-                        }
-                        if ($encryptedCvc != "" && $encryptedCvc != "false") {
-                            $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
-                        } else {
-                            if ($paymentMethod == 'cc') {
-
-                                // log the browser data to see why it is failing
-                                Mage::log($_SERVER['HTTP_USER_AGENT'], Zend_Log::ERR, "adyen_exception.log", true);
-
-                                // For CC encrypted data is needed if you use CSE
-                                Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__('Missing the encrypted data value. Make sure the Client Side Encryption(CSE) script did encrypt the Credit Card details'));
-                            }
-                        }
-                    } else {
-                        if ($recurringDetailReference && $recurringDetailReference != "") {
-
-                            // this is only needed for creditcards
-                            if ($payment->getCcExpMonth() != "" && $payment->getCcExpYear() != "") {
-                                if ($recurringType != "RECURRING") {
-
-                                    $session = Mage::helper('adyen')->getSession();
-                                    $info = $payment->getMethodInstance();
-
-                                    $this->card->cvc = $payment->getCcCid();
-                                }
-
-                                $this->card->expiryMonth = $payment->getCcExpMonth();
-                                $this->card->expiryYear = $payment->getCcExpYear();
-                            } else {
-                                $this->card = null;
-                            }
-
-                        } else {
-                            // this is only the case for adyen_cc payments
-                            $this->card->cvc = $payment->getCcCid();
-                            $this->card->expiryMonth = $payment->getCcExpMonth();
-                            $this->card->expiryYear = $payment->getCcExpYear();
-                            $this->card->holderName = $payment->getCcOwner();
-                            $this->card->number = $payment->getCcNumber();
-                        }
+                    if ($encryptedNumber != "" && $encryptedNumber != "false") {
+                        $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
                     }
+                    if ($encryptedExpiryMonth != "" && $encryptedExpiryYear != "") {
+                        $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
+                        $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
+                    }
+                    if ($encryptedCvc != "" && $encryptedCvc != "false") {
+                        $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
+                    }
+
                 }
 
                 // installments

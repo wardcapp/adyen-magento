@@ -182,15 +182,6 @@ $originKey = $this->getOriginKeys();
         new csf(securedFields);
     </script>
 
-    <?php if ($this->isCseEnabled()): ?>
-        <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime"
-               value="<?php echo date("c"); ?>" data-encrypted-name="generationtime"/>
-        <script type="text/javascript">
-
-
-        </script>
-    <?php endif; ?>
-
     <div class="checkout-container" id="adyen-cc-checkout-container">
         <div class="form-div">
             <div class="js-chckt-pm__pm-holder">
