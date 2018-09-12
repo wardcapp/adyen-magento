@@ -117,37 +117,6 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract im
     }
 
     /**
-     * @desc Helper functions to get config data
-     */
-    public function isCseEnabled()
-    {
-        if (Mage::app()->getStore()->isAdmin()) {
-            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
-            $storeId = $quote->getStoreId();
-            return Mage::getStoreConfig("payment/adyen_cc/cse_enabled", $storeId);
-        }
-        return Mage::getStoreConfig("payment/adyen_cc/cse_enabled");
-    }
-
-    /**
-     * @return string
-     */
-    public function getCsePublicKey()
-    {
-        if (Mage::app()->getStore()->isAdmin()) {
-            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
-            $storeId = $quote->getStoreId();
-        } else {
-            $storeId = null;
-        }
-
-        if (Mage::helper('adyen')->getConfigDataDemoMode($storeId)) {
-            return trim(Mage::getStoreConfig("payment/adyen_cc/cse_publickey_test", $storeId));
-        }
-        return trim(Mage::getStoreConfig("payment/adyen_cc/cse_publickey", $storeId));
-    }
-
-    /**
      * @desc Specific functions for 3d secure validation
      */
 

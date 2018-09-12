@@ -27,6 +27,7 @@
 /** @var $this Adyen_Payment_Block_Form_Oneclick */
 ?>
 <?php $_code=$this->getMethodCode() ?>
+<?php $originKey = $this->getOriginKeys(); ?>
 <ul id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li>
         <?php
@@ -47,31 +48,19 @@
                     <?php echo $recurringDetails["card_expiryMonth"] . " /" . $recurringDetails["card_expiryYear"]; ?>
                 </div>
                 <div id="changable-card-expiry-<?php echo $_code; ?>" class="changable-card-expiry" style="display:none;">
-                    <select id="<?php echo $_code ?>_expiration_<?php echo $_code; ?>" <?php echo (!$this->isCseEnabled() ? "name=\"payment[oneclick_exp_month]\"" : "data-encrypted-name-oneclick-" . $_code . "=expiryMonth"); ?> class="month validate-oneclick-exp required-entry">
+                    <select id="<?php echo $_code ?>_expiration_<?php echo $_code; ?>" <?php echo ("data-encrypted-name-oneclick-" . $_code . "=expiryMonth"); ?> class="month validate-oneclick-exp required-entry">
                         <?php foreach ($this->getCcMonths() as $k=>$v): ?>
                             <option value="<?php echo $k?$k:'' ?>"<?php if($k==$recurringDetails["card_expiryMonth"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
                         <?php endforeach ?>
                     </select>
 
-                    <select id="<?php echo $_code ?>_expiration_yr_<?php echo $_code; ?>" <?php echo (!$this->isCseEnabled() ? "name=\"payment[oneclick_exp_year]\"" : "data-encrypted-name-oneclick-" . $_code . "=expiryYear"); ?> class="year required-entry">
+                    <select id="<?php echo $_code ?>_expiration_yr_<?php echo $_code; ?>" <?php echo ("data-encrypted-name-oneclick-" . $_code . "=expiryYear"); ?> class="year required-entry">
                         <?php foreach ($this->getCcYears() as $k=>$v): ?>
                             <option value="<?php echo $k?$k:'' ?>"<?php if($k==$recurringDetails["card_expiryYear"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
                         <?php endforeach ?>
                     </select>
                 </div>
             </div>
-
-         <?php if( $this->showCvc()):?>
-            <div class="columns three c">
-                <label><?php echo $this->__('Card Verification Number') ?></label>
-                <?php if($this->hasVerification()): ?>
-                    <div class="cvc_block" id="cvc_block_<?php echo $_code;?>">
-                        <input type="text" pattern="[0-9]{3,}" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" id="<?php echo $_code ?>_cc_cid" <?php echo (!$this->isCseEnabled() ? "name=\"payment[oneclick_cid_".$_code."]\"" : "data-encrypted-name-oneclick-" . $_code ."=cvc"); ?> value="" />
-                        <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
-                    </div>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
 
         <?php if($this->hasInstallments()): ?>
             <div id="adyen_oneclick_installment_<?php echo $_code;?>" class="adyen-oneclick-installments">
@@ -88,89 +77,84 @@
             </div>
         <?php endif;?>
 
-        <?php if ($this->isCseEnabled()): ?>
-        <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>" data-encrypted-name-oneclick-<?php echo $_code ?>="generationtime" />
+        <div class="checkout-oneclick-container">
+            <div id="oneclick-div-<?php echo $_code ?>" class="oneclick-div">
+                <div class="js-chckt-pm__pm-holder">
+                    <input type="hidden" name="txvariant" value="mc_r<?php echo $_code; ?>"/>
+                    <div id="update-exp-date-<?php echo $_code; ?>" style="display: none" class="expdatedivs">
+                        <div class="input-container">
+                            <span class="input-label">Expiry month:</span>
+                            <span class="input-field" data-cse="encryptedExpiryMonth"></span>
+                        </div>
+                        <div class="input-container">
+                            <span class="input-label">Expiry year:</span>
+                            <span class="input-field" data-cse="encryptedExpiryYear"></span>
+                        </div>
+                        <?php if( $this->showCvc()):?>
+                            <div class="input-container">
+                                <span class="input-label label-security-code">Security code:</span>
+                                <span class="input-field" data-cse="encryptedSecurityCode"></span>
+                            </div>
+                        <?php endif;?>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="payment[encrypted_expiry_month]"
+                   id="encryptedExpiryMonth<?php echo $_code; ?>" value="">
+            <input type="hidden" name="payment[encrypted_expiry_year]"
+                   id="encryptedExpiryYear<?php echo $_code; ?>" value="">
+            <input type="hidden" name="payment[encrypted_data_<?php echo $_code; ?>]"
+                   id="encryptedSecurityCode<?php echo $_code; ?>"
+                   value="">
             <script type="text/javascript">
 
+                // On radio button, hide the date(if present) and show the href
+                Event.observe($("p_method_<?php echo $_code; ?>"), 'change', function () {
+                    $("update-exp-date-<?php echo $_code; ?>").hide();
+                    $("update-expiration-date-<?php echo $_code; ?>").show();
+                });
+
                 // update-expiration-date action
-                $$('.update-expiration-date').each(function(element) {
+                $$('#update-expiration-date-<?php echo $_code; ?>').each(function (element) {
                     element.observe('click', updateExpirationDate);
                 });
-                // show the expiration month and year
                 function updateExpirationDate(event) {
                     // hide the link
                     this.hide();
                     // show expiration month and year
-                    var id = this.id.replace("update-expiration-date-", "");
-                    var changableId = "changable-card-expiry-" + id;
-                    var staticId = "static-card-expiry-" + id;
+                    var id = "update-exp-date-<?php echo $_code; ?>";
                     // show changeble card expiry
-                    $(staticId).hide();
-                    $(changableId).show();
+                    $(id).show();
                     event.preventDefault();
                 }
 
-                var cse_key_oneclick = <?php echo json_encode($this->getCsePublicKey()); ?>;
-                var cse_options_oneclick = {
-                    name:  'payment[encrypted_data_oneclick]',
-                    force: true
-                };
-
-                var cseUpdateOneClick = function() {
-
-                    try {
-                        if (order.paymentMethod && order.paymentMethod == '<?php echo $_code ?>') {
-                            var elementOneClick = $('payment_form_<?php echo $_code ?>');
-                            var cse_form_oneclick =  elementOneClick.match('form') ? elementOneClick : elementOneClick.up('form');
-
-                            // add this field to option
-                            cse_options_oneclick.fieldNameAttribute = "data-encrypted-name-oneclick-<?php echo $_code ?>";
-
-                            // do not validate because number does not exists for oneclick
-                            cse_options_oneclick.enableValidations = false;
-
-                            var cseFormOneClick = adyen.encrypt.createEncryptedForm(cse_form_oneclick, cse_key_oneclick, cse_options_oneclick);
-                            // encrypt data directly because submit button is not always on the page
-                            cseFormOneClick.createEncryptedField(cseFormOneClick.encrypt());
-                        }
-                    } catch (e) {
-                        if (typeof console == "object") {
-                            console.error(e);
-                        } else {
-                            alert("Warning: Adyen Client Side Encryption cannot succeed.");
-                        }
-                    }
-
-                };
-
-                var cseInitOneClick = function() {
-                    if (typeof adyen === 'undefined') {
-                        var script = document.createElement("script");
-                        script.type = "text/javascript";
-                        script.src = "<?php echo $this->getJsUrl('adyen/payment/adyen.encrypt_0_1_18.js'); ?>";
-                        document.body.appendChild(script);
-                    }
-
-                    // if the browser does not support forach method implement it
-                    if (!Array.prototype.forEach) {
-                        Array.prototype.forEach = function(fn, scope) {
-                            for(var i = 0, len = this.length; i < len; ++i) {
-                                fn.call(scope, this[i], i, this);
+                var securedOneclickFields_<?php echo $_code;?> =
+                    {
+                        originKey: "<?php echo $originKey;?>",
+                        rootNode: "#oneclick-div-<?php echo $_code;?>",
+                        allowedDOMAccess: false,
+                        securedFieldStyling: {
+                            placeholders: {
+                                encryptedExpiryMonth: '<?php echo $recurringDetails["card_expiryMonth"]; ?>',
+                                //Show only last 2 digits of card_expiryYear: 2021 -> 21
+                                encryptedExpiryYear: '<?php echo substr($recurringDetails["card_expiryYear"], -2); ?>',
+                                encryptedSecurityCode: '737'
+                            }
+                        },
+                        callbacks: {
+                            onFieldValid: function (result) {
+                                document.getElementById(result.encryptedFieldName.concat(result.markerNode.id.replace("oneclick-div-", ""))).value = result.blob;
                             }
                         }
-                    }
 
-                    var fields = $$('#payment_form_<?php echo $_code ?> input, #payment_form_<?php echo $_code ?> textarea, #payment_form_<?php echo $_code ?> select');
-                    fields.forEach(function(field) {
-                        field.observe('change', cseUpdateOneClick);
-                    });
-                };
+                    };
 
-                cseInitOneClick();
+                new csf(securedOneclickFields_<?php echo $_code;?>);
+
             </script>
-        <?php endif;?>
 
-        <?php elseif($recurringDetails["variant"] == "elv"): ?>
+
+            <?php elseif($recurringDetails["variant"] == "elv"): ?>
             <div class="columns three a">
                 <label><?php echo $this->__('Account holder name') ?></label>
                 <span><?php echo $recurringDetails["elv_accountHolderName"]; ?></span>

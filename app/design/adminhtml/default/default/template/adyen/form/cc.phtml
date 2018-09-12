@@ -60,10 +60,12 @@ $originKey = $this->getOriginKeys();
                     <span class="input-label">Expiry year:</span>
                     <span class="input-field" data-cse="encryptedExpiryYear"></span>
                 </div>
+                <?php if( $this->hasVerification()):?>
                 <div class="input-container">
                     <span class="input-label label-security-code">Security code:</span>
                     <span class="input-field" data-cse="encryptedSecurityCode"></span>
                 </div>
+                <?php endif; ?>
                 <div class="input-box">
                     <div class="v-fix">
                         <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc"

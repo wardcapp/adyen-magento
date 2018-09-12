@@ -440,8 +440,6 @@
                 <title>Adyen Credit Card</title>
                 <debug>0</debug>
                 <enable_installments>0</enable_installments>
-                <cse_enabled>1</cse_enabled>
-                <cse_public_key></cse_public_key>
                 <visible_type>both</visible_type>
                 <enable_moto>0</enable_moto>
                 <trxuser_password>0</trxuser_password>

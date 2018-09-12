@@ -88,16 +88,6 @@ class Adyen_Payment_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
         return reset($result['originKeys']);
     }
 
-    public function isCseEnabled()
-    {
-        return $this->getMethod()->isCseEnabled();
-    }
-
-    public function getCsePublicKey()
-    {
-        return $this->getMethod()->getCsePublicKey();
-    }
-
     public function getPossibleInstallments()
     {
         return $this->getMethod()->getPossibleInstallments();

@@ -27,10 +27,6 @@
  */
 class Adyen_Payment_Block_Info_Cc extends Mage_Payment_Block_Info_Cc {
 	
-    public function isCseEnabled() {
-        return $this->getMethod()->isCseEnabled();
-    }
-	
     /**
      * Init default template for block
      */
