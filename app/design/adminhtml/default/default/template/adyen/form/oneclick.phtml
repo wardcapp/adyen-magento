@@ -27,7 +27,7 @@
 /** @var $this Adyen_Payment_Block_Form_Oneclick */
 ?>
 <?php $_code=$this->getMethodCode() ?>
-<?php $originKey = $this->getOriginKeys(); ?>
+<?php $originKey = $this->getOriginKey(); ?>
 <ul id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li>
         <?php
@@ -81,7 +81,7 @@
             <div id="oneclick-div-<?php echo $_code ?>" class="oneclick-div">
                 <div class="js-chckt-pm__pm-holder">
                     <input type="hidden" name="txvariant" value="mc_r<?php echo $_code; ?>"/>
-                    <div id="update-exp-date-<?php echo $_code; ?>" style="display: none" class="expdatedivs">
+                    <div id="update-exp-date-<?php echo $_code; ?>" style="display: none">
                         <div class="input-container">
                             <span class="input-label">Expiry month:</span>
                             <span class="input-field" data-cse="encryptedExpiryMonth"></span>
@@ -99,9 +99,9 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" name="payment[encrypted_expiry_month]"
+            <input type="hidden" name="payment[encrypted_expiry_month_<?php echo $_code; ?>]"
                    id="encryptedExpiryMonth<?php echo $_code; ?>" value="">
-            <input type="hidden" name="payment[encrypted_expiry_year]"
+            <input type="hidden" name="payment[encrypted_expiry_year_<?php echo $_code; ?>]"
                    id="encryptedExpiryYear<?php echo $_code; ?>" value="">
             <input type="hidden" name="payment[encrypted_cvc_<?php echo $_code; ?>]"
                    id="encryptedSecurityCode<?php echo $_code; ?>"

@@ -28,7 +28,7 @@
 <?php
 /** @var Adyen_Payment_Block_Form_Cc $this */
 $_code = $this->getMethodCode();
-$originKey = $this->getOriginKeys();
+$originKey = $this->getOriginKey();
 ?>
 <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li class="adyen_payment_creditcard_labels">
@@ -221,6 +221,7 @@ $originKey = $this->getOriginKeys();
                     <span class="input-label label-security-code">Security code:</span>
                     <span class="input-field" data-cse="encryptedSecurityCode"></span>
                 </div>
+                <?php if ($this->canCreateBillingAgreement()): ?>
                 <div class="input-box" id="adyen-remember-details">
                     <div class="v-fix">
                         <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc"
@@ -229,6 +230,7 @@ $originKey = $this->getOriginKeys();
                         </label>
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
 

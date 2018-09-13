@@ -104,8 +104,8 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc
 
    
         $method = $this->getCode();
-        $encryptedMonth = $data->getData('encrypted_expiry_month');
-        $encryptedYear = $data->getData('encrypted_expiry_year');
+        $encryptedMonth = $data->getData('encrypted_expiry_month_' . $method);
+        $encryptedYear = $data->getData('encrypted_expiry_year_' . $method);
         $encryptedCvc = $data->getData('encrypted_cvc_' . $method);
         $session->setData('encrypted_cvc_' . $method, $encryptedCvc);
         $session->setData('encrypted_expiry_month_' . $method, $encryptedMonth);
