@@ -86,24 +86,32 @@ $originKey = $this->getOriginKeys();
 <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>"
        data-encrypted-name="generationtime"/>
 <script type="text/javascript">
-    var securedFields =
+    var securedFields = csf(
         {
-            originKey: "<?php echo $originKey;?>",
-            rootNode: '.form-div',
-            allowedDOMAccess: false,
-            securedFieldStyling: {
-                placeholders: {
-                    encryptedCardNumber: '4111 1111 1111 1111',
-                    encryptedExpiryMonth: '10',
-                    encryptedExpiryYear: '20',
-                    encryptedSecurityCode: '737'
-                }
+            configObject: {
+                originKey: "<?php echo $originKey;?>",
             },
-            callbacks: {
-                onFieldValid: function (result) {
-                    document.getElementById(result.encryptedFieldName).value = result.blob;
+            rootNode: 'body',
+            allowedDOMAccess: false,
+            paymentMethods: {
+                card: {
+                    placeholders: {
+                        encryptedCardNumber: '4111 1111 1111 1111',
+                        encryptedExpiryMonth: '10',
+                        encryptedExpiryYear: '20',
+                        encryptedSecurityCode: '737'
+                    }
+
                 }
             }
-        };
-    new csf(securedFields);
+        }
+    );
+    securedFields.onFieldValid(function (result) {
+        if (result.txVariant == 'card') {
+            document.getElementById(result.encryptedFieldName).value = result.blob;
+        }
+        else {
+            document.getElementById(result.encryptedFieldName.concat(result.txVariant.replace("mc_r",""))).value = result.blob;
+        }
+    });
 </script>

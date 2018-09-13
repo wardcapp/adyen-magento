@@ -153,33 +153,41 @@ $originKey = $this->getOriginKeys();
                 }
             });
         }
-
-        var securedFields =
+        var securedFields = csf(
             {
-                originKey: "<?php echo $originKey;?>",
-                cardGroupTypes: alt_types,
-                rootNode: '#adyen-cc-checkout-container',
-                allowedDOMAccess: false,
-                securedFieldStyling: {
-                    placeholders: {
-                        encryptedCardNumber: '4111 1111 1111 1111',
-                        encryptedExpiryMonth: '10',
-                        encryptedExpiryYear: '20',
-                        encryptedSecurityCode: '737'
-                    }
+                configObject: {
+                    originKey: "<?php echo $originKey;?>",
+                    cardGroupTypes: alt_types
                 },
-                callbacks: {
-                    onBrand: function (brandObject) {
-                        if (brandObject.brand) {
-                            cardSetCardBrand(brandObject.brand, true, alt_types);
+                rootNode: 'body',
+                allowedDOMAccess: false,
+                paymentMethods: {
+                    card: {
+                        placeholders: {
+                            encryptedCardNumber: '4111 1111 1111 1111',
+                            encryptedExpiryMonth: '10',
+                            encryptedExpiryYear: '20',
+                            encryptedSecurityCode: '737'
                         }
-                    },
-                    onFieldValid: function (result) {
-                        document.getElementById(result.encryptedFieldName).value = result.blob;
+
                     }
                 }
-            };
-        new csf(securedFields);
+            }
+        );
+        securedFields.onBrand(function (brandObject) {
+            if (brandObject.brand) {
+                cardSetCardBrand(brandObject.brand, true, alt_types);
+            }
+        });
+        securedFields.onFieldValid(function (result) {
+            if (result.txVariant == 'card') {
+                document.getElementById(result.encryptedFieldName).value = result.blob;
+            }
+            else {
+                document.getElementById(result.encryptedFieldName.concat(result.txVariant.replace("mc_r",""))).value = result.blob;
+            }
+        });
+
     </script>
 
     <div class="checkout-container" id="adyen-cc-checkout-container">

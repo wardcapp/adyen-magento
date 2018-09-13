@@ -108,7 +108,7 @@ $originKey = $this->getOriginKeys();
                            id="encryptedExpiryMonth<?php echo $_code; ?>" value="">
                     <input type="hidden" name="payment[encrypted_expiry_year]"
                            id="encryptedExpiryYear<?php echo $_code; ?>" value="">
-                    <input type="hidden" name="payment[encrypted_data_<?php echo $_code; ?>]"
+                    <input type="hidden" name="payment[encrypted_cvc_<?php echo $_code; ?>]"
                            id="encryptedSecurityCode<?php echo $_code; ?>"
                            value="">
 
@@ -135,29 +135,6 @@ $originKey = $this->getOriginKeys();
                         $(id).show();
                         event.preventDefault();
                     }
-
-                    var securedOneclickFields_<?php echo $_code;?> =
-                        {
-                            originKey: "<?php echo $originKey;?>",
-                            rootNode: "#oneclick-div-<?php echo $_code;?>",
-                            allowedDOMAccess: false,
-                            securedFieldStyling: {
-                                placeholders: {
-                                    encryptedExpiryMonth: '<?php echo $_recurringDetails["card_expiryMonth"]; ?>',
-                                    //Show only last 2 digits of card_expiryYear: 2021 -> 21
-                                    encryptedExpiryYear: '<?php echo substr($_recurringDetails["card_expiryYear"], -2); ?>',
-                                    encryptedSecurityCode: '737'
-                                }
-                            },
-                            callbacks: {
-                                onFieldValid: function (result) {
-                                    document.getElementById(result.encryptedFieldName.concat(result.markerNode.id.replace("oneclick-div-", ""))).value = result.blob;
-                                }
-                            }
-
-                        };
-
-                    new csf(securedOneclickFields_<?php echo $_code;?>);
 
                 </script>
 
