@@ -161,6 +161,7 @@ $originKey = $this->getOriginKey();
                 },
                 rootNode: 'body',
                 allowedDOMAccess: false,
+                recurringCardIndicator: 'oneclick_',
                 paymentMethods: {
                     card: {
                         placeholders: {
@@ -184,7 +185,7 @@ $originKey = $this->getOriginKey();
                 document.getElementById(result.encryptedFieldName).value = result.blob;
             }
             else {
-                document.getElementById(result.encryptedFieldName.concat(result.txVariant.replace("mc_r",""))).value = result.blob;
+                document.getElementById(result.encryptedFieldName.concat(result.txVariant.replace("oneclick_",""))).value = result.blob;
             }
         });
 

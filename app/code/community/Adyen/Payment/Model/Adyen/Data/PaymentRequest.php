@@ -187,7 +187,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->deliveryAddress->country = $deliveryAddress->getCountryId();
                 }
 
-                Mage::log($paymentMethod, null, "adyen_api.log");
                 if ($paymentMethod == "oneclick") {
                     $recurringDetailReference = $payment->getAdditionalInformation("recurring_detail_reference");
 

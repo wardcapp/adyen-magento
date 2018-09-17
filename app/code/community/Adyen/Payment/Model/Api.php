@@ -225,11 +225,11 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         $cacheId = "adyen_origin_keys_".$store;
 
         $originUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
-        if (substr($originUrl, -1) == '/') {
-            $originUrl = substr($originUrl, 0, -1);
-        }
+        $parsed = parse_url($originUrl);
+        $domain = $parsed['scheme'] . "://" . $parsed['host'];
+
         $request = array(
-            "originDomains" => array($originUrl)
+            "originDomains" => array($domain)
         );
 
         if (($cacheData = Mage::app()->getCache()->load($cacheId))) {
