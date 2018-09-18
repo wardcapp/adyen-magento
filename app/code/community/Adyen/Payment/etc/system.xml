@@ -1707,8 +1707,7 @@
                         </pos_terminal_id>
                         <pos_merchant_account translate="label">
                             <label>Merchant Account for Terminal API</label>
-                            <frontend_type>obscure</frontend_type>
-                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <frontend_type>text</frontend_type>
                             <sort_order>35</sort_order>
                             <tooltip>Please insert your Merchant Account name used by the Cloud API. Please leave it blank if the Merchant Account is the same as the one configured in the Required Settings</tooltip>
                             <show_in_default>1</show_in_default>

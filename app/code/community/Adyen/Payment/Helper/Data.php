@@ -607,4 +607,13 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 
         return $collection->getSize();
     }
+
+
+    public function getPosApiKey($storeId = null)
+    {
+        if ($this->getConfigDataDemoMode($storeId)) {
+            return Mage::helper('core')->decrypt($this->getConfigData('api_key_test', "adyen_pos_cloud", $storeId));
+        }
+        return Mage::helper('core')->decrypt($this->getConfigData('api_key_live', "adyen_pos_cloud", $storeId));
+    }
 }
