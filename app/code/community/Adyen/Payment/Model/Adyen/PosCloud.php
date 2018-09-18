@@ -54,18 +54,6 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
         return Mage::getSingleton('checkout/session');
     }
 
-    public function assignData($data) {
-        if (!($data instanceof Varien_Object)) {
-            $data = new Varien_Object($data);
-        }
-        $info = $this->getInfoInstance();
-
-        // save value remember details checkbox
-        $info->setAdditionalInformation('store_cc', $data->getStoreCc());
-
-        return $this;
-    }
-
     /**
      * @desc Get current quote
      *
@@ -77,40 +65,6 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
 
     public function getOrderPlaceRedirectUrl() {
         return Mage::getUrl('adyen/process/redirect');
-    }
-
-    /**
-     * @desc prepare params array to send it to gateway page via POST
-     * @return array
-     */
-    public function getFormFields() {
-        $this->_initOrder();
-        $order = $this->_order;
-        $realOrderId = $order->getRealOrderId();
-        $orderCurrencyCode = $order->getOrderCurrencyCode();
-        $amount = Mage::helper('adyen')->formatAmount($order->getGrandTotal(),$orderCurrencyCode);
-        $customerId = $order->getCustomerId();
-        $customerEmail = $order->getCustomerEmail();
-
-        $adyFields = array();
-        $adyFields['currencyCode'] = $orderCurrencyCode;
-        $adyFields['paymentAmount'] = $amount;
-        $adyFields['merchantReference'] = $realOrderId;
-        $adyFields['paymentAmountGrandTotal'] = $order->formatPrice($order->getGrandTotal()); // for showing only
-
-        // for recurring payments
-        $recurringType = $this->_getConfigData('recurring_type', 'adyen_pos_cloud');
-
-        if($order->getPayment()->getAdditionalInformation("store_cc") != "") {
-            $adyFields['recurringContract'] = $recurringType;
-        }
-
-        $adyFields['shopperReference'] = (!empty($customerId)) ? $customerId : self::GUEST_ID . $realOrderId;
-        $adyFields['shopperEmail'] = $customerEmail;
-
-        Mage::log($adyFields, self::DEBUG_LEVEL, 'adyen_http-request.log',true);
-
-        return $adyFields;
     }
 
     public function getFormName() {
