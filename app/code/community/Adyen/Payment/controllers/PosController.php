@@ -27,9 +27,7 @@
  */
 class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
 {
-    /**
-     * @return array
-     */
+
     public function initiateAction()
     {
         $api = Mage::getSingleton('adyen/api');
@@ -51,7 +49,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
                     'MessageType' => 'Request',
                     'MessageClass' => 'Service',
                     'MessageCategory' => 'Payment',
-                    'SaleID' => 'Magento2Cloud',
+                    'SaleID' => 'Magento1Cloud',
                     'POIID' => $poiId,
                     'ProtocolVersion' => '3.0',
                     'ServiceID' => $serviceID
