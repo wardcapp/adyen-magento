@@ -1660,10 +1660,108 @@
                         </specificcountry>
                     </fields>
                 </adyen_pos>
+                <adyen_pos_cloud>
+                    <label>POS with Terminal API</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>390</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_pos_cloud/active</activity_path>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sort_order>
+                        <pos_terminal_id translate="label">
+                            <label>Unique Terminal ID for Terminal API</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <tooltip>Copy this from the Adyen Customer Area => Point of sale => Terminal Fleet Manager => Unique Terminal Id </tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </pos_terminal_id>
+                        <pos_merchant_account translate="label">
+                            <label>Merchant Account for Terminal API</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>35</sort_order>
+                            <tooltip>Please insert your Merchant Account name used by the Cloud API. Please leave it blank if the Merchant Account is the same as the one configured in the Required Settings</tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </pos_merchant_account>
+                        <api_key_test translate="label">
+                            <label>API key for Terminal API TEST</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>40</sort_order>
+                            <tooltip>Copy this from the Test Adyen Customer Area => Settings => Users => System => [web service user]=> Checkout API Key.</tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_key_test>
+                        <api_key_live translate="label">
+                            <label>API key for Terminal API LIVE</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>45</sort_order>
+                            <tooltip>Copy this from the Live Adyen Customer Area => Settings => Users => System => [web service user]=> Checkout API Key.</tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_key_live>
+                        <capture_mode_pos translate="label">
+                            <label>Capture Delay</label>
+                            <frontend_type>select</frontend_type>
+                            <tooltip>Please set your Capture Delay for POS transactions. Immediate is the default. Set to manual if you want to perform the capture of funds manually later. You need to change this setting as well in Adyen Customer Area => Settings => Merchant Settings => POS Capture Delay. If you have selected a capture delay of a couple of days in Adyen keep it here on immediate</tooltip>
+                            <source_model>adyen/source_captureModes</source_model>
+                            <config_path>payment/adyen_abstract/capture_mode</config_path>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </capture_mode_pos>
+                        <recurring_type>
+                            <label>Agreement Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adyen/source_recurringType</source_model>
+                            <config_path>payment/adyen_abstract/recurringtypes</config_path>
+                            <sort_order>55</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <tooltip>You can set different value for POS because you have to have the permission of the customer</tooltip>
+                        </recurring_type>
+                    </fields>
+                </adyen_pos_cloud>
                 <adyen_cash translate="label" module="adyen">
                     <label>CASH</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>390</sort_order>
+                    <sort_order>395</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
