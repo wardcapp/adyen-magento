@@ -53,16 +53,17 @@ class Adyen_Payment_Block_ApplePay extends Mage_Core_Block_Template
     public function getSubTotal()
     {
         $subtotal = array();
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
 
         if ($this->getProduct() && $this->getProduct()->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
             $product = $this->_getData('product');
             if (!$product) {
                 $product = Mage::registry('product');
                 $subtotal['label'] = $product->getName();
-                $subtotal['amount'] = $product->getFinalPrice();
+                $subtotal['amount'] = $quote->getStore()->formatPrice($product->getFinalPrice());
                 $subtotal['productId'] = $product->getId();
             }
-        } else if (Mage::getSingleton('checkout/session')->getQuote()->getItemsCount() > 0) {
+        } else if ($quote->getItemsCount() > 0) {
             $subtotal['label'] = $this->__('Grand Total');
             $subtotal['amount'] = $this->getSubtotalInclTax();
             $subtotal['productId'] = 0;
