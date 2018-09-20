@@ -76,6 +76,20 @@ $originKey = $this->getOriginKey();
                 </div>
             </div>
         </div>
+        <?php if($this->hasInstallments()): ?>
+            <li>
+                <div class="input-box">
+                    <label for="<?php echo $_code ?>_installments" class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
+                    <div class="v-fix">
+                        <select id="<?php echo $_code ?>_installments" name="payment[additional_data]" class="number required-entry">
+                            <?php foreach ($this->getPossibleInstallments() as $k=>$v): ?>
+                                <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                </div>
+            </li>
+        <?php endif;?>
 
         <input type="hidden" name="payment[encrypted_number]" id="encryptedCardNumber" value="">
         <input type="hidden" name="payment[encrypted_expiry_month]" id="encryptedExpiryMonth" value="">
@@ -85,7 +99,59 @@ $originKey = $this->getOriginKey();
 </ul>
 <input type="hidden" id="<?php echo $_code ?>_encrypted_form_expiry_generationtime" value="<?php echo date("c"); ?>"
        data-encrypted-name="generationtime"/>
+
 <script type="text/javascript">
+
+    var ajaxReq;
+    function getInstallments(variant) {
+        // get the installments for this cardtype
+        var ccType = variant;
+        var url = '<?php echo  Mage::helper('adminhtml')->getUrl('adminhtml/GetInstallmentsAdmin'); ?>';
+        if (ajaxReq && ajaxReq.readystate != 4) {
+            ajaxReq.transport.abort();
+        }
+
+        ajaxReq = new Ajax.Request(url, {
+            parameters: {ccType: ccType, isAjax: 1, method: 'POST'},
+            onSuccess: function (transport) {
+
+                if (transport.status == 200) {
+
+                    // get current selected installment
+                    var currentSelectedInstallment = document.getElementById('<?php echo $_code ?>_installments').getValue();
+
+                    // clear the select box
+                    document.getElementById('<?php echo $_code ?>_installments').options.length = 0;
+
+                    var response = transport.responseText.evalJSON();
+
+                    var sel = false;
+                    for (var key in response) {
+
+                        // change the installments
+                        var opt = document.createElement('option');
+                        opt.text = response[key]
+                        opt.value = key;
+                        // check if selected installment is still available
+                        if (currentSelectedInstallment == key) {
+                            sel = true;
+                        }
+                        $('<?php echo $_code ?>_installments').options.add(opt);
+                    }
+
+                    if (sel == true && currentSelectedInstallment) {
+                        document.getElementById('adyen_cc_installments').value = currentSelectedInstallment;
+                    }
+                }
+            },
+            onFailure: function () {
+                alert('<?php echo $this->jsQuoteEscape($this->__('Server Error. Please try again.')) ?>');
+            }
+        });
+    }
+
+
+
     var securedFields = csf(
         {
             configObject: {
@@ -107,6 +173,11 @@ $originKey = $this->getOriginKey();
             }
         }
     );
+    securedFields.onBrand(function (brandObject) {
+        if (brandObject.brand) {
+            getInstallments(brandObject.brand);
+        }
+    });
     securedFields.onFieldValid(function (result) {
         if (result.txVariant == 'card') {
             document.getElementById(result.encryptedFieldName).value = result.blob;

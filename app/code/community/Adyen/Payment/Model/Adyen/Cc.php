@@ -56,8 +56,9 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract im
         $info->setAdditionalInformation('number_of_installments', $data->getAdditionalData());
 
         // save value remember details checkbox
-        $info->setAdditionalInformation('store_cc', $data->getStoreCc());
-
+        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+            $info->setAdditionalInformation('store_cc', $data->getStoreCc());
+        }
 
         $info->setCcType($data->getCcType());
         $info->setCcOwner($data->getCcOwner());

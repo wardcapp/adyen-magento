@@ -171,11 +171,11 @@ class Adyen_Payment_Helper_Installments
 	            	$resulting_freq = $frequency;
 	            }
             }
-           
+
         }
         return $resulting_freq;
     }
-    
+
     public function isInstallmentsEnabled($store = null){
     	$value = Mage::getStoreConfig("payment/adyen_cc/enable_installments", $store);
     	return $value;
@@ -186,8 +186,12 @@ class Adyen_Payment_Helper_Installments
     public function getInstallmentForCreditCardType($ccType) {
 
         // retrieving quote
-        $quote = (Mage::getModel('checkout/type_onepage') !== false)? Mage::getModel('checkout/type_onepage')->getQuote(): Mage::getModel('checkout/session')->getQuote();
-
+        if(Mage::getDesign()->getArea() == 'adminhtml'|| Mage::app()->getStore()->isAdmin()){
+            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        }
+        else {
+            $quote = (Mage::getModel('checkout/type_onepage') !== false) ? Mage::getModel('checkout/type_onepage')->getQuote() : Mage::getModel('checkout/session')->getQuote();
+        }
         $currency = $quote->getQuoteCurrencyCode();
 
         if($quote->isVirtual()) {
@@ -202,7 +206,6 @@ class Adyen_Payment_Helper_Installments
         } else {
             $amount = (double) $quote->getGrandTotal();
         }
-
         // installment key where installents are saved in settings
         $ccTypeInstallments = "installments_".$ccType;
 

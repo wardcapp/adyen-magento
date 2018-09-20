@@ -62,20 +62,22 @@
                 </div>
             </div>
 
-        <?php if($this->hasInstallments()): ?>
-            <div id="adyen_oneclick_installment_<?php echo $_code;?>" class="adyen-oneclick-installments">
-                <label for="<?php echo $_code ?>_installment_<?php echo $_code; ?>" class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
+        <?php if ($this->hasInstallments()): ?>
+            <div id="adyen_oneclick_installment_<?php echo $_code; ?>" class="adyen-oneclick-installments">
+                <label for="<?php echo $_code ?>_installment_<?php echo $_code; ?>"
+                       class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
                 <div class="input-box">
                     <div class="v-fix">
-                        <select id="<?php echo $_code ?>_installment" name="payment[installment]" class="adyen-installment number required-entry">
-                            <?php foreach ($this->getInstallments() as $k=>$v): ?>
-                                <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                        <select id="<?php echo $_code ?>_installment" name="payment[installment]"
+                                class="adyen-installment number required-entry">
+                            <?php foreach ($this->getInstallments() as $k => $v): ?>
+                                <option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
                             <?php endforeach ?>
                         </select>
                     </div>
                 </div>
             </div>
-        <?php endif;?>
+        <?php endif; ?>
 
         <div class="checkout-oneclick-container">
             <div id="oneclick-div-<?php echo $_code ?>" class="oneclick-div">

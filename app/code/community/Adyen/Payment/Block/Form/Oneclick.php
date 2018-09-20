@@ -92,9 +92,13 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
      */
     public function getInstallments()
     {
+
         $adyenHelper = Mage::helper('adyen');
         $methodCode = $this->getMethodCode();
         $ccType = $adyenHelper->_getConfigData('variant', $methodCode);
+        if(empty($ccType)){
+            $ccType = $this->getRecurringDetails()['variant'];
+        }
         $ccType = Mage::helper('adyen/data')->getMagentoCreditCartType($ccType);
         $result = Mage::helper('adyen/installments')->getInstallmentForCreditCardType($ccType);
         return $result;

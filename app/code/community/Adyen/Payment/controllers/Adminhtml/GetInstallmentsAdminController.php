@@ -23,10 +23,10 @@
  * @package    Adyen_Payment
  * @author     Adyen
  * @property   Adyen B.V
- * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
+ * @copyright  Copyright (c) 2018 Adyen BV (http://www.adyen.com)
  */
 
-class Adyen_Payment_GetInstallmentsController extends Mage_Core_Controller_Front_Action {
+class Adyen_Payment_Adminhtml_GetInstallmentsAdminController extends Mage_Adminhtml_Controller_Action {
 
     public function indexAction()
     {
