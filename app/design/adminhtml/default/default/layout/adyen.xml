@@ -69,6 +69,7 @@
 
     <adminhtml_sales_order_create_index>
         <reference name="head">
+            <action method="addCss"><stylesheet>adyenstyle.css</stylesheet></action>
             <action method="addJs">
                 <script>adyen/payment/iban.js</script>
             </action>
@@ -84,7 +85,6 @@
                    template="adyen/payment/notifications.phtml"/>
             <block type="adyen/adminhtml_messageversion" name="adyen_messageversion"
                    template="adyen/payment/messageversion.phtml"/>
-            <block type="core/template" name="adyen_securedfields" template="adyen/payment/securedfields.phtml"/>
         </reference>
     </default>
 </layout>

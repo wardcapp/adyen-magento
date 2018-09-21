@@ -100,7 +100,7 @@ $originKey = $this->getOriginKey();
 
             <?php if($this->hasInstallments()): ?>
             if (selectedCard != null) {
-                var interval = setInterval(getInstallments(selectedCard), 500);
+               getInstallments(selectedCard);
             }
             <?php endif; ?>
 
@@ -110,7 +110,6 @@ $originKey = $this->getOriginKey();
         function getInstallments(variant) {
             // get the installments for this cardtype
             var ccType = variant;
-
             var url = '<?php echo $this->getUrl('adyen/GetInstallments', array('_secure' => true)); ?>';
             if (ajaxReq && ajaxReq.readystate != 4) {
                 ajaxReq.transport.abort();
