@@ -92,6 +92,9 @@ $originKey = $this->getOriginKey();
                         $(imageId).removeClassName('grey');
                     }
                 }
+                if(selectedCard == "card"){
+                    $('<?php echo $_code ?>_cc_type').setValue("");
+                }
                 document.getElementById(imageId).style.display = "inline";
             }
 
@@ -200,7 +203,7 @@ $originKey = $this->getOriginKey();
         document.body.appendChild(secf);
 
     </script>
-
+<li>
     <div class="checkout-container" id="adyen-cc-checkout-container">
         <div class="form-div">
             <div class="js-chckt-pm__pm-holder">
@@ -250,4 +253,5 @@ $originKey = $this->getOriginKey();
         <input type="hidden" name="payment[encrypted_expiry_year]" id="encryptedExpiryYear" value="">
         <input type="hidden" name="payment[encrypted_cvc]" id="encryptedSecurityCode" value="">
     </div>
+</li>
 </ul>

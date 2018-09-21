@@ -70,7 +70,9 @@
 
 
 /* Credit Cards */
-.sp-methods .form-list li.adyen_payment_creditcard_labels { margin-top:15px; }
+.sp-methods .form-list li.adyen_payment_creditcard_labels { margin-top:15px;
+    overflow: hidden;
+}
 .sp-methods .form-list li.adyen_payment_creditcard_labels img {
     display: block;
     float: left;
@@ -304,7 +306,6 @@ div.adyenAutocomplete ul li {
 }
 
 .checkout-container {
-    float: left;
     margin: 0 auto;
     position: relative;
     width: 100%;
