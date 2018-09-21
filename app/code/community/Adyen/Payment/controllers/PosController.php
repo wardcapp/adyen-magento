@@ -78,7 +78,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         // If customer exists add it into the request to store request
         if (!empty($customerId)) {
             $shopperEmail = $quote->getCustomerEmail();
-            $recurringContract = $adyenHelper->getConfigData('capture_mode_pos', 'adyen_pos_cloud', $storeId);
+            $recurringContract = $adyenHelper->getConfigData('recurring_type', 'adyen_pos_cloud', $storeId);
 
             if (!empty($recurringContract) && !empty($shopperEmail) && !empty($customerId)) {
                 $recurringDetails = array(
@@ -94,20 +94,23 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         $quote->getPayment()->getMethodInstance()->getInfoInstance()->setAdditionalInformation('initiateDate',
             $initiateDate);
 
-
-        $response = $api->doRequestSync($request, $storeId);
+        $result = "Stop";
+        // Continue only if success or timeout
+        try {
+            $response = $api->doRequestSync($request, $storeId);
+            if (!empty($response['SaleToPOIResponse']['PaymentResponse']) && $response['SaleToPOIResponse']['PaymentResponse']['Response']['Result'] == 'Success') {
+                $result = "OK";
+            }
+        } catch(Adyen_Payment_Exception $e) {
+            if($e->getCode() == CURLE_OPERATION_TIMEOUTED) {
+                $result = "Timeout";
+            }
+        }
 
         $quote->getPayment()->getMethodInstance()->getInfoInstance()->setAdditionalInformation('terminalResponse',
             $response);
 
         $quote->save();
-        if (!empty($response['SaleToPOIResponse']['PaymentResponse']) && $response['SaleToPOIResponse']['PaymentResponse']['Response']['Result'] == 'Success') {
-            $result = "OK";
-        } elseif (!empty($response['code']) && ($response['code'] == CURLE_OPERATION_TIMEOUTED)) {
-            $result = "Timeout";
-        } else {
-            $result = "Stop";
-        }
 
         $this->getResponse()->setHeader('Content-type', 'application/json');
         $this->getResponse()->setBody($result);
