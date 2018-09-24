@@ -129,10 +129,8 @@ $originKey = $this->getOriginKey();
                     function updateExpirationDate(event) {
                         // hide the link
                         this.hide();
-                        // show expiration month and year
-                        var id = "update-exp-date-<?php echo $_code; ?>";
-                        // show changeble card expiry
-                        $(id).show();
+                        // show expiration month and year/changeable card expiry
+                        $("update-exp-date-<?php echo $_code; ?>").show();
                         event.preventDefault();
                     }
 
