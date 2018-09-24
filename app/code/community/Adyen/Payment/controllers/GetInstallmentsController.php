@@ -35,6 +35,7 @@ class Adyen_Payment_GetInstallmentsController extends Mage_Core_Controller_Front
 
         // get installments for cctype
         $ccType = isset($params['ccType']) ? $params['ccType'] : "";
+        $ccType = Mage::helper('adyen')->getMagentoCreditCartType($ccType);
 
         $result = Mage::helper('adyen/installments')->getInstallmentForCreditCardType($ccType);
 

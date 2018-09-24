@@ -47,13 +47,13 @@
     </add_order_grid_column_handle>
     <!-- order grid action -->
     <adminhtml_sales_order_grid>
-    <!-- apply the layout handle defined above -->
-        <update handle="add_order_grid_column_handle" />
+        <!-- apply the layout handle defined above -->
+        <update handle="add_order_grid_column_handle"/>
     </adminhtml_sales_order_grid>
     <!-- order grid view action -->
     <adminhtml_sales_order_index>
         <!-- apply the layout handle defined above -->
-        <update handle="add_order_grid_column_handle" />
+        <update handle="add_order_grid_column_handle"/>
     </adminhtml_sales_order_index>
 
     <adminhtml_adyen_event_queue_index>
@@ -69,15 +69,22 @@
 
     <adminhtml_sales_order_create_index>
         <reference name="head">
-            <action method="addJs"><script>adyen/payment/iban.js</script></action>
-            <action method="addJs"><script>adyen/adminhtml/sales.js</script></action>
+            <action method="addCss"><stylesheet>adyenstyle.css</stylesheet></action>
+            <action method="addJs">
+                <script>adyen/payment/iban.js</script>
+            </action>
+            <action method="addJs">
+                <script>adyen/adminhtml/sales.js</script>
+            </action>
         </reference>
     </adminhtml_sales_order_create_index>
 
     <default>
         <reference name="notifications">
-            <block type="adyen/adminhtml_notifications" name="adyen_notifications" template="adyen/payment/notifications.phtml"/>
-            <block type="adyen/adminhtml_messageversion" name="adyen_messageversion" template="adyen/payment/messageversion.phtml"/>
+            <block type="adyen/adminhtml_notifications" name="adyen_notifications"
+                   template="adyen/payment/notifications.phtml"/>
+            <block type="adyen/adminhtml_messageversion" name="adyen_messageversion"
+                   template="adyen/payment/messageversion.phtml"/>
         </reference>
     </default>
 </layout>

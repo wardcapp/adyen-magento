@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
+class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc
+{
 
     protected $_code = 'adyen_oneclick';
     protected $_formBlockType = 'adyen/form_oneclick';
@@ -36,19 +38,20 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
     protected $_canUseForMultishipping = true;
 
 
-    public function isAvailable($quote=null) {
+    public function isAvailable($quote = null)
+    {
         $isAvailble = parent::isAvailable($quote);
 
         // extra check if contract_type is allowed
-        if($isAvailble) {
+        if ($isAvailble) {
             $recurringPaymentType = $this->getRecurringPaymentType();
             $recurringDetails = $this->getRecurringDetails();
 
-            if(isset($recurringDetails['recurring_type'])) {
+            if (isset($recurringDetails['recurring_type'])) {
 
                 $result = strpos($recurringDetails['recurring_type'], $recurringPaymentType);
 
-                if($result !== false) {
+                if ($result !== false) {
                     return true;
                 } else {
                     return false;
@@ -69,7 +72,8 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         return $this;
     }
 
-    public function assignData($data) {
+    public function assignData($data)
+    {
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
@@ -77,15 +81,15 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
 
         // get storeId
         $session = Mage::helper('adyen')->getSession();
-        
-        if(Mage::app()->getStore()->isAdmin()) {
+
+        if (Mage::app()->getStore()->isAdmin()) {
             $store = $session->getStore();
         } else {
             $store = Mage::app()->getStore();
         }
         $storeId = $store->getId();
 
-        if($data->getRecurringDetailReference()) {
+        if ($data->getRecurringDetailReference()) {
             // this can be the case if you select the recurring card from the POS express checkout mechanisme
             $info->setAdditionalInformation('recurring_detail_reference', $data->getRecurringDetailReference());
         } else {
@@ -94,44 +98,30 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
             $info->setAdditionalInformation('recurring_detail_reference', $recurringDetailReference);
         }
 
-        $ccType = Mage::getStoreConfig("payment/".$this->getCode() . "/variant", $storeId);
+        $ccType = Mage::getStoreConfig("payment/" . $this->getCode() . "/variant", $storeId);
         $ccType = Mage::helper('adyen')->getMagentoCreditCartType($ccType);
         $info->setCcType($ccType);
 
-        if ($this->isCseEnabled()) {
-            $method = $this->getCode();
-            $encryptedData = $data->getData('encrypted_data_'.$method);
-            $session->setData('encrypted_data_'.$method, $encryptedData);
-        } else {
+   
+        $method = $this->getCode();
+        $encryptedMonth = $data->getData('encrypted_expiry_month_' . $method);
+        $encryptedYear = $data->getData('encrypted_expiry_year_' . $method);
+        $encryptedCvc = $data->getData('encrypted_cvc_' . $method);
+        $session->setData('encrypted_cvc_' . $method, $encryptedCvc);
+        $session->setData('encrypted_expiry_month_' . $method, $encryptedMonth);
+        $session->setData('encrypted_expiry_year_' . $method, $encryptedYear);
 
-            // check if expiry month and year is changed
-            $expiryMonth = $data->getOneclickExpMonth();
-            $expiryYear = $data->getOneclickExpYear();
-            $cvcCode = $data->getOneclickCid();
 
-            $cardHolderName = Mage::getStoreConfig("payment/".$this->getCode() . "/card_holderName", $storeId);
-            $last4Digits = Mage::getStoreConfig("payment/".$this->getCode() . "/card_number", $storeId);
-            $cardHolderName = Mage::getStoreConfig("payment/".$this->getCode() . "/card_holderName", $storeId);
-
-            // just set default data for info block only
-            $info->setCcType($ccType)
-                ->setCcOwner($cardHolderName)
-                ->setCcLast4($last4Digits)
-                ->setCcExpMonth($expiryMonth)
-                ->setCcExpYear($expiryYear)
-                ->setCcCid($cvcCode);
-        }
-
-        if(Mage::helper('adyen/installments')->isInstallmentsEnabled()) {
+        if (Mage::helper('adyen/installments')->isInstallmentsEnabled()) {
             $info->setAdditionalInformation('number_of_installments', $data->getInstallment());
         } else {
             $info->setAdditionalInformation('number_of_installments', "");
 
         }
 
-        if($info->getAdditionalInformation('number_of_installments') != "") {
+        if ($info->getAdditionalInformation('number_of_installments') != "") {
             // recalculate the totals so that extra fee is defined
-            $quote = (Mage::getModel('checkout/type_onepage') !== false)? Mage::getModel('checkout/type_onepage')->getQuote(): Mage::getModel('checkout/session')->getQuote();
+            $quote = (Mage::getModel('checkout/type_onepage') !== false) ? Mage::getModel('checkout/type_onepage')->getQuote() : Mage::getModel('checkout/session')->getQuote();
             $quote->setTotalsCollectedFlag(false);
             $quote->collectTotals();
         }
@@ -149,14 +139,14 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
      */
     public function setCustomerInteraction($customerInteraction)
     {
-        $this->_customerInteraction = (bool) $customerInteraction;
+        $this->_customerInteraction = (bool)$customerInteraction;
     }
 
     public function hasCustomerInteraction()
     {
-        if($this->_customerInteraction === null) {
+        if ($this->_customerInteraction === null) {
             $recurringPaymentType = $this->getRecurringPaymentType();
-            if($recurringPaymentType == "ONECLICK") {
+            if ($recurringPaymentType == "ONECLICK") {
                 $this->_customerInteraction = true;
             } else {
                 $this->_customerInteraction = false;
@@ -169,7 +159,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
     public function getRecurringPaymentType()
     {
         // For admin always use Recurring
-        if(Mage::app()->getStore()->isAdmin()) {
+        if (Mage::app()->getStore()->isAdmin()) {
             return "RECURRING";
         } else {
             return $this->_getConfigData('recurring_payment_type', 'adyen_oneclick');
@@ -184,33 +174,32 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
     {
         $subscriptionReference = str_replace('adyen_oneclick_', '', $this->getCode());
 
-        return Mage::getModel('adyen/billing_agreement')->getCollection()
-            ->addFieldToFilter('reference_id', $subscriptionReference)
-            ->getFirstItem();
+        return Mage::getModel('adyen/billing_agreement')->getCollection()->addFieldToFilter('reference_id',
+                $subscriptionReference)->getFirstItem();
     }
 
 
     /**
      * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
-     * @param Mage_Sales_Model_Quote_Payment        $paymentInfo
+     * @param Mage_Sales_Model_Quote_Payment $paymentInfo
      *
      * @return $this
      */
     public function initBillingAgreementPaymentInfo(
         Adyen_Payment_Model_Billing_Agreement $billingAgreement,
-        Mage_Sales_Model_Quote_Payment $paymentInfo)
-    {
+        Mage_Sales_Model_Quote_Payment $paymentInfo
+    ) {
         try {
             $recurringDetailReference = $billingAgreement->getReferenceId();
-            $paymentInfo->setMethod('adyen_oneclick_'.$recurringDetailReference);
+            $paymentInfo->setMethod('adyen_oneclick_' . $recurringDetailReference);
             $paymentInfo->setAdditionalInformation('recurring_detail_reference', $recurringDetailReference);
 
             // set the ccType needed for Sepa, Sofort and Ideal
             $agreementData = $billingAgreement->getAgreementData();
-            if(isset($agreementData['variant'])) {
+            if (isset($agreementData['variant'])) {
                 $paymentInfo->setCcType($agreementData['variant']);
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Adyen_Payment_Exception::logException($e);
         }
         return $this;
@@ -224,10 +213,11 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         return true;
     }
 
-    public function canCreateAdyenSubscription() {
+    public function canCreateAdyenSubscription()
+    {
 
         // get storeId
-        if(Mage::app()->getStore()->isAdmin()) {
+        if (Mage::app()->getStore()->isAdmin()) {
             $store = Mage::getSingleton('adminhtml/session_quote')->getStore();
         } else {
             $store = Mage::app()->getStore();
@@ -236,7 +226,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
 
         // Only cards that are saved as RECURRING or ONECLICK,RECURRING can be used for subscription
         $recurringType = $this->getConfigData('recurring_type', $storeId);
-        if($recurringType == "RECURRING" || $recurringType == "ONECLICK,RECURRING") {
+        if ($recurringType == "RECURRING" || $recurringType == "ONECLICK,RECURRING") {
             return true;
         }
         return false;
@@ -244,28 +234,23 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
 
     /**
      * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
-     * @param array                                 $data
+     * @param array $data
      *
      * @return $this
      */
     public function parseRecurringContractData(
         Adyen_Payment_Model_Billing_Agreement $billingAgreement,
-        array $data)
-    {
-        $billingAgreement
-            ->setMethodCode($this->getCode())
-            ->setReferenceId($data['recurringDetailReference'])
-            ->setCreatedAt($data['creationDate']);
+        array $data
+    ) {
+        $billingAgreement->setMethodCode($this->getCode())->setReferenceId($data['recurringDetailReference'])->setCreatedAt($data['creationDate']);
 
-        $creationDate =  str_replace(' ', '-', $data['creationDate']);
+        $creationDate = str_replace(' ', '-', $data['creationDate']);
         $billingAgreement->setCreatedAt($creationDate);
 
         //Billing agreement SEPA
         if (isset($data['bank_iban'])) {
-            $billingAgreement->setAgreementLabel(Mage::helper('adyen')->__('%s, %s',
-                $data['bank_iban'],
-                $data['bank_ownerName']
-            ));
+            $billingAgreement->setAgreementLabel(Mage::helper('adyen')->__('%s, %s', $data['bank_iban'],
+                $data['bank_ownerName']));
         }
 
         // Billing agreement is CC
@@ -277,27 +262,20 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
                 $ccType = $ccTypes[$ccType]['name'];
             }
 
-            $label = Mage::helper('adyen')->__('%s, %s, **** %s',
-                $ccType,
-                $data['card_holderName'],
-                $data['card_number'],
-                $data['card_expiryMonth'],
-                $data['card_expiryYear']
-            );
+            $label = Mage::helper('adyen')->__('%s, %s, **** %s', $ccType, $data['card_holderName'],
+                $data['card_number'], $data['card_expiryMonth'], $data['card_expiryYear']);
             $billingAgreement->setAgreementLabel($label);
         }
 
         if (isset($data['variant']) && $data['variant'] == 'paypal') {
-            
+
             $email = "";
             if (isset($data['tokenDetails']['tokenData']['EmailId'])) {
                 $email = $data['tokenDetails']['tokenData']['EmailId'];
             } elseif (isset($data['lastKnownShopperEmail'])) {
                 $email = $data['lastKnownShopperEmail'];
             }
-            $label = Mage::helper('adyen')->__('PayPal %s',
-                $email
-            );
+            $label = Mage::helper('adyen')->__('PayPal %s', $email);
 
             $billingAgreement->setAgreementLabel($label);
         }
@@ -305,15 +283,16 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         return $this;
     }
 
-    public function getRecurringDetails() {
+    public function getRecurringDetails()
+    {
 
-        if(Mage::app()->getStore()->isAdmin()) {
+        if (Mage::app()->getStore()->isAdmin()) {
             $storeId = Mage::getSingleton('adminhtml/session_quote')->getStoreId();
         } else {
             $storeId = Mage::app()->getStore()->getStoreId();
         }
 
-        $recurringDetails = Mage::getStoreConfig("payment/".$this->getCode(), $storeId);
+        $recurringDetails = Mage::getStoreConfig("payment/" . $this->getCode(), $storeId);
         return $recurringDetails;
     }
 }

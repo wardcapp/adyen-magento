@@ -23,25 +23,26 @@
  * @package    Adyen_Payment
  * @author     Adyen
  * @property   Adyen B.V
- * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
+ * @copyright  Copyright (c) 2018 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Info_Cc extends Mage_Payment_Block_Info_Cc {
-	
-    /**
-     * Init default template for block
-     */
-    protected function _construct() {
-        parent::_construct();
-        $this->setTemplate('adyen/info/cc.phtml');
-    }
 
-    public function toPdf() {
-        $this->setTemplate('adyen/pdf/cc.phtml');
-        return $this->toHtml();
-    }
+class Adyen_Payment_Adminhtml_GetInstallmentsAdminController extends Mage_Adminhtml_Controller_Action {
 
-    public function hasInstallments(){
-        return Mage::helper('adyen/installments')->isInstallmentsEnabled();
+    public function indexAction()
+    {
+
+        $params = $this->getRequest()->getParams();
+
+        // get installments for cctype
+        $ccType = isset($params['ccType']) ? $params['ccType'] : "";
+        $ccType = Mage::helper('adyen')->getMagentoCreditCartType($ccType);
+
+        $result = Mage::helper('adyen/installments')->getInstallmentForCreditCardType($ccType);
+
+        $jsonData = json_encode($result);
+        $this->getResponse()->setHeader('Content-type', 'application/json');
+        $this->getResponse()->setBody($jsonData);
+
     }
 
 }
