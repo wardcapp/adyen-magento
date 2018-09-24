@@ -30,7 +30,7 @@
 <fieldset class="form-list">
     <ul id="payment_form_<?php echo $_code ?>" style="display:none">
         <li>
-            <?php echo $this->__('A button will appear here.') ?>
+            <input type = "button" onclick="location.href='<?php echo $this->getUrl('adyen/Pos/Initiate', array('_secure'=>true)); ?>'" value="button" class="button btn-proceed-checkout btn-checkout adyen-checkout-button"/>
         </li>
     </ul>
 </fieldset>
