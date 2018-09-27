@@ -318,11 +318,13 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         return json_decode($result, true);
     }
 
-    public function doRequestSync(array $request, $storeId)
+    public function doRequestSync(array $request, $storeId, $timeout = null)
     {
         $requestUrl = $this->_helper()->getConfigDataDemoMode() ? "https://terminal-api-test.adyen.com/sync" : "https://terminal-api-live.adyen.com/sync";
         $apiKey = $this->_helper()->getPosApiKey($storeId);
-        $timeout = $this->_helper()->getConfigData('timeout', 'adyen_pos_cloud', $storeId);
+        if(empty($timeout)){
+            $timeout = $this->_helper()->getConfigData('timeout', 'adyen_pos_cloud', $storeId);
+        }
         $response = $this->_doRequestJson($request, $requestUrl, $apiKey, $storeId, $timeout);
         return $response;
     }

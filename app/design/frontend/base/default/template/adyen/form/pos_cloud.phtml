@@ -12,10 +12,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -27,10 +27,46 @@
 ?>
 <?php $_code = $this->getMethodCode() ?>
 
+<script type="text/javascript">
+    //To be optimized in PW-599
+    $("initiate").on("click",function () {
+        new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/initiate', array('_secure' => true)); ?>", {
+            parameters: {isAjax: 1, method: 'POST'},
+            onSuccess: function (response) {
+                console.log(response.responseText);
+                if (response.responseText.indexOf("Timeout") > -1) {
+                   status();
+                }
+                return;
+            },
+            onFailure: function () {
+                reject(Error("Network Error"));
+            }
+        });
+    });
+    function status(){
+        new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/checkStatus', array('_secure' => true)); ?>", {
+            parameters: {isAjax: 1, method: 'POST'},
+            onSuccess: function (response) {
+                console.log(response.responseText);
+                setTimeout(
+                    status,5000);
+            },
+            onFailure: function () {
+                reject(Error("Network Error"));
+            }
+        });
+    };
+</script>
+
 <fieldset class="form-list">
     <ul id="payment_form_<?php echo $_code ?>" style="display:none">
         <li>
-            <input type = "button" onclick="location.href='<?php echo $this->getUrl('adyen/Pos/Initiate', array('_secure'=>true)); ?>'" value="button" class="button btn-proceed-checkout btn-checkout adyen-checkout-button"/>
+
+            <input type="button" id="initiate" value="Initiate"
+                   class="button btn-proceed-checkout btn-checkout adyen-checkout-button"/>
+
         </li>
     </ul>
 </fieldset>
+
