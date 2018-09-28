@@ -142,7 +142,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
                         'MessageCategory' => 'TransactionStatus',
                         'MessageType' => 'Request',
                         'ServiceID' => $newServiceID,
-                        'SaleID' => 'Magento2CloudStatus',
+                        'SaleID' => 'Magento1CloudStatus',
                         'POIID' => $poiId
                     ),
                     'TransactionStatusRequest' => array(
@@ -166,32 +166,27 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
                 if (!empty($response['SaleToPOIResponse']['TransactionStatusResponse'])) {
                     $statusResponse = $response['SaleToPOIResponse']['TransactionStatusResponse'];
                     if ($statusResponse['Response']['Result'] == 'Failure') {
-                        $result = "retry";
+                        $result = "Retry";
                     } else {
                         $paymentResponse = $statusResponse['RepeatedMessageResponse']['RepeatedResponseMessageBody']['PaymentResponse'];
-                        if (!empty($paymentResponse) && $paymentResponse['Response']['Result'] == 'Success') {
-                            $result = "OK";
-                        }
                     }
                 }
             } catch (Adyen_Payment_Exception $e) {
                 if ($e->getCode() == CURLE_OPERATION_TIMEOUTED) {
-                    $result = "Timeout";
+                    $result = "Retry";
                 }
             }
 
-        } else {
-            if (!empty($paymentResponse) && $paymentResponse['Response']['Result'] == 'Success') {
-                $result = "OK";
-            }
         }
 
         //If we are in a final state, update the quote
         if (!empty($paymentResponse)) {
             $quote->getPayment()->setAdditionalInformation('terminalResponse', $paymentResponse);
             $quote->save();
+            if ($paymentResponse['Response']['Result'] == 'Success') {
+                $result = "OK";
+            }
         }
-
 
         $this->getResponse()->setHeader('Content-type', 'application/json');
         $this->getResponse()->setBody($result);
