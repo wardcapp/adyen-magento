@@ -32,7 +32,6 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
     protected $_formBlockType = 'adyen/form_posCloud';
     protected $_infoBlockType = 'adyen/info_posCloud';
     protected $_paymentMethod = 'pos_cloud';
-    protected $_isInitializeNeeded = true;
 
     /**
      * @var GUEST_ID , used when order is placed by guests
@@ -64,7 +63,7 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
     }
 
     public function getOrderPlaceRedirectUrl() {
-        return Mage::getUrl('adyen/process/redirect');
+        return parent::getOrderPlaceRedirectUrl();
     }
 
     public function getFormName() {

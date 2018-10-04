@@ -28,32 +28,64 @@
 <?php $_code = $this->getMethodCode() ?>
 
 <script type="text/javascript">
-    //To be optimized in PW-599
-    $("initiate").on("click",function () {
+    $("initiate").on("click", function () {
+        var self = this;
+        this.disabled = true;
+        $("pos-cloud-please-wait").show();
         new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/initiate', array('_secure' => true)); ?>", {
             parameters: {isAjax: 1, method: 'POST'},
             onSuccess: function (response) {
-                console.log(response.responseText);
-                if (response.responseText.indexOf("Timeout") > -1) {
-                   status();
+                if (response.responseText.indexOf("Retry") > -1) {
+                    status();
+                    return;
                 }
-                return;
+                else if (response.responseText.indexOf("Stop") > -1) {
+                    alert(response.responseJSON.error);
+                    self.disabled = false;
+                    $("pos-cloud-please-wait").hide();
+                    return;
+                }
+                placeOrder();
             },
             onFailure: function () {
                 reject(Error("Network Error"));
             }
         });
     });
-    function status(){
+    function status() {
         new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/checkStatus', array('_secure' => true)); ?>", {
             parameters: {isAjax: 1, method: 'POST'},
             onSuccess: function (response) {
-                console.log(response.responseText);
-                setTimeout(
-                    status,5000);
+                var self = this;
+                if (response.responseText.indexOf("Retry") > -1) {
+                    self.setTimeout(
+                        status, 5000);
+                    return;
+                }
+                else if (response.responseText.indexOf("Stop") > -1) {
+                    alert(response.responseJSON.error);
+                    self.disabled = false;
+                    $("pos-cloud-please-wait").hide();
+                    return;
+                }
+                placeOrder();
             },
             onFailure: function () {
                 reject(Error("Network Error"));
+            }
+        });
+    };
+    function placeOrder() {
+        new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/placeOrder', array('_secure' => true)); ?>", {
+            parameters: {isAjax: 1, method: 'POST'},
+            onSuccess: function (response) {
+                if (response.responseText.indexOf("SUCCESS") > -1) {
+                    window.location = "<?php echo $this->getUrl('checkout/onepage/success',
+                        array('_secure' => true)); ?>";
+                }
+            },
+            onFailure: function () {
+                reject(Error("Order Creation Error"));
             }
         });
     };
@@ -65,7 +97,10 @@
 
             <input type="button" id="initiate" value="Initiate"
                    class="button btn-proceed-checkout btn-checkout adyen-checkout-button"/>
-
+            <span id="pos-cloud-please-wait" style="display:none;" class="opc-please-wait">
+                <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" class="v-middle" alt=""/> &nbsp; <?php echo $this->__('Please follow the instructions on your terminal...') ?>
+                &nbsp;
+            </span>
         </li>
     </ul>
 </fieldset>

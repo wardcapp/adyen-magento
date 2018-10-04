@@ -27,6 +27,9 @@
  */
 class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
 {
+    const PAYMENT_SUCCESSFUL = "Ok"; //Payment on the terminal was successful
+    const PAYMENT_ERROR = "Stop"; //Payment on the terminal was refused, or error with the terminal
+    const PAYMENT_RETRY = "Retry"; //Timeout on the terminal, poll on the status call to retrieve the status of the payment
 
     public function initiateAction()
     {
@@ -93,16 +96,20 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         $quote->getPayment()->setAdditionalInformation('serviceID', $serviceID);
         $quote->getPayment()->setAdditionalInformation('initiateDate', $initiateDate);
 
-        $result = "Stop";
+        $result = self::PAYMENT_ERROR;
+        $errorCondition = "Payment Error";
+
         // Continue only if success or timeout
         try {
             $response = $api->doRequestSync($request, $storeId);
             if (!empty($response['SaleToPOIResponse']['PaymentResponse']) && $response['SaleToPOIResponse']['PaymentResponse']['Response']['Result'] == 'Success') {
-                $result = "OK";
+                $result = self::PAYMENT_SUCCESSFUL;
+            } elseif (!empty($response['SaleToPOIResponse']['PaymentResponse']) && $response['SaleToPOIResponse']['PaymentResponse']['Response']['Result'] == 'Failure') {
+                $errorCondition = $response['SaleToPOIResponse']['PaymentResponse']['Response']['ErrorCondition'];
             }
         } catch (Adyen_Payment_Exception $e) {
             if ($e->getCode() == CURLE_OPERATION_TIMEOUTED) {
-                $result = "Timeout";
+                $result = self::PAYMENT_RETRY;
             }
         }
 
@@ -110,8 +117,13 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
             $response['SaleToPOIResponse']['PaymentResponse']);
         $quote->save();
 
+        $resultArray = array(
+            'result' => $result,
+            'error' => $errorCondition
+        );
+
         $this->getResponse()->setHeader('Content-type', 'application/json');
-        $this->getResponse()->setBody($result);
+        $this->getResponse()->setBody(json_encode($resultArray));
         return $result;
     }
 
@@ -129,8 +141,8 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
 
         $newServiceID = date("dHis");
 
-        $result = "Stop";
-
+        $result = self::PAYMENT_ERROR;
+        $errorCondition = "Payment Error";
         //If no response from Initiate, call Transaction Status
         if (empty($paymentResponse)) {
 
@@ -162,18 +174,18 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
             );
 
             try {
-                $response = $api->doRequestSync($request, $storeId, 5);
+                $response = $api->doRequestSync($request, $storeId);
                 if (!empty($response['SaleToPOIResponse']['TransactionStatusResponse'])) {
                     $statusResponse = $response['SaleToPOIResponse']['TransactionStatusResponse'];
                     if ($statusResponse['Response']['Result'] == 'Failure') {
-                        $result = "Retry";
+                        $result = self::PAYMENT_RETRY;
                     } else {
                         $paymentResponse = $statusResponse['RepeatedMessageResponse']['RepeatedResponseMessageBody']['PaymentResponse'];
                     }
                 }
             } catch (Adyen_Payment_Exception $e) {
                 if ($e->getCode() == CURLE_OPERATION_TIMEOUTED) {
-                    $result = "Retry";
+                    $result = self::PAYMENT_RETRY;
                 }
             }
 
@@ -184,10 +196,47 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
             $quote->getPayment()->setAdditionalInformation('terminalResponse', $paymentResponse);
             $quote->save();
             if ($paymentResponse['Response']['Result'] == 'Success') {
-                $result = "OK";
+                $result = self::PAYMENT_SUCCESSFUL;
             }
         }
 
+        $resultArray = array(
+            'result' => $result,
+            'error' => $errorCondition
+        );
+        $this->getResponse()->setHeader('Content-type', 'application/json');
+        $this->getResponse()->setBody(json_encode($resultArray));
+        return $result;
+    }
+
+    public function placeOrderAction()
+    {
+        $quote = (Mage::getModel('checkout/type_onepage') !== false) ? Mage::getModel('checkout/type_onepage')->getQuote() : Mage::getModel('checkout/session')->getQuote();
+        $service = Mage::getModel('sales/service_quote', $quote);
+
+        $quote->getPayment()->setMethod('adyen_pos_cloud');
+        $quote->collectTotals()->save();
+        try {
+            $service->submitAll();
+            $order = $service->getOrder();
+            $order->save();
+
+            $result = "SUCCESS";
+
+            // add order information to the session
+            $session = Mage::getSingleton('checkout/session');
+            $session->setLastOrderId($order->getId());
+            $session->setLastRealOrderId($order->getIncrementId());
+            $session->setLastSuccessQuoteId($order->getQuoteId());
+            $session->setLastQuoteId($order->getQuoteId());
+            $session->unsAdyenRealOrderId();
+            $session->setQuoteId($session->getAdyenQuoteId(true));
+            $session->getQuote()->setIsActive(false)->save();
+
+        } catch (Exception $e) {
+            Mage::logException($e);
+            $result = "ERROR";
+        }
         $this->getResponse()->setHeader('Content-type', 'application/json');
         $this->getResponse()->setBody($result);
         return $result;

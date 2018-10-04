@@ -616,4 +616,15 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         }
         return Mage::helper('core')->decrypt($this->getConfigData('api_key_live', "adyen_pos_cloud", $storeId));
     }
+
+    public function getAdyenMerchantAccount($paymentMethod, $storeId)
+    {
+        $merchantAccount = trim($this->getConfigData('merchantAccount', 'adyen_abstract', $storeId));
+        $merchantAccountPos = trim($this->getConfigData('pos_merchant_account', 'adyen_pos_cloud', $storeId));
+        Mage::log("paymentMethod: " . $paymentMethod . " merchantAccount: " . $merchantAccount . " merchantAccountPOS: " . $merchantAccountPos, null, "adyen_api.log");
+        if ($paymentMethod == 'pos_cloud' && !empty($merchantAccountPos)) {
+            return $merchantAccountPos;
+        }
+        return $merchantAccount;
+    }
 }

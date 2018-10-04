@@ -182,6 +182,16 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </ws_password_live>
+                                <custom_endpoint_live translate="label">
+                                    <label>Live: Custom Endpoint</label>
+                                    <tooltip>This is only applicable if you have a Live account. Find this in your Live Adyen Customer Area => Settings => Users => System. Normally this will be ws@Company.YourCompanyAccount. Copy and Paste the exact ws user name here.</tooltip>
+                                    <config_path>payment/adyen_abstract/ws_username_live</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>115</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </custom_endpoint_live>
                                 <ws_live_button translate="label">
                                     <label></label>
                                     <button_label>Test Web Service Credentials for live</button_label>
