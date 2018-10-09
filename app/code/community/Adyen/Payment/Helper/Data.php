@@ -629,9 +629,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 
     public function formatTerminalAPIReceipt($paymentReceipt)
     {
-        Mage::log("receiptinsideformat: " . $paymentReceipt, null, "adyen_api.log");
         $paymentReceipt = json_decode($paymentReceipt);
-
         $formatted = "<table class='terminal-api-receipt'>";
         foreach ($paymentReceipt as $receipt) {
             if ($receipt->DocumentQualifier == "CustomerReceipt") {
