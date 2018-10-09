@@ -31,6 +31,14 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
     const PAYMENT_ERROR = "Stop"; //Payment on the terminal was refused, or error with the terminal
     const PAYMENT_RETRY = "Retry"; //Timeout on the terminal, poll on the status call to retrieve the status of the payment
 
+    /**
+     * Initiate controller for POS Cloud.
+     * Returns:
+     * - PAYMENT_SUCCESSFUL on authorised payment on the Terminal
+     * - PAYMENT_ERROR on refused payment on the Terminal
+     * - PAYMENT_RETRY on timeout, the frontend will call @see checkStatusAction
+     * @return string
+     */
     public function initiateAction()
     {
         $api = Mage::getSingleton('adyen/api');
@@ -127,6 +135,14 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         return $result;
     }
 
+    /**
+     * Checkstatus controller for POS Cloud.
+     * Returns:
+     * - PAYMENT_SUCCESSFUL on successful Status call, with authorised PaymentResponse
+     * - PAYMENT_ERROR on successful Status call, with refused/cancelled PaymentResponse
+     * - PAYMENT_RETRY on timeout, the frontend will poll on @see checkStatusAction
+     * @return string
+     */
     public function checkStatusAction()
     {
         $api = Mage::getSingleton('adyen/api');
