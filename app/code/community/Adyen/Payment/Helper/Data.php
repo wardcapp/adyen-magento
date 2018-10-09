@@ -626,4 +626,33 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         }
         return $merchantAccount;
     }
+
+    public function formatTerminalAPIReceipt($paymentReceipt)
+    {
+        Mage::log("receiptinsideformat: " . $paymentReceipt, null, "adyen_api.log");
+        $paymentReceipt = json_decode($paymentReceipt);
+
+        $formatted = "<table class='terminal-api-receipt'>";
+        foreach ($paymentReceipt as $receipt) {
+            if ($receipt->DocumentQualifier == "CustomerReceipt") {
+                foreach ($receipt->OutputContent->OutputText as $item) {
+                    parse_str($item->Text, $textParts);
+                    $formatted .= "<tr class='terminal-api-receipt'>";
+                    if (!empty($textParts['name'])) {
+                        $formatted .= "<td class='terminal-api-receipt-name'>" . $textParts['name'] . "</td>";
+                    } else {
+                        $formatted .= "<td class='terminal-api-receipt-name'>&nbsp;</td>";
+                    }
+                    if (!empty($textParts['value'])) {
+                        $formatted .= "<td class='terminal-api-receipt-value' align='right'>" . $textParts['value'] . "</td>";
+                    } else {
+                        $formatted .= "<td class='terminal-api-receipt-value' align='right'>&nbsp;</td>";
+                    }
+                    $formatted .= "</tr>";
+                }
+            }
+        }
+        $formatted .= "</table>";
+        return $formatted;
+    }
 }

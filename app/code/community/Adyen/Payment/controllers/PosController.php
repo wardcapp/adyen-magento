@@ -120,7 +120,10 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
                 $result = self::PAYMENT_RETRY;
             }
         }
-
+        if (!empty($response['SaleToPOIResponse']['PaymentResponse']['PaymentReceipt'])) {
+            $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt(json_encode($response['SaleToPOIResponse']['PaymentResponse']['PaymentReceipt']));
+            $quote->getPayment()->setAdditionalInformation('receipt', $formattedReceipt);
+        }
         $quote->getPayment()->setAdditionalInformation('terminalResponse',
             $response['SaleToPOIResponse']['PaymentResponse']);
         $quote->save();
@@ -209,6 +212,10 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
 
         //If we are in a final state, update the quote
         if (!empty($paymentResponse)) {
+            if (!empty($paymentResponse['PaymentReceipt'])) {
+                $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt(json_encode($paymentResponse['PaymentReceipt']));
+                $quote->getPayment()->setAdditionalInformation('receipt', $formattedReceipt);
+            }
             $quote->getPayment()->setAdditionalInformation('terminalResponse', $paymentResponse);
             $quote->save();
             if ($paymentResponse['Response']['Result'] == 'Success') {
