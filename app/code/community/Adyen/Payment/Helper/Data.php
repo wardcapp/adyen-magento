@@ -627,30 +627,36 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         return $merchantAccount;
     }
 
+    /**
+     * Format the Receipt sent in the Terminal API response in HTML
+     * so that it can be easily shown to the shopper
+     *
+     * @param $paymentReceipt
+     * @return string
+     */
     public function formatTerminalAPIReceipt($paymentReceipt)
     {
-        $paymentReceipt = json_decode($paymentReceipt);
-        $formatted = "<table class='terminal-api-receipt'>";
+        $formattedHtml = "<table class='terminal-api-receipt'>";
         foreach ($paymentReceipt as $receipt) {
-            if ($receipt->DocumentQualifier == "CustomerReceipt") {
-                foreach ($receipt->OutputContent->OutputText as $item) {
-                    parse_str($item->Text, $textParts);
-                    $formatted .= "<tr class='terminal-api-receipt'>";
+            if ($receipt['DocumentQualifier'] == "CustomerReceipt") {
+                foreach ($receipt['OutputContent']['OutputText'] as $item) {
+                    parse_str($item['Text'], $textParts);
+                    $formattedHtml .= "<tr class='terminal-api-receipt'>";
                     if (!empty($textParts['name'])) {
-                        $formatted .= "<td class='terminal-api-receipt-name'>" . $textParts['name'] . "</td>";
+                        $formattedHtml .= "<td class='terminal-api-receipt-name'>" . $textParts['name'] . "</td>";
                     } else {
-                        $formatted .= "<td class='terminal-api-receipt-name'>&nbsp;</td>";
+                        $formattedHtml .= "<td class='terminal-api-receipt-name'>&nbsp;</td>";
                     }
                     if (!empty($textParts['value'])) {
-                        $formatted .= "<td class='terminal-api-receipt-value' align='right'>" . $textParts['value'] . "</td>";
+                        $formattedHtml .= "<td class='terminal-api-receipt-value' align='right'>" . $textParts['value'] . "</td>";
                     } else {
-                        $formatted .= "<td class='terminal-api-receipt-value' align='right'>&nbsp;</td>";
+                        $formattedHtml .= "<td class='terminal-api-receipt-value' align='right'>&nbsp;</td>";
                     }
-                    $formatted .= "</tr>";
+                    $formattedHtml .= "</tr>";
                 }
             }
         }
-        $formatted .= "</table>";
-        return $formatted;
+        $formattedHtml .= "</table>";
+        return $formattedHtml;
     }
 }

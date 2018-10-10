@@ -413,6 +413,7 @@
                 <sort_order>100</sort_order>
                 <visible_type>frontend</visible_type>
                 <timeout>25</timeout>
+                <total_timeout>120</total_timeout>
             </adyen_pos_cloud>
             <adyen_cash>
                 <active>0</active>

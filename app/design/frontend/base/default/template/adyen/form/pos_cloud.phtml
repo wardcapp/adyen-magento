@@ -64,7 +64,7 @@
                 }
                 else if (response.responseText.indexOf("Stop") > -1) {
                     alert(response.responseJSON.error);
-                    self.disabled = false;
+                    $("initiate").disabled = false;
                     $("pos-cloud-please-wait").hide();
                     return;
                 }

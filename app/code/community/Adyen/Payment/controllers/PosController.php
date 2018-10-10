@@ -121,7 +121,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
             }
         }
         if (!empty($response['SaleToPOIResponse']['PaymentResponse']['PaymentReceipt'])) {
-            $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt(json_encode($response['SaleToPOIResponse']['PaymentResponse']['PaymentReceipt']));
+            $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt($response['SaleToPOIResponse']['PaymentResponse']['PaymentReceipt']);
             $quote->getPayment()->setAdditionalInformation('receipt', $formattedReceipt);
         }
         $quote->getPayment()->setAdditionalInformation('terminalResponse',
@@ -142,7 +142,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
      * Checkstatus controller for POS Cloud.
      * Returns:
      * - PAYMENT_SUCCESSFUL on successful Status call, with authorised PaymentResponse
-     * - PAYMENT_ERROR on successful Status call, with refused/cancelled PaymentResponse
+     * - PAYMENT_ERROR on successful Status call, with refused/cancelled PaymentResponse, or if two minutes are passed since the @see initiateAction call
      * - PAYMENT_RETRY on timeout, the frontend will poll on @see checkStatusAction
      * @return string
      */
@@ -154,16 +154,25 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
 
         $adyenHelper = Mage::helper('adyen');
         $poiId = $adyenHelper->getConfigData('pos_terminal_id', "adyen_pos_cloud", $storeId);
+        $totalTimeout = $adyenHelper->getConfigData('total_timeout', 'adyen_pos_cloud', $storeId);
 
         $paymentResponse = $quote->getPayment()->getAdditionalInformation('terminalResponse');
         $serviceID = $quote->getPayment()->getAdditionalInformation('serviceID');
+        $initiateDate = $quote->getPayment()->getAdditionalInformation('initiateDate');
 
         $newServiceID = date("dHis");
 
+        $statusDate = date("U");
+        $timeDiff = (int)$statusDate - (int)$initiateDate;
+
+
         $result = self::PAYMENT_ERROR;
         $errorCondition = "Payment Error";
-        //If no response from Initiate, call Transaction Status
-        if (empty($paymentResponse)) {
+
+        if ($timeDiff > $totalTimeout) {
+            $errorCondition = "The Terminal timed out after " . $totalTimeout . " seconds.";
+        } //If no response from Initiate, call Transaction Status
+        elseif (empty($paymentResponse)) {
 
             $request = array(
                 'SaleToPOIRequest' => array(
@@ -213,13 +222,16 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         //If we are in a final state, update the quote
         if (!empty($paymentResponse)) {
             if (!empty($paymentResponse['PaymentReceipt'])) {
-                $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt(json_encode($paymentResponse['PaymentReceipt']));
+                $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt($paymentResponse['PaymentReceipt']);
                 $quote->getPayment()->setAdditionalInformation('receipt', $formattedReceipt);
             }
             $quote->getPayment()->setAdditionalInformation('terminalResponse', $paymentResponse);
             $quote->save();
             if ($paymentResponse['Response']['Result'] == 'Success') {
                 $result = self::PAYMENT_SUCCESSFUL;
+            }
+            elseif ($paymentResponse['Response']['Result'] == 'Failure') {
+                $errorCondition = $paymentResponse['Response']['ErrorCondition'];
             }
         }
 
