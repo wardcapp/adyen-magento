@@ -244,6 +244,12 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         return $result;
     }
 
+    /**
+     * Places the order after a PAYMENT_SUCCESSFUL from
+     * @see initiateAction or
+     * @see checkStatusAction
+     * @return string
+     */
     public function placeOrderAction()
     {
         $quote = (Mage::getModel('checkout/type_onepage') !== false) ? Mage::getModel('checkout/type_onepage')->getQuote() : Mage::getModel('checkout/session')->getQuote();
