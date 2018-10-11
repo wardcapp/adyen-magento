@@ -171,8 +171,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
 
         if ($timeDiff > $totalTimeout) {
             $errorCondition = "The Terminal timed out after " . $totalTimeout . " seconds.";
-        } //If no response from Initiate, call Transaction Status
-        elseif (empty($paymentResponse)) {
+        } elseif (empty($paymentResponse)) {
 
             $request = array(
                 'SaleToPOIRequest' => array(
@@ -229,8 +228,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
             $quote->save();
             if ($paymentResponse['Response']['Result'] == 'Success') {
                 $result = self::PAYMENT_SUCCESSFUL;
-            }
-            elseif ($paymentResponse['Response']['Result'] == 'Failure') {
+            } elseif ($paymentResponse['Response']['Result'] == 'Failure') {
                 $errorCondition = $paymentResponse['Response']['ErrorCondition'];
             }
         }
