@@ -232,7 +232,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             $storeId = $storeId->getId();
         }
 
-        $requestUrl = $this->_helper()->getConfigDataDemoMode()
+        $requestUrl = $this->_helper()->getConfigDataDemoMode($storeId)
             ? "https://pal-test.adyen.com/pal/adapter/httppost"
             : "https://pal-live.adyen.com/pal/adapter/httppost";
         $username = $this->_helper()->getConfigDataWsUserName($storeId);
