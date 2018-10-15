@@ -30,6 +30,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
     const RECURRING_TYPE_ONECLICK = 'ONECLICK';
     const RECURRING_TYPE_RECURRING = 'RECURRING';
     const RECURRING_TYPE_ONECLICK_RECURRING = 'ONECLICK,RECURRING';
+    const ENDPOINT_PROTOCOL = "https://";
+    const CHECKOUT_ENDPOINT_LIVE_SUFFIX = "-checkout-live.adyenpayments.com/checkout";
 
     protected $_recurringTypes = array(
         self::RECURRING_TYPE_ONECLICK,
@@ -341,7 +343,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
         $requestUrl = $this->_helper()->getConfigDataDemoMode()
             ? "https://checkout-test.adyen.com/v1/originKeys"
-            : "https://checkout-live.adyen.com/v1/originKeys";
+            : self::ENDPOINT_PROTOCOL . $this->_helper()->getConfigData("live_endpoint_url_prefix") . self::CHECKOUT_ENDPOINT_LIVE_SUFFIX . "/v1/originKeys";
         return $this->_doRequestJson($request, $requestUrl, $storeId);
     }
 
