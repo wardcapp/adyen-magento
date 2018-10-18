@@ -214,18 +214,29 @@
                                     <config_path>payment/adyen_abstract/api_key_live</config_path>
                                     <frontend_type>obscure</frontend_type>
                                     <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
-                                    <sort_order>115</sort_order>
+                                    <sort_order>125</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </api_key_live>
+                                <live_endpoint_url_prefix translate="label">
+                                    <label>Live: Endpoint URL prefix</label>
+                                    <tooltip><![CDATA[e.g. if your live endpoint is: <br/> <i>https://1234a567bcd89ef0-MagentoCompany-checkout-live.adyenpayments.com</i> <br/> please type:  <strong>1234a567bcd89ef0-MagentoCompany</strong> in this field.]]></tooltip>
+                                    <comment><![CDATA[Provide the unique live url prefix: <strong>[random]-[company name]</strong> from the "API URLs and Response" menu in the Adyen Customer Area. For more information, please check <a href="https://docs.adyen.com/developers/development-resources/live-endpoints#checkoutendpoints">  our documentation</a>.]]></comment>
+                                    <config_path>payment/adyen_abstract/live_endpoint_url_prefix</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>130</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </live_endpoint_url_prefix>
                                 <capture_mode translate="label">
                                     <label>Capture Delay</label>
                                     <frontend_type>select</frontend_type>
                                     <tooltip>Immediate is the default. Set to manual if you want to perform the capture of funds manually later (only affects credit cards and a few alternative payment methods). You need to change this setting as well in Adyen Customer Area => Settings => Merchant Settings => Capture Delay. If you have selected a capture delay of a couple of days in Adyen keep it here on immediate</tooltip>
                                     <source_model>adyen/source_captureModes</source_model>
                                     <config_path>payment/adyen_abstract/capture_mode</config_path>
-                                    <sort_order>130</sort_order>
+                                    <sort_order>135</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
