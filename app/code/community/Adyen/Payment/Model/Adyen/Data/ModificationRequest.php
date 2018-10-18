@@ -33,6 +33,7 @@ class Adyen_Payment_Model_Adyen_Data_ModificationRequest extends Adyen_Payment_M
     public $merchantReference;
     public $modificationAmount;
     public $originalReference;
+    public $applicationInfo;
 
     public function create(Varien_Object $payment, $amount, $merchantAccount, $pspReference = null)
     {
@@ -50,6 +51,8 @@ class Adyen_Payment_Model_Adyen_Data_ModificationRequest extends Adyen_Payment_M
             $this->modificationAmount->currency = $currency;
         }
         $this->originalReference = $pspReference;
+        $this->applicationInfo = new Adyen_Payment_Model_Adyen_Data_ApplicationInfo();
+
         return $this;
     }
 

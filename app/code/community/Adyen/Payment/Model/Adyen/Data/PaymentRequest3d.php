@@ -32,9 +32,11 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest3d extends Adyen_Payment_Mode
     public $md;
     public $paResponse;
     public $shopperIP;
+    public $applicationInfo;
     
     public function __construct() {
         $this->browserInfo = new Adyen_Payment_Model_Adyen_Data_BrowserInfo();
+        $this->applicationInfo = new Adyen_Payment_Model_Adyen_Data_ApplicationInfo();
     }
 	
     public function create(Varien_Object $payment, $merchantAccount)
@@ -45,6 +47,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest3d extends Adyen_Payment_Mode
         $this->shopperIP = $_SERVER['REMOTE_ADDR'];
 		$this->md = $payment->getAdditionalInformation('md');
 		$this->paResponse = $payment->getAdditionalInformation('paResponse');
+
         return $this;
     }    
 }

@@ -50,6 +50,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     public $shopperReference;
     public $shopperStatement;
     public $additionalData;
+    public $applicationInfo;
 
     // added for boleto
     public $shopperName;
@@ -64,6 +65,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->additionalData = new Adyen_Payment_Model_Adyen_Data_AdditionalData();
         $this->shopperName = new Adyen_Payment_Model_Adyen_Data_ShopperName(); // for boleto
         $this->bankAccount = new Adyen_Payment_Model_Adyen_Data_BankAccount(); // for SEPA
+        $this->applicationInfo = new Adyen_Payment_Model_Adyen_Data_ApplicationInfo();
     }
 
     /**
