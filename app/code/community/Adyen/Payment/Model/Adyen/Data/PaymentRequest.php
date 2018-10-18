@@ -156,12 +156,38 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->shopperName->lastName = trim($billingAddress->getLastname());
 
                     $this->billingAddress = new Adyen_Payment_Model_Adyen_Data_BillingAddress();
-                    $this->billingAddress->street = $billingAddress->getStreet(1);
+
+                    if ($billingAddress->getStreet(1)) {
+                        $this->billingAddress->street = $billingAddress->getStreet(1);
+                    } else {
+                        $this->billingAddress->street = 'N/A';
+                    }
+
+                    if ($billingAddress->getPostcode()) {
+                        $this->billingAddress->postalCode = $billingAddress->getPostcode();
+                    } else {
+                        $this->billingAddress->postalCode = '';
+                    }
+
+                    if ($billingAddress->getCity()) {
+                        $this->billingAddress->city = $billingAddress->getCity();
+                    } else {
+                        $this->billingAddress->city = 'N/A';
+                    }
+
+                    if ($billingAddress->getRegionCode()) {
+                        $this->billingAddress->stateOrProvince = $billingAddress->getRegionCode();
+                    } else {
+                        $this->billingAddress->stateOrProvince = '';
+                    }
+
+                    if ($billingAddress->getCountryId()) {
+                        $this->billingAddress->country = $billingAddress->getCountryId();
+                    } else {
+                        $this->billingAddress->country = 'ZZ';
+                    }
+
                     $this->billingAddress->houseNumberOrName = '';
-                    $this->billingAddress->city = $billingAddress->getCity();
-                    $this->billingAddress->postalCode = $billingAddress->getPostcode();
-                    $this->billingAddress->stateOrProvince = $billingAddress->getRegionCode();
-                    $this->billingAddress->country = $billingAddress->getCountryId();
                 }
 
                 $deliveryAddress = $order->getShippingAddress();
