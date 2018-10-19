@@ -500,6 +500,7 @@
                 <show_in_payment_step_checkout>1</show_in_payment_step_checkout>
                 <show_outside_of_checkout>1</show_outside_of_checkout>
                 <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
+                <allow_recurring>0</allow_recurring>
             </adyen_apple_pay>
             <adyen_multibanco>
                 <model>adyen/adyen_multibanco</model>
