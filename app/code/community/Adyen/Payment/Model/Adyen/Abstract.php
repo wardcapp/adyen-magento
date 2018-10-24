@@ -382,7 +382,7 @@ abstract class Adyen_Payment_Model_Adyen_Abstract extends Mage_Payment_Model_Met
         }
 
         $this->_initService($storeId);
-        $merchantAccount = trim($this->_getConfigData('merchantAccount', 'adyen_abstract', $storeId));
+        $merchantAccount = Mage::helper('adyen')->getAdyenMerchantAccount($this->_paymentMethod, $storeId);
         $recurringType = $this->_getConfigData('recurringtypes', 'adyen_abstract', $storeId);
         $recurringPaymentType = $this->_getConfigData('recurring_payment_type', 'adyen_oneclick', $storeId);
         $enableMoto = (int)$this->_getConfigData('enable_moto', 'adyen_cc', $storeId);

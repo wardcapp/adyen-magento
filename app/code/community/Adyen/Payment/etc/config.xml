@@ -404,6 +404,17 @@
                 <allowspecific>0</allowspecific>
                 <sort_order>80</sort_order>
             </adyen_pos>
+            <adyen_pos_cloud translate="title" module="adyen">
+                <active>0</active>
+                <model>adyen/adyen_posCloud</model>
+                <group>adyen</group>
+                <title>Adyen POS Terminal API</title>
+                <recurring_type>NONE</recurring_type>
+                <sort_order>100</sort_order>
+                <visible_type>frontend</visible_type>
+                <timeout>25</timeout>
+                <total_timeout>120</total_timeout>
+            </adyen_pos_cloud>
             <adyen_cash>
                 <active>0</active>
                 <model>adyen/adyen_cash</model>

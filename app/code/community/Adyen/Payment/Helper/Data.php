@@ -607,4 +607,70 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 
         return $collection->getSize();
     }
+
+    /**
+     * Return the ApiKey for the current store/mode
+     *
+     * @param null $storeId
+     * @return mixed
+     */
+    public function getPosApiKey($storeId = null)
+    {
+        if ($this->getConfigDataDemoMode($storeId)) {
+            return Mage::helper('core')->decrypt($this->getConfigData('api_key_test', "adyen_pos_cloud", $storeId));
+        }
+        return Mage::helper('core')->decrypt($this->getConfigData('api_key_live', "adyen_pos_cloud", $storeId));
+    }
+
+    /**
+     * Return the merchant account name configured for the proper payment method.
+     * If it is not configured for the specific payment method,
+     * return the merchant account name defined in required settings.
+     *
+     * @param $paymentMethod
+     * @param null $storeId
+     * @return string
+     */
+    public function getAdyenMerchantAccount($paymentMethod, $storeId = null)
+    {
+        $merchantAccount = trim($this->getConfigData('merchantAccount', 'adyen_abstract', $storeId));
+        $merchantAccountPos = trim($this->getConfigData('pos_merchant_account', 'adyen_pos_cloud', $storeId));
+        if ($paymentMethod == 'pos_cloud' && !empty($merchantAccountPos)) {
+            return $merchantAccountPos;
+        }
+        return $merchantAccount;
+    }
+
+    /**
+     * Format the Receipt sent in the Terminal API response in HTML
+     * so that it can be easily shown to the shopper
+     *
+     * @param $paymentReceipt
+     * @return string
+     */
+    public function formatTerminalAPIReceipt($paymentReceipt)
+    {
+        $formattedHtml = "<table class='terminal-api-receipt'>";
+        foreach ($paymentReceipt as $receipt) {
+            if ($receipt['DocumentQualifier'] == "CustomerReceipt") {
+                foreach ($receipt['OutputContent']['OutputText'] as $item) {
+                    parse_str($item['Text'], $textParts);
+                    $formattedHtml .= "<tr class='terminal-api-receipt'>";
+                    if (!empty($textParts['name'])) {
+                        $formattedHtml .= "<td class='terminal-api-receipt-name'>" . $textParts['name'] . "</td>";
+                    } else {
+                        $formattedHtml .= "<td class='terminal-api-receipt-name'>&nbsp;</td>";
+                    }
+                    if (!empty($textParts['value'])) {
+                        $formattedHtml .= "<td class='terminal-api-receipt-value' align='right'>" . $textParts['value'] . "</td>";
+                    } else {
+                        $formattedHtml .= "<td class='terminal-api-receipt-value' align='right'>&nbsp;</td>";
+                    }
+                    $formattedHtml .= "</tr>";
+                }
+            }
+        }
+        $formattedHtml .= "</table>";
+        return $formattedHtml;
+    }
 }

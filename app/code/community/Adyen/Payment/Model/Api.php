@@ -29,6 +29,10 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
     const RECURRING_TYPE_ONECLICK  = 'ONECLICK';
     const RECURRING_TYPE_RECURRING = 'RECURRING';
     const RECURRING_TYPE_ONECLICK_RECURRING = 'ONECLICK,RECURRING';
+    const ENDPOINT_TEST = "https://pal-test.adyen.com/pal/adapter/httppost";
+    const ENDPOINT_LIVE = "https://pal-live.adyen.com/pal/adapter/httppost";
+    const ENDPOINT_TERMINAL_CLOUD_TEST = "https://terminal-api-test.adyen.com/sync";
+    const ENDPOINT_TERMINAL_CLOUD_LIVE = "https://terminal-api-live.adyen.com/sync";
 
     protected $_recurringTypes = array(
         self::RECURRING_TYPE_ONECLICK,
@@ -232,9 +236,9 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             $storeId = $storeId->getId();
         }
 
-        $requestUrl = "https://pal-live.adyen.com/pal/adapter/httppost";
+        $requestUrl = self::ENDPOINT_LIVE;
         if($this->_helper()->getConfigDataDemoMode($storeId)) {
-            $requestUrl = "https://pal-test.adyen.com/pal/adapter/httppost";
+            $requestUrl = self::ENDPOINT_TEST;
         }
 
         $username = $this->_helper()->getConfigDataWsUserName($storeId);
@@ -277,5 +281,78 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
     protected function _helper()
     {
         return Mage::helper('adyen');
+    }
+
+    /**
+     * Do the API request in json format
+     *
+     * @param array $request
+     * @param $requestUrl
+     * @param $apiKey
+     * @param $storeId
+     * @param null $timeout
+     * @return mixed
+     */
+    protected function _doRequestJson(array $request, $requestUrl, $apiKey, $storeId, $timeout = null)
+    {
+        $ch = curl_init();
+        $headers = array(
+            'Content-Type: application/json'
+        );
+
+        if (empty($apiKey)) {
+            $username = $this->_helper()->getConfigDataWsUserName($storeId);
+            $password = $this->_helper()->getConfigDataWsPassword($storeId);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
+        } else {
+            $headers[] = 'x-api-key: ' . $apiKey;
+        }
+
+        if (!empty($timeout)) {
+            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        }
+        Mage::log($request, null, 'adyen_api.log');
+
+        curl_setopt($ch, CURLOPT_URL, $requestUrl);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        $error = curl_error($ch);
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $errorCode = curl_errno($ch);
+        curl_close($ch);
+        if ($result === false) {
+            Adyen_Payment_Exception::throwCurlException($error, $errorCode);
+        }
+        if ($httpStatus == 401 || $httpStatus == 403) {
+            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__('Received Status code %s, please make sure your Checkout API key is correct.',
+                $httpStatus));
+        } elseif ($httpStatus != 200) {
+            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__('HTTP Status code %s received, data %s',
+                $httpStatus, $result));
+        }
+        return json_decode($result, true);
+    }
+
+    /**
+     * Set the timeout and do a sync request to the Terminal API endpoint
+     *
+     * @param array $request
+     * @param $storeId
+     * @return mixed
+     */
+    public function doRequestSync(array $request, $storeId)
+    {
+        $requestUrl = self::ENDPOINT_TERMINAL_CLOUD_LIVE;
+        if ($this->_helper()->getConfigDataDemoMode($storeId)) {
+            $requestUrl = self::ENDPOINT_TERMINAL_CLOUD_TEST;
+        }
+        $apiKey = $this->_helper()->getPosApiKey($storeId);
+        $timeout = $this->_helper()->getConfigData('timeout', 'adyen_pos_cloud', $storeId);
+        $response = $this->_doRequestJson($request, $requestUrl, $apiKey, $storeId, $timeout);
+        return $response;
     }
 }

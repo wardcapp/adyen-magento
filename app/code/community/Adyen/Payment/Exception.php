@@ -54,4 +54,19 @@ class Adyen_Payment_Exception extends Mage_Core_Exception
     {
         Mage::log("\n" . $e->__toString(), Zend_Log::ERR, 'adyen_exception.log');
     }
+
+    /**
+     * Throw an Adyen_Payment_Exception on Curl errors and log it.
+     * @param      $message
+     * @param null $messageStorage
+     *
+     * @throws Adyen_Payment_Exception
+     */
+    public static function throwCurlException($errorMessage, $errorCode)
+    {
+        $exception = new Adyen_Payment_Exception($errorMessage, $errorCode);
+        self::logException($exception);
+
+        throw $exception;
+    }
 }
