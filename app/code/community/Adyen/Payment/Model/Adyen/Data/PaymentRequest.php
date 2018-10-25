@@ -100,9 +100,11 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
 
         // if PaymentMethod is ApplePay and merchant want to store it as recurring tokinize the card
-        if ($paymentMethod == "apple_pay" && Mage::helper('adyen')->getConfigData("allow_recurring", "adyen_apple_pay")) {
-            $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
-            $this->recurring->contract = "RECURRING";
+        if ($paymentMethod == "apple_pay" && $recurringType) {
+            if ($recurringType != "ONECLICK") {
+                $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
+                $this->recurring->contract = "RECURRING";
+            }
         } else if ($paymentMethod != "apple_pay" && $recurringType) {
             if ($paymentMethod == "oneclick") {
                 // For ONECLICK look at the recurringPaymentType that the merchant has selected in Adyen ONECLICK settings
@@ -127,10 +129,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->recurring->contract = "RECURRING";
                 }
             } else {
-                {
                     $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
                     $this->recurring->contract = $recurringType;
-                }
             }
         }
 
