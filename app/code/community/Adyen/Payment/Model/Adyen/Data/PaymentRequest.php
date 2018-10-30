@@ -50,6 +50,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
     public $shopperReference;
     public $shopperStatement;
     public $additionalData;
+    public $applicationInfo;
 
     // added for boleto
     public $shopperName;
@@ -64,8 +65,19 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->additionalData = new Adyen_Payment_Model_Adyen_Data_AdditionalData();
         $this->shopperName = new Adyen_Payment_Model_Adyen_Data_ShopperName(); // for boleto
         $this->bankAccount = new Adyen_Payment_Model_Adyen_Data_BankAccount(); // for SEPA
+        $this->applicationInfo = new Adyen_Payment_Model_Adyen_Data_ApplicationInfo();
     }
 
+    /**
+     * @param Varien_Object $payment
+     * @param $amount
+     * @param null $paymentMethod
+     * @param null $merchantAccount
+     * @param null $recurringType
+     * @param null $recurringPaymentType
+     * @param null $enableMoto
+     * @return $this
+     */
     public function create(
         Varien_Object $payment,
         $amount,
@@ -97,7 +109,6 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $this->shopperReference = (!empty($customerId)) ? $customerId : self::GUEST_ID . $realOrderId;
 
         // Set the recurring contract for apple pay do not save as oneclick or recurring because that will give errors on recurring payments
-
 
         // if PaymentMethod is ApplePay and merchant want to store it as recurring tokinize the card
         if ($paymentMethod == "apple_pay" && $recurringType) {
@@ -254,57 +265,29 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                     $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
                     $kv->key = new SoapVar("payment.token", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                    $kv->value = new SoapVar(base64_encode($token), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
+                    $kv->value = new SoapVar(base64_encode($token), XSD_STRING, "string",
+                        "http://www.w3.org/2001/XMLSchema");
                     $this->additionalData->entry = $kv;
-                } else if (Mage::getModel('adyen/adyen_cc')->isCseEnabled()) {
-
-                    $this->card = null;
-
+                } else {
                     $session = Mage::helper('adyen')->getSession();
                     $info = $payment->getMethodInstance();
-                    $encryptedData = $session->getData('encrypted_data_' . $info->getCode());
+                    $encryptedNumber = $session->getData('encrypted_number_' . $info->getCode());
+                    $encryptedExpiryMonth = $session->getData('encrypted_expiry_month_' . $info->getCode());
+                    $encryptedExpiryYear = $session->getData('encrypted_expiry_year_' . $info->getCode());
+                    $encryptedCvc = $session->getData('encrypted_cvc_' . $info->getCode());
+                    $this->card->holderName = $payment->getCcOwner();
 
-                    if ($encryptedData != "" && $encryptedData != "false") {
-                        $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-                        $kv->key = new SoapVar("card.encrypted.json", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kv->value = new SoapVar($encryptedData, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $this->additionalData->entry = $kv;
-                    } else {
-                        if ($paymentMethod == 'cc') {
-
-                            // log the browser data to see why it is failing
-                            Mage::log($_SERVER['HTTP_USER_AGENT'], Zend_Log::ERR, "adyen_exception.log", true);
-
-                            // For CC encrypted data is needed if you use CSE
-                            Adyen_Payment_Exception::throwException(
-                                Mage::helper('adyen')->__('Missing the encrypted data value. Make sure the Client Side Encryption(CSE) script did encrypt the Credit Card details')
-                            );
-                        }
+                    if ($encryptedNumber != "" && $encryptedNumber != "false") {
+                        $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
                     }
-                } else {
-
-                    if ($recurringDetailReference && $recurringDetailReference != "") {
-
-                        // this is only needed for creditcards
-                        if ($payment->getCcCid() != "" && $payment->getCcExpMonth() != "" && $payment->getCcExpYear() != "") {
-                            if ($recurringType != "RECURRING") {
-                                $this->card->cvc = $payment->getCcCid();
-                            }
-
-                            $this->card->expiryMonth = $payment->getCcExpMonth();
-                            $this->card->expiryYear = $payment->getCcExpYear();
-                        } else {
-                            $this->card = null;
-                        }
-
-                    } else {
-                        // this is only the case for adyen_cc payments
-                        $this->card->cvc = $payment->getCcCid();
-                        $this->card->expiryMonth = $payment->getCcExpMonth();
-                        $this->card->expiryYear = $payment->getCcExpYear();
-                        $this->card->holderName = $payment->getCcOwner();
-                        $this->card->number = $payment->getCcNumber();
+                    if ($encryptedExpiryMonth != "" && $encryptedExpiryYear != "") {
+                        $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
+                        $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
                     }
+                    if ($encryptedCvc != "" && $encryptedCvc != "false") {
+                        $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
+                    }
+
                 }
 
                 // installments
@@ -322,7 +305,8 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 }
 
                 // add observer to have option to overrule and or add request data
-                Mage::dispatchEvent('adyen_payment_card_payment_request', array('order' => $order, 'paymentMethod' => $paymentMethod, 'paymentRequest' => $this));
+                Mage::dispatchEvent('adyen_payment_card_payment_request',
+                    array('order' => $order, 'paymentMethod' => $paymentMethod, 'paymentRequest' => $this));
 
                 break;
             case "boleto":

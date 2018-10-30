@@ -24,26 +24,20 @@
  * @package    Adyen_Payment
  * @author     Adyen
  * @property   Adyen B.V
- * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
+ * @copyright  Copyright (c) 2018 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Data_AdditionalData extends Adyen_Payment_Model_Adyen_Data_Abstract
+class Adyen_Payment_Model_Adyen_Data_ApplicationInfo extends Adyen_Payment_Model_Adyen_Data_Abstract
 {
-    public $entry = array();
+    public $adyenPaymentSource = array(
+        "name" => "adyen-magento"
+    );
+    public $externalPlatform = array(
+        "name" => "Magento"
+    );
 
-    public function addEntry($key, $value)
+    public function __construct()
     {
-        $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
-        $kv->key = new SoapVar($key, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-        $kv->value = new SoapVar($value, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-        $this->entry[] = $kv;
-    }
-
-    public function toArray()
-    {
-        $data = array();
-        foreach ($this->entry as $kv) {
-            $data[$kv->key] = $kv->value;
-        }
-        return $data;
+        $this->externalPlatform['version'] = Mage::getVersion();
+        $this->adyenPaymentSource['version'] = Mage::helper('adyen')->getExtensionVersion();
     }
 }

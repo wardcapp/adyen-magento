@@ -302,7 +302,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 
 
     /**
-     * @param null $storeId
+     * @param int|null $storeId
      *
      * @return mixed
      */
@@ -316,7 +316,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 
 
     /**
-     * @param null $storeId
+     * @param int|null $storeId
      *
      * @return string
      */
@@ -328,11 +328,24 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         return Mage::helper('core')->decrypt($this->getConfigData('ws_password_live', null, $storeId));
     }
 
+    /**
+     * @param int|null $storeId
+     *
+     * @return string
+     */
+    public function getConfigDataApiKey($storeId = null)
+    {
+        if ($this->getConfigDataDemoMode($storeId)) {
+            return Mage::helper('core')->decrypt($this->getConfigData('api_key_test', null, $storeId));
+        }
+        return Mage::helper('core')->decrypt($this->getConfigData('api_key_live', null, $storeId));
+    }
+
 
     /**
      * @param      $code
      * @param null $paymentMethodCode
-     * @param null $storeId
+     * @param int|null $storeId
      * @deprecated please use getConfigData
      * @return mixed
      */
@@ -514,7 +527,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     }
     
     /**
-     * @param null $storeId
+     * @param int|null $storeId
      * @return mixed
      */
     public function getApplePayMerchantIdentifier($storeId = null)
@@ -526,7 +539,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     }
     
     /**
-     * @param null $storeId
+     * @param int|null $storeId
      * @return mixed
      */
     public function getApplePayFullPathLocationPEMFile($storeId = null)
@@ -611,7 +624,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     /**
      * Return the ApiKey for the current store/mode
      *
-     * @param null $storeId
+     * @param int|null $storeId
      * @return mixed
      */
     public function getPosApiKey($storeId = null)
@@ -628,7 +641,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
      * return the merchant account name defined in required settings.
      *
      * @param $paymentMethod
-     * @param null $storeId
+     * @param int|null $storeId
      * @return string
      */
     public function getAdyenMerchantAccount($paymentMethod, $storeId = null)

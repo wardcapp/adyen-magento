@@ -616,7 +616,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
      * @desc Give Default settings
      * @param $code
      * @param null $paymentMethodCode
-     * @param null $storeId
+     * @param int|null $storeId
      * @return mixed
      */
     protected function _getConfigData($code, $paymentMethodCode = null, $storeId = null)

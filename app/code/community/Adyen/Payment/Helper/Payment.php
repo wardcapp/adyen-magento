@@ -378,7 +378,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     }
 
     /**
-     * @param null $storeId
+     * @param int|null $storeId
      * @param $paymentMethodCode
      * @return string
      */
