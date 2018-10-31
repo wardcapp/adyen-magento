@@ -241,8 +241,12 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         if ($cacheData = Mage::app()->getCache()->load($cacheId)) {
             $result = unserialize($cacheData);
         } else {
-            $result = $this->doRequestOriginKey($request, $store);
-            Mage::app()->getCache()->save(serialize($result), $cacheId, array(Mage_Core_Model_Config::CACHE_TAG));
+            try {
+                $result = $this->doRequestOriginKey($request, $store);
+                Mage::app()->getCache()->save(serialize($result), $cacheId, array(Mage_Core_Model_Config::CACHE_TAG));
+            } catch (Exception $e) {
+                return;
+            }
         }
 
         return $result;
