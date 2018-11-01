@@ -22,7 +22,7 @@ class Adyen_Payment_Block_Adminhtml_Apikeymessage extends Mage_Adminhtml_Block_T
             try {
                 $title = "Adyen extension requires the API KEY!";
                 if ($this->_adyenHelper->getConfigDataWsUserName()) {
-                    $description = "Please provide API-KEY for the webservice user " . $this->_adyenHelper->getWsUsername() . "  for default/store " . Mage::app()->getStore()->getName();
+                    $description = "Please provide API-KEY for the webservice user " . $this->_adyenHelper->getConfigDataWsUserName() . "  for default/store " . Mage::app()->getStore()->getName();
                 } else {
                     $description = "Please provide API-KEY for default/store " . Mage::app()->getStore()->getName();
                 }
