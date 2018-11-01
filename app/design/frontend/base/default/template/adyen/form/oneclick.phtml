@@ -98,10 +98,12 @@ $originKey = $this->getOriginKey();
                                     <span class="input-field" data-cse="encryptedExpiryYear"></span>
                                 </div>
                             </div>
-                            <div class="input-container">
-                                <span class="input-label label-security-code">Security code:</span>
-                                <span class="input-field" data-cse="encryptedSecurityCode"></span>
-                            </div>
+                            <?php if ($this->showCvc()): ?>
+                                <div class="input-container">
+                                    <span class="input-label label-security-code">Security code:</span>
+                                    <span class="input-field" data-cse="encryptedSecurityCode"></span>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <input type="hidden" name="payment[encrypted_expiry_month_<?php echo $_code; ?>]"
