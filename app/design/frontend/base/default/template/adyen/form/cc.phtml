@@ -157,7 +157,8 @@ $originKey = $this->getOriginKey();
                 {
                     configObject: {
                         originKey: "<?php echo $originKey;?>",
-                        cardGroupTypes: alt_types
+                        //cardDefault is added to since the onBrand callback is not fired with only one Type
+                        cardGroupTypes: alt_types + 'cardDefault'
                     },
                     rootNode: 'body',
                     allowedDOMAccess: false,
