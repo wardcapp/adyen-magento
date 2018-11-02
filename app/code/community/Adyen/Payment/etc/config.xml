@@ -29,7 +29,7 @@
 <config>
     <modules>
         <Adyen_Payment>
-            <version>2.11.1</version>
+            <version>2.12.0</version>
         </Adyen_Payment>
     </modules>
     <global>
@@ -404,6 +404,17 @@
                 <allowspecific>0</allowspecific>
                 <sort_order>80</sort_order>
             </adyen_pos>
+            <adyen_pos_cloud translate="title" module="adyen">
+                <active>0</active>
+                <model>adyen/adyen_posCloud</model>
+                <group>adyen</group>
+                <title>Adyen POS Terminal API</title>
+                <recurring_type>NONE</recurring_type>
+                <sort_order>100</sort_order>
+                <visible_type>frontend</visible_type>
+                <timeout>25</timeout>
+                <total_timeout>120</total_timeout>
+            </adyen_pos_cloud>
             <adyen_cash>
                 <active>0</active>
                 <model>adyen/adyen_cash</model>
@@ -440,8 +451,6 @@
                 <title>Adyen Credit Card</title>
                 <debug>0</debug>
                 <enable_installments>0</enable_installments>
-                <cse_enabled>1</cse_enabled>
-                <cse_public_key></cse_public_key>
                 <visible_type>both</visible_type>
                 <enable_moto>0</enable_moto>
                 <trxuser_password>0</trxuser_password>

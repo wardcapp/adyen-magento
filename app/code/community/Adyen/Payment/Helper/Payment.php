@@ -62,9 +62,9 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
      * @param bool $isConfigDemoMode
      * @return string
      */
-    public function prepareFieldsforUrl($fields, $isConfigDemoMode = false)
+    public function prepareFieldsforUrl($fields, $isConfigDemoMode = false, $paymentRoutine)
     {
-        $url = $this->getFormUrl(null, $isConfigDemoMode);
+        $url = $this->getFormUrl(null, $isConfigDemoMode, $paymentRoutine);
 
         // Issue some empty values will not be presenting in the url causing signature issues
 //        if (count($fields)) {
@@ -378,7 +378,7 @@ class Adyen_Payment_Helper_Payment extends Adyen_Payment_Helper_Data
     }
 
     /**
-     * @param null $storeId
+     * @param int|null $storeId
      * @param $paymentMethodCode
      * @return string
      */

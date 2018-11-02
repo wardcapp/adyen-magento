@@ -63,7 +63,7 @@ class Adyen_Payment_Model_Cronjob {
     /**
      * @param $code
      * @param null $paymentMethodCode
-     * @param null $storeId
+     * @param int|null $storeId
      * @return mixed
      */
     protected function _getConfigData($code, $paymentMethodCode = null, $storeId = null)

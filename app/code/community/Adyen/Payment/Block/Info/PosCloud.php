@@ -23,25 +23,18 @@
  * @package    Adyen_Payment
  * @author     Adyen
  * @property   Adyen B.V
- * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
+ * @copyright  Copyright (c) 2018 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Info_Cc extends Mage_Payment_Block_Info_Cc {
-	
-    /**
-     * Init default template for block
-     */
+class Adyen_Payment_Block_Info_PosCloud extends Mage_Payment_Block_Info {
+
     protected function _construct() {
         parent::_construct();
-        $this->setTemplate('adyen/info/cc.phtml');
+        $this->setTemplate('adyen/info/pos_cloud.phtml');
     }
 
     public function toPdf() {
-        $this->setTemplate('adyen/pdf/cc.phtml');
+        $this->setTemplate('adyen/pdf/pos_cloud.phtml');
         return $this->toHtml();
-    }
-
-    public function hasInstallments(){
-        return Mage::helper('adyen/installments')->isInstallmentsEnabled();
     }
 
 }

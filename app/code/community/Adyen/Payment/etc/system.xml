@@ -149,6 +149,19 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </ws_password_test>
+                                <api_key_test translate="label">
+                                    <label>Test: Api-Key</label>
+                                    <tooltip>If you don't know your Api-Key, log in to your Test Customer Area.
+                                        Navigate to Settings > Users > System, and click on your webservice user, normally this will be ws@Company.YourCompanyAccount.
+                                        Under Checkout token is your API Key.</tooltip>
+                                    <config_path>payment/adyen_abstract/api_key_test</config_path>
+                                    <frontend_type>obscure</frontend_type>
+                                    <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                                    <sort_order>85</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </api_key_test>
                                 <ws_test_button translate="label">
                                     <label></label>
                                     <button_label>Test Web Service Credentials for test</button_label>
@@ -188,18 +201,42 @@
                                     <config_path>payment/adyen_abstract/ws_live_button</config_path>
                                     <modus>live</modus>
                                     <frontend_model>adyen/adminhtml_system_config_testWebserverConfiguration</frontend_model>
-                                    <sort_order>120</sort_order>
+                                    <sort_order>132</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
                                 </ws_live_button>
+                                <api_key_live translate="label">
+                                    <label>Live: Api-Key</label>
+                                    <tooltip>If you don't know your Api-Key, log in to your Live Customer Area.
+                                        Navigate to Settings > Users > System, and click on your webservice user, normally this will be ws@Company.YourCompanyAccount.
+                                        Under Checkout token is your API Key.</tooltip>
+                                    <config_path>payment/adyen_abstract/api_key_live</config_path>
+                                    <frontend_type>obscure</frontend_type>
+                                    <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                                    <sort_order>125</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </api_key_live>
+                                <live_endpoint_url_prefix translate="label">
+                                    <label>Live: Endpoint URL prefix</label>
+                                    <tooltip><![CDATA[e.g. if your live endpoint is: <br/> <i>https://1234a567bcd89ef0-MagentoCompany-checkout-live.adyenpayments.com</i> <br/> please type:  <strong>1234a567bcd89ef0-MagentoCompany</strong> in this field.]]></tooltip>
+                                    <comment><![CDATA[Provide the unique live url prefix: <strong>[random]-[company name]</strong> from the "API URLs and Response" menu in the Adyen Customer Area. For more information, please check <a href="https://docs.adyen.com/developers/development-resources/live-endpoints#checkoutendpoints">  our documentation</a>.]]></comment>
+                                    <config_path>payment/adyen_abstract/live_endpoint_url_prefix</config_path>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>130</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>0</show_in_store>
+                                </live_endpoint_url_prefix>
                                 <capture_mode translate="label">
                                     <label>Capture Delay</label>
                                     <frontend_type>select</frontend_type>
                                     <tooltip>Immediate is the default. Set to manual if you want to perform the capture of funds manually later (only affects credit cards and a few alternative payment methods). You need to change this setting as well in Adyen Customer Area => Settings => Merchant Settings => Capture Delay. If you have selected a capture delay of a couple of days in Adyen keep it here on immediate</tooltip>
                                     <source_model>adyen/source_captureModes</source_model>
                                     <config_path>payment/adyen_abstract/capture_mode</config_path>
-                                    <sort_order>130</sort_order>
+                                    <sort_order>135</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>0</show_in_store>
@@ -706,37 +743,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </cctypes>
-                        <cse_enabled translate="label">
-                            <label>Enable Client-Side Encryption (CSE)</label>
-                            <tooltip>Contact support@adyen.com to enable CSE permission on your Adyen account. If you want this to be turned on on your live account please fill in the SAQ-A form and send this to salessupport@adyen.com</tooltip>
-                            <comment><![CDATA[<a target="_blank" href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1_SAQ_A_rev1-1.docx">Click here to download the SAQ A form</a>]]></comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </cse_enabled>
-                        <cse_publickey_test translate="label">
-                            <label>Enter CSE Public Key of Test Adyen Web Service User</label>
-                            <tooltip>Copy this from the Test Adyen Customer Area => Settings => Users => System => [web service user]=> Client Encryption Public Key.</tooltip>
-                            <frontend_type>textarea</frontend_type>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends><cse_enabled>1</cse_enabled></depends>
-                        </cse_publickey_test>
-                        <cse_publickey translate="label">
-                            <label>Enter CSE Public Key of Live Adyen Web Service User</label>
-                            <frontend_type>textarea</frontend_type>
-                            <tooltip>Copy this from the Live Adyen Customer Area => Settings => Users => System => [web service user] => Client Encryption Public Key.</tooltip>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends><cse_enabled>1</cse_enabled></depends>
-                        </cse_publickey>
                         <allowspecific translate="label">
                             <label>Payment from applicable countries</label>
                             <frontend_type>allowspecific</frontend_type>
@@ -1660,10 +1666,105 @@
                         </specificcountry>
                     </fields>
                 </adyen_pos>
+                <adyen_pos_cloud>
+                    <label>POS with Terminal API</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>390</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <frontend_model>adyen/adminhtml_system_config_fieldset_method</frontend_model>
+                    <activity_path>payment/adyen_pos_cloud/active</activity_path>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <tooltip>Set the sequence number of this payment method in the checkout. Payment methods with a higher sort order number will be displayed lower in the list.</tooltip>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sort_order>
+                        <pos_terminal_id translate="label">
+                            <label>Unique Terminal ID for Terminal API</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <tooltip>Copy this from the Adyen Customer Area => Point of sale => Terminal Fleet Manager => Unique Terminal Id </tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </pos_terminal_id>
+                        <pos_merchant_account translate="label">
+                            <label>Merchant Account for Terminal API</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>35</sort_order>
+                            <tooltip>Please insert your Merchant Account name used by the Cloud API. Please leave it blank if the Merchant Account is the same as the one configured in the Required Settings</tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </pos_merchant_account>
+                        <api_key_test translate="label">
+                            <label>API key for Terminal API TEST</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>40</sort_order>
+                            <tooltip>Copy this from the Test Adyen Customer Area => Settings => Users => System => [web service user]=> Checkout API Key.</tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_key_test>
+                        <api_key_live translate="label">
+                            <label>API key for Terminal API LIVE</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>45</sort_order>
+                            <tooltip>Copy this from the Live Adyen Customer Area => Settings => Users => System => [web service user]=> Checkout API Key.</tooltip>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_key_live>
+                        <capture_mode_pos translate="label">
+                            <label>Capture Delay</label>
+                            <frontend_type>select</frontend_type>
+                            <tooltip>Please set your Capture Delay for POS transactions. Immediate is the default. Set to manual if you want to perform the capture of funds manually later. You need to change this setting as well in Adyen Customer Area => Settings => Merchant Settings => POS Capture Delay. If you have selected a capture delay of a couple of days in Adyen keep it here on immediate</tooltip>
+                            <source_model>adyen/source_captureModes</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </capture_mode_pos>
+                        <recurring_type>
+                            <label>Agreement Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adyen/source_recurringType</source_model>
+                            <sort_order>55</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <tooltip>You can set different value for POS because you have to have the permission of the customer</tooltip>
+                        </recurring_type>
+                    </fields>
+                </adyen_pos_cloud>
                 <adyen_cash translate="label" module="adyen">
                     <label>CASH</label>
                     <frontend_type>text</frontend_type>
-                    <sort_order>390</sort_order>
+                    <sort_order>395</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -1899,6 +2000,17 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </visible_type>
+                        <payment_routines translate="label">
+                            <label>Payment Flow Selection</label>
+                            <tooltip>Adyen provides you with 2 types of payment routines. The Single-Page flow is dynamic and contains card validation and animations powered by JavaScript. The Multi-Page flow is static, but performs better on older browsers.</tooltip>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adyen/source_PaymentRoutines</source_model>
+                            <config_path>payment/adyen_pay_by_mail/payment_routines</config_path>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </payment_routines>
                     </fields>
                 </adyen_pay_by_mail>
                 <!-- @Apple Pay only -->

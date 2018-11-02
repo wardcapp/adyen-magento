@@ -214,7 +214,7 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
     /**
      * @param $code
      * @param null $paymentMethodCode
-     * @param null $storeId
+     * @param int|null $storeId
      * @return mixed
      */
     protected function _getConfigData($code, $paymentMethodCode = null, $storeId = null)
