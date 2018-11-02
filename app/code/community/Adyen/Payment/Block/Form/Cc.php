@@ -83,9 +83,9 @@ class Adyen_Payment_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
 
     public function getOriginKey()
     {
-        $result = json_decode($this->getMethod()->originKeys(),true);
+        $result = $this->getMethod()->originKeys();
 
-        return reset($result['originKeys']);
+        return $result;
     }
 
     public function getPossibleInstallments()

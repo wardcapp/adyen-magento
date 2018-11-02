@@ -153,11 +153,14 @@ $originKey = $this->getOriginKey();
             });
         }
         function initiateSecuredFields(){
+            var cardGroupTypes = alt_types.slice();
+            //cardDefault is added to since the onBrand callback is not fired with only one Type
+            cardGroupTypes.push('cardDefault');
             var securedFields = csf(
                 {
                     configObject: {
                         originKey: "<?php echo $originKey;?>",
-                        cardGroupTypes: alt_types
+                        cardGroupTypes: cardGroupTypes
                     },
                     rootNode: 'body',
                     allowedDOMAccess: false,

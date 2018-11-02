@@ -87,17 +87,15 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                         // check if recurring reference is already in array
                         if (isset($recurringContracts[$recurringDetailReference])) {
                             // recurring reference already exists so recurringType is possible for ONECLICK and RECURRING
-                            $recurringContracts[$recurringDetailReference]['recurring_type'] = "ONECLICK,RECURRING";
+                            $recurringContracts[$recurringDetailReference]['recurring_type'] = self::RECURRING_TYPE_ONECLICK_RECURRING;
                         } else {
                             $recurringContracts[$recurringDetailReference] = $recurringContract;
                         }
                     }
                 }
             } catch (Adyen_Payment_Exception $e) {
-                Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__(
-                    "Error retrieving the Billing Agreement for shopperReference %s with recurringType #%s Error: %s",
-                    $shopperReference, $recurringType, $e->getMessage()
-                ));
+                Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__("Error retrieving the Billing Agreement for shopperReference %s with recurringType #%s Error: %s",
+                    $shopperReference, $recurringType, $e->getMessage()));
             }
         }
         return $recurringContracts;
@@ -187,9 +185,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
             }
         }
 
-        return isset($this->_paymentMethodMap[$variant])
-            ? $this->_paymentMethodMap[$variant]
-            : $variant;
+        return isset($this->_paymentMethodMap[$variant]) ? $this->_paymentMethodMap[$variant] : $variant;
     }
 
 
@@ -228,7 +224,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
 
     public function originKeys($store)
     {
-        $cacheId = "adyen_origin_keys_".$store;
+        $cacheId = "adyen_origin_keys_" . $store;
 
         $originUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
         $parsed = parse_url($originUrl);
@@ -239,17 +235,20 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         );
 
         if ($cacheData = Mage::app()->getCache()->load($cacheId)) {
-            $result = unserialize($cacheData);
+            $originKey = $cacheData;
         } else {
             try {
-                $result = $this->doRequestOriginKey($request, $store);
-                Mage::app()->getCache()->save(serialize($result), $cacheId, array(Mage_Core_Model_Config::CACHE_TAG));
+                $resultJson = $this->doRequestOriginKey($request, $store);
+                $result = json_decode($resultJson, true);
+                if (!empty($originKey = $result['originKeys'][$domain])) {
+                    Mage::app()->getCache()->save($originKey, $cacheId,
+                        array(Mage_Core_Model_Config::CACHE_TAG), 60 * 60 * 24);
+                }
             } catch (Exception $e) {
-                return;
+                return '';
             }
         }
-
-        return $result;
+        return $originKey;
     }
 
 
@@ -269,7 +268,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         }
 
         $requestUrl = self::ENDPOINT_LIVE;
-        if($this->_helper()->getConfigDataDemoMode($storeId)) {
+        if ($this->_helper()->getConfigDataDemoMode($storeId)) {
             $requestUrl = self::ENDPOINT_TEST;
         }
 
@@ -299,9 +298,8 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         }
 
         if ($httpStatus != 200) {
-            Adyen_Payment_Exception::throwException(
-                Mage::helper('adyen')->__('HTTP Status code %s received, data %s', $httpStatus, $result)
-            );
+            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__('HTTP Status code %s received, data %s',
+                $httpStatus, $result));
         }
 
         return $result;
