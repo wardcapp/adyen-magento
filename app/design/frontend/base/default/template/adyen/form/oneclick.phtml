@@ -90,17 +90,17 @@ $originKey = $this->getOriginKey();
                             <input type="hidden" name="txvariant" value="oneclick_<?php echo $_code; ?>"/>
                             <div id="update-exp-date-<?php echo $_code; ?>" style="display: none">
                                 <div class="input-container">
-                                    <span class="input-label">Expiry month:</span>
+                                    <span class="input-label"><?php echo $this->__('Expiry month') ?>:</span>
                                     <span class="input-field" data-cse="encryptedExpiryMonth"></span>
                                 </div>
                                 <div class="input-container">
-                                    <span class="input-label">Expiry year:</span>
+                                    <span class="input-label"><?php echo $this->__('Expiry year') ?>:</span>
                                     <span class="input-field" data-cse="encryptedExpiryYear"></span>
                                 </div>
                             </div>
                             <?php if ($this->showCvc()): ?>
                                 <div class="input-container">
-                                    <span class="input-label label-security-code">Security code:</span>
+                                    <span class="input-label label-security-code"><?php echo $this->__('Security code') ?>:</span>
                                     <span class="input-field" data-cse="encryptedSecurityCode"></span>
                                 </div>
                             <?php endif; ?>
@@ -110,10 +110,13 @@ $originKey = $this->getOriginKey();
                            id="encryptedExpiryMonth<?php echo $_code; ?>" value="">
                     <input type="hidden" name="payment[encrypted_expiry_year_<?php echo $_code; ?>]"
                            id="encryptedExpiryYear<?php echo $_code; ?>" value="">
-                    <input type="hidden" name="payment[encrypted_cvc_<?php echo $_code; ?>]"
+                    <?php if ($this->showCvc()): ?>
+                    <input type="hidden" class="required-entry" name="payment[encrypted_cvc_<?php echo $_code; ?>]"
                            id="encryptedSecurityCode<?php echo $_code; ?>"
                            value="">
-
+                    <?php endif; ?>
+                    <div class="validation-advice" id="advice-required-entry-encryptedSecurityCode<?php echo $_code; ?>"
+                         style="display: none;"><?php echo $this->__('This is a required field.') ?></div>
                 </div>
 
                 <script type="text/javascript">
