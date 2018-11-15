@@ -85,16 +85,16 @@
                     <input type="hidden" name="txvariant" value="oneclick_<?php echo $_code; ?>"/>
                     <div id="update-exp-date-<?php echo $_code; ?>" style="display: none">
                         <div class="input-container">
-                            <span class="input-label">Expiry month:</span>
+                            <span class="input-label"><?php echo $this->__('Expiry month') ?>:</span>
                             <span class="input-field" data-cse="encryptedExpiryMonth"></span>
                         </div>
                         <div class="input-container">
-                            <span class="input-label">Expiry year:</span>
+                            <span class="input-label"><?php echo $this->__('Expiry year') ?>:</span>
                             <span class="input-field" data-cse="encryptedExpiryYear"></span>
                         </div>
                         <?php if( $this->showCvc()):?>
                             <div class="input-container">
-                                <span class="input-label label-security-code">Security code:</span>
+                                <span class="input-label label-security-code"><?php echo $this->__('Security code') ?>:</span>
                                 <span class="input-field" data-cse="encryptedSecurityCode"></span>
                             </div>
                         <?php endif;?>
