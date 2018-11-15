@@ -222,19 +222,19 @@ $originKey = $this->getOriginKey();
 
                 </div>
                 <div class="input-container">
-                    <span class="input-label">Card number:</span>
+                    <span class="input-label"><?php echo $this->__('Card number') ?>:</span>
                     <span class="input-field" data-cse="encryptedCardNumber"></span>
                 </div>
                 <div class="input-container">
-                    <span class="input-label">Expiry month:</span>
+                    <span class="input-label"><?php echo $this->__('Expiry month') ?>:</span>
                     <span class="input-field" data-cse="encryptedExpiryMonth"></span>
                 </div>
                 <div class="input-container">
-                    <span class="input-label">Expiry year:</span>
+                    <span class="input-label"><?php echo $this->__('Expiry year') ?>:</span>
                     <span class="input-field" data-cse="encryptedExpiryYear"></span>
                 </div>
                 <div class="input-container">
-                    <span class="input-label label-security-code">Security code:</span>
+                    <span class="input-label label-security-code"><?php echo $this->__('Security code') ?>:</span>
                     <span class="input-field" data-cse="encryptedSecurityCode"></span>
                 </div>
                 <?php if ($this->canCreateBillingAgreement()): ?>
