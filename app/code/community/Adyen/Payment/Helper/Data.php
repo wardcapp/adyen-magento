@@ -31,6 +31,8 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     const KLARNA = "klarna";
     const RATEPAY = "ratepay";
     const AFTERPAY = "afterpay";
+    const ENDPOINT_SECURED_FIELDS_TEST = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.3.min.js";
+    const ENDPOINT_SECURED_FIELDS_LIVE = "https://checkoutshopper-live.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.3.min.js";
 
     /**
      * @return array
@@ -525,7 +527,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         );
         return $calculation->getRate($request->setProductClassId($taxClass));
     }
-    
+
     /**
      * @param int|null $storeId
      * @return mixed
@@ -537,7 +539,7 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         }
         return $this->getConfigData('merchant_identifier_live', 'adyen_apple_pay', $storeId);
     }
-    
+
     /**
      * @param int|null $storeId
      * @return mixed
@@ -685,5 +687,17 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         }
         $formattedHtml .= "</table>";
         return $formattedHtml;
+    }
+
+    /**
+     * Returns the correct secured fields URL
+     * @return string
+     */
+    public function getSecuredFieldsURL()
+    {
+        if ($this->getConfigDataDemoMode()) {
+            return self::ENDPOINT_SECURED_FIELDS_TEST;
+        }
+        return self::ENDPOINT_SECURED_FIELDS_LIVE;
     }
 }
