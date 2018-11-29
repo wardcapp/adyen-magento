@@ -66,6 +66,7 @@ class Adyen_Payment_Block_Adminhtml_Sales_Billing_Agreement_Grid
             'header'            => Mage::helper('customer')->__('Name'),
             'index'             => 'name',
             'type'              => 'text',
+            'escape'            => true
         ), 'customer_email');
 
 //        $status = $this->getColumn('status');
