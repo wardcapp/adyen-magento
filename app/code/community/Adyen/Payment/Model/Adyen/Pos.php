@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,10 +26,11 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
+class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract
+{
 
-	protected $_canUseInternal = false;
-	protected $_code = 'adyen_pos';
+    protected $_canUseInternal = false;
+    protected $_code = 'adyen_pos';
     protected $_formBlockType = 'adyen/form_pos';
     protected $_infoBlockType = 'adyen/info_pos';
     protected $_paymentMethod = 'pos';
@@ -41,7 +43,8 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
 
     protected $_paymentMethodType = 'pos';
 
-    public function getPaymentMethodType() {
+    public function getPaymentMethodType()
+    {
         return $this->_paymentMethodType;
     }
 
@@ -54,8 +57,8 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
         // check if ip range is enabled
         $ipFilter = $this->_getConfigData('ip_filter', 'adyen_pos');
 
-        if($isAvailable && $ipFilter != 0) {
-            $ip =  Mage::helper('adyen')->getClientIp();
+        if ($isAvailable && $ipFilter != 0) {
+            $ip = Mage::helper('adyen')->getClientIp();
             switch ($ipFilter) {
                 case '1':
                     // check if ip in in list
@@ -67,12 +70,13 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
                 case '2':
                 default:
                     // check if ip is in range
-                    $from =  $this->_getConfigData('ip_filter_from', 'adyen_pos');
-                    $to =  $this->_getConfigData('ip_filter_to', 'adyen_pos');
+                    $from = $this->_getConfigData('ip_filter_from', 'adyen_pos');
+                    $to = $this->_getConfigData('ip_filter_to', 'adyen_pos');
                     $isAvailable = Mage::helper('adyen')->ipInRange($ip, $from, $to);
                     break;
             }
         }
+
         return $isAvailable;
     }
 
@@ -81,14 +85,17 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
      *
      * @return Mage_Checkout_Model_Session
      */
-    public function getCheckout() {
+    public function getCheckout()
+    {
         return Mage::getSingleton('checkout/session');
     }
 
-    public function assignData($data) {
+    public function assignData($data)
+    {
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
+
         $info = $this->getInfoInstance();
 
         // save value remember details checkbox
@@ -102,11 +109,13 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
      *
      * @return Mage_Sales_Model_Quote
      */
-    public function getQuote() {
+    public function getQuote()
+    {
         return $this->getCheckout()->getQuote();
     }
 
-    public function getOrderPlaceRedirectUrl() {
+    public function getOrderPlaceRedirectUrl()
+    {
         return Mage::getUrl('adyen/process/redirect');
     }
 
@@ -114,12 +123,13 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
      * @desc prepare params array to send it to gateway page via POST
      * @return array
      */
-    public function getFormFields() {
+    public function getFormFields()
+    {
         $this->_initOrder();
         $order = $this->_order;
         $realOrderId = $order->getRealOrderId();
         $orderCurrencyCode = $order->getOrderCurrencyCode();
-        $amount = Mage::helper('adyen')->formatAmount($order->getGrandTotal(),$orderCurrencyCode);
+        $amount = Mage::helper('adyen')->formatAmount($order->getGrandTotal(), $orderCurrencyCode);
         $customerId = $order->getCustomerId();
         $customerEmail = $order->getCustomerEmail();
 
@@ -132,20 +142,21 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
         // for recurring payments
         $recurringType = $this->_getConfigData('recurringtypes', 'adyen_pos');
 
-        if($order->getPayment()->getAdditionalInformation("store_cc") != "") {
+        if ($order->getPayment()->getAdditionalInformation("store_cc") != "") {
             $adyFields['recurringContract'] = $recurringType;
         }
 
         $adyFields['shopperReference'] = (!empty($customerId)) ? $customerId : self::GUEST_ID . $realOrderId;
         $adyFields['shopperEmail'] = $customerEmail;
 
-        Mage::log($adyFields, self::DEBUG_LEVEL, 'adyen_http-request.log',true);
+        Mage::log($adyFields, self::DEBUG_LEVEL, 'adyen_http-request.log', true);
 
         return $adyFields;
     }
 
-    public function getFormName() {
-		return "Adyen POS";
+    public function getFormName()
+    {
+        return "Adyen POS";
     }
 
     /**
@@ -153,21 +164,25 @@ class Adyen_Payment_Model_Adyen_Pos extends Adyen_Payment_Model_Adyen_Abstract {
      *
      * @return string
      */
-    public function getRedirectBlockType() {
+    public function getRedirectBlockType()
+    {
         return $this->_redirectBlockType;
     }
 
-    public function initialize($paymentAction, $stateObject) {
+    public function initialize($paymentAction, $stateObject)
+    {
         $state = Mage_Sales_Model_Order::STATE_NEW;
         $stateObject->setState($state);
         $stateObject->setStatus($this->_getConfigData('order_status'));
     }
 
-    public function showRememberThisCheckoutbox() {
+    public function showRememberThisCheckoutbox()
+    {
         $recurringType = $this->_getConfigData('recurringtypes', 'adyen_pos');
-        if($recurringType == "ONECLICK" || $recurringType == "ONECLICK,RECURRING") {
+        if ($recurringType == "ONECLICK" || $recurringType == "ONECLICK,RECURRING") {
             return true;
         }
+
         return false;
     }
 

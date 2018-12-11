@@ -122,12 +122,16 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
                 $result = self::PAYMENT_RETRY;
             }
         }
+
         if (!empty($response['SaleToPOIResponse']['PaymentResponse']['PaymentReceipt'])) {
             $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt($response['SaleToPOIResponse']['PaymentResponse']['PaymentReceipt']);
             $quote->getPayment()->setAdditionalInformation('receipt', $formattedReceipt);
         }
-        $quote->getPayment()->setAdditionalInformation('terminalResponse',
-            $response['SaleToPOIResponse']['PaymentResponse']);
+
+        $quote->getPayment()->setAdditionalInformation(
+            'terminalResponse',
+            $response['SaleToPOIResponse']['PaymentResponse']
+        );
         $quote->save();
 
         $resultArray = array(
@@ -174,7 +178,6 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         if ($timeDiff > $totalTimeout) {
             $errorCondition = "The Terminal timed out after " . $totalTimeout . " seconds.";
         } elseif (empty($paymentResponse)) {
-
             $request = array(
                 'SaleToPOIRequest' => array(
                     'MessageHeader' => array(
@@ -217,7 +220,6 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
                     $result = self::PAYMENT_RETRY;
                 }
             }
-
         }
 
         //If we are in a final state, update the quote
@@ -226,6 +228,7 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
                 $formattedReceipt = $adyenHelper->formatTerminalAPIReceipt($paymentResponse['PaymentReceipt']);
                 $quote->getPayment()->setAdditionalInformation('receipt', $formattedReceipt);
             }
+
             $quote->getPayment()->setAdditionalInformation('terminalResponse', $paymentResponse);
             $quote->save();
             if ($paymentResponse['Response']['Result'] == 'Success') {
@@ -273,11 +276,11 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
             $session->unsAdyenRealOrderId();
             $session->setQuoteId($session->getAdyenQuoteId(true));
             $session->getQuote()->setIsActive(false)->save();
-
         } catch (Exception $e) {
             Mage::logException($e);
             $result = self::ORDER_ERROR;
         }
+
         $this->getResponse()->setHeader('Content-type', 'application/json');
         $this->getResponse()->setBody($result);
         return $result;

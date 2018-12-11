@@ -44,6 +44,7 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
                 $authStatus = $this->_httpAuthenticate($varienObj);
                 break;
         }
+
         return $authStatus;
     }
 
@@ -78,7 +79,10 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
         // Sort the array by key using SORT_STRING order
         ksort($result, SORT_STRING);
 
-        $signData = implode(":", array_map(array($this, 'escapeString'), array_merge(array_keys($result), array_values($result))));
+        $signData = implode(
+            ":",
+            array_map(array($this, 'escapeString'), array_merge(array_keys($result), array_values($result)))
+        );
 
         $signMac = Zend_Crypt_Hmac::compute(pack("H*", $secretWord), 'sha256', $signData);
         $localStringToHash = base64_encode(pack('H*', $signMac));
@@ -86,6 +90,7 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
         if (strcmp($localStringToHash, $response->getData('merchantSig')) === 0) {
             return true;
         }
+
         return false;
     }
 
@@ -108,7 +113,8 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
     protected function _httpAuthenticate(Varien_Object $response)
     {
         $result = array(
-            'authentication' => false, 'message' => ''
+            'authentication' => false,
+            'message' => ''
         );
 
         $this->fixCgiHttpAuthentication(); //add cgi support
@@ -118,19 +124,47 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
         $submitedMerchantAccount = $response->getData('merchantAccountCode');
 
         if (empty($submitedMerchantAccount) && empty($internalMerchantAccount)) {
-            if (strtolower(substr($response->getData('pspReference'), 0, 17)) == "testnotification_" || strtolower(substr($response->getData('pspReference'), 0, 5)) == "test_") {
-                Mage::log('Notification test failed: merchantAccountCode is empty in magento settings', Zend_Log::DEBUG, "adyen_notification.log", true);
+            if (strtolower(
+                substr(
+                    $response->getData('pspReference'), 0,
+                    17
+                )
+            ) == "testnotification_" || strtolower(
+                substr(
+                    $response->getData('pspReference'), 0,
+                    5
+                )
+            ) == "test_") {
+                Mage::log(
+                    'Notification test failed: merchantAccountCode is empty in magento settings', Zend_Log::DEBUG,
+                    "adyen_notification.log", true
+                );
                 $result['message'] = 'merchantAccountCode is empty in magento settings';
             }
+
             return $result;
         }
 
         // validate username and password
         if ((!isset($_SERVER['PHP_AUTH_USER']) && !isset($_SERVER['PHP_AUTH_PW']))) {
-            if (strtolower(substr($response->getData('pspReference'), 0, 17)) == "testnotification_" || strtolower(substr($response->getData('pspReference'), 0, 5)) == "test_") {
-                Mage::log('Authentication failed: PHP_AUTH_USER and PHP_AUTH_PW are empty. See Adyen Magento manual CGI mode', Zend_Log::DEBUG, "adyen_notification.log", true);
+            if (strtolower(
+                substr(
+                    $response->getData('pspReference'), 0,
+                    17
+                )
+            ) == "testnotification_" || strtolower(
+                substr(
+                    $response->getData('pspReference'), 0,
+                    5
+                )
+            ) == "test_") {
+                Mage::log(
+                    'Authentication failed: PHP_AUTH_USER and PHP_AUTH_PW are empty. See Adyen Magento manual CGI mode',
+                    Zend_Log::DEBUG, "adyen_notification.log", true
+                );
                 $result['message'] = 'Authentication failed: PHP_AUTH_USER and PHP_AUTH_PW are empty. See Adyen Magento manual CGI mode';
             }
+
             return $result;
         }
 
@@ -145,7 +179,17 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
         }
 
         // If notification is test check if fields are correct if not return error
-        if (strtolower(substr($response->getData('pspReference'), 0, 17)) == "testnotification_" || strtolower(substr($response->getData('pspReference'), 0, 5)) == "test_") {
+        if (strtolower(
+            substr(
+                $response->getData('pspReference'), 0,
+                17
+            )
+        ) == "testnotification_" || strtolower(
+            substr(
+                $response->getData('pspReference'), 0,
+                5
+            )
+        ) == "test_") {
             if ($accountCmp != 0) {
                 $result['message'] = "MerchantAccount in notification is not the same as in Magento settings and Allow multiple merchants option is not enabled";
             } elseif ($usernameCmp != 0 || $passwordCmp != 0) {
@@ -162,19 +206,34 @@ class Adyen_Payment_Model_Authenticate extends Mage_Core_Model_Abstract
      * Fix these global variables for the CGI if needed
      */
     public function fixCgiHttpAuthentication()
-    { // unsupported is $_SERVER['REMOfixCgiHttpAuthenticationTE_AUTHORIZATION']: as stated in manual :p
+    {
+        // unsupported is $_SERVER['REMOfixCgiHttpAuthenticationTE_AUTHORIZATION']: as stated in manual :p
 
         // do nothing if values are already there
         if (!empty($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_PW'])) {
             return;
-        } else if (isset($_SERVER['REDIRECT_REMOTE_AUTHORIZATION']) && $_SERVER['REDIRECT_REMOTE_AUTHORIZATION'] != '') { //pcd note: no idea who sets this
-            list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode($_SERVER['REDIRECT_REMOTE_AUTHORIZATION']), 2);
-        } elseif (!empty($_SERVER['HTTP_AUTHORIZATION'])) { //pcd note: standard in magento?
-            list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)), 2);
-        } elseif (!empty($_SERVER['REMOTE_USER'])) { //pcd note: when cgi and .htaccess modrewrite patch is executed
-            list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['REMOTE_USER'], 6)), 2);
-        } elseif (!empty($_SERVER['REDIRECT_REMOTE_USER'])) { //pcd note: no idea who sets this
-            list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['REDIRECT_REMOTE_USER'], 6)), 2);
+        } else {
+            if (isset($_SERVER['REDIRECT_REMOTE_AUTHORIZATION']) && $_SERVER['REDIRECT_REMOTE_AUTHORIZATION'] != '') { //pcd note: no idea who sets this
+                list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(
+                    ':',
+                    base64_decode($_SERVER['REDIRECT_REMOTE_AUTHORIZATION']), 2
+                );
+            } elseif (!empty($_SERVER['HTTP_AUTHORIZATION'])) { //pcd note: standard in magento?
+                list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(
+                    ':',
+                    base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)), 2
+                );
+            } elseif (!empty($_SERVER['REMOTE_USER'])) { //pcd note: when cgi and .htaccess modrewrite patch is executed
+                list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(
+                    ':',
+                    base64_decode(substr($_SERVER['REMOTE_USER'], 6)), 2
+                );
+            } elseif (!empty($_SERVER['REDIRECT_REMOTE_USER'])) { //pcd note: no idea who sets this
+                list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(
+                    ':',
+                    base64_decode(substr($_SERVER['REDIRECT_REMOTE_USER'], 6)), 2
+                );
+            }
         }
     }
 

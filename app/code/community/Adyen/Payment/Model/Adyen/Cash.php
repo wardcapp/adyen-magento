@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,11 +26,11 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Cash extends Adyen_Payment_Model_Adyen_Abstract {
+class Adyen_Payment_Model_Adyen_Cash extends Adyen_Payment_Model_Adyen_Abstract
+{
 
     protected $_code = 'adyen_cash';
     protected $_formBlockType = 'adyen/form_cash';
-    protected $_infoBlockType = 'adyen/info_cash';
     protected $_paymentMethod = 'cash';
     protected $_canUseCheckout = true;
     protected $_canUseInternal = true;
@@ -39,19 +40,22 @@ class Adyen_Payment_Model_Adyen_Cash extends Adyen_Payment_Model_Adyen_Abstract 
     public function __construct()
     {
         // check if this is adyen_cc payment method because this function is as well used for oneclick payments
-        if($this->getCode() == "adyen_cash") {
+        if ($this->getCode() == "adyen_cash") {
             $visible = Mage::getStoreConfig("payment/adyen_cash/visible_type");
-            if($visible == "backend") {
+            if ($visible == "backend") {
                 $this->_canUseCheckout = false;
                 $this->_canUseInternal = true;
-            } else if($visible == "frontend") {
-                $this->_canUseCheckout = true;
-                $this->_canUseInternal = false;
             } else {
-                $this->_canUseCheckout = true;
-                $this->_canUseInternal = true;
+                if ($visible == "frontend") {
+                    $this->_canUseCheckout = true;
+                    $this->_canUseInternal = false;
+                } else {
+                    $this->_canUseCheckout = true;
+                    $this->_canUseInternal = true;
+                }
             }
         }
+
         parent::__construct();
     }
 
@@ -64,25 +68,19 @@ class Adyen_Payment_Model_Adyen_Cash extends Adyen_Payment_Model_Adyen_Abstract 
         // check if ip range is enabled
         $ipFilter = $this->_getConfigData('ip_filter', 'adyen_cash');
 
-        if($isAvailable && $ipFilter) {
+        if ($isAvailable && $ipFilter) {
             // check if ip is in range
-            $ip =  Mage::helper('adyen')->getClientIp();
-            $from =  $this->_getConfigData('ip_filter_from', 'adyen_cash');
-            $to =  $this->_getConfigData('ip_filter_to', 'adyen_cash');
+            $ip = Mage::helper('adyen')->getClientIp();
+            $from = $this->_getConfigData('ip_filter_from', 'adyen_cash');
+            $to = $this->_getConfigData('ip_filter_to', 'adyen_cash');
             $isAvailable = Mage::helper('adyen')->ipInRange($ip, $from, $to);
         }
+
         return $isAvailable;
     }
 
-    public function assignData($data)
+    public function authorize(Varien_Object $payment, $amount)
     {
-
-    }
-
-
-    public function authorize(Varien_Object $payment, $amount) {
-
-
         $payment->setLastTransId($this->getTransactionId())->setIsTransactionPending(true);
 
         $order = $payment->getOrder();
@@ -122,20 +120,17 @@ class Adyen_Payment_Model_Adyen_Cash extends Adyen_Payment_Model_Adyen_Abstract 
         $wsUsername = $this->getConfigDataWsUserName($storeId);
         $wsPassword = $this->getConfigDataWsPassword($storeId);
 
-        if ($isConfigDemoMode)
-        {
+        if ($isConfigDemoMode) {
             curl_setopt($ch, CURLOPT_URL, "https://pal-test.adyen.com/pal/servlet/CustomPayment/beginCustomPayment");
-        }
-        else
-        {
+        } else {
             curl_setopt($ch, CURLOPT_URL, "https://pal-live.adyen.com/pal/servlet/CustomPayment/beginCustomPayment");
         }
 
         curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC  );
-        curl_setopt($ch, CURLOPT_USERPWD,$wsUsername.":".$wsPassword);
-        curl_setopt($ch, CURLOPT_POST,count($request));
-        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($request));
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, $wsUsername . ":" . $wsPassword);
+        curl_setopt($ch, CURLOPT_POST, count($request));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $results = curl_exec($ch);

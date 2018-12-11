@@ -18,6 +18,7 @@
  * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
  * @license      http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -84,9 +85,10 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
                 unset($countryList[$key]);
             }
         }
+
         return $countryList;
     }
-    
+
     /**
      * @return string
      */
@@ -97,13 +99,13 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
         }
 
         $quote = $this->_getQuote();
-        if (! $quote || ! $quote->getBillingAddress()) {
+        if (!$quote || !$quote->getBillingAddress()) {
             return '';
         }
 
         return $quote->getBillingAddress()->getCountryId();
     }
-    
+
     /**
      * @return string
      */
@@ -114,13 +116,13 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
         }
 
         $quote = $this->_getQuote();
-        if (! $quote || ! $quote->getBillingAddress()) {
+        if (!$quote || !$quote->getBillingAddress()) {
             return '';
         }
 
         return $quote->getBillingAddress()->getName();
     }
-    
+
     /**
      * @return string
      */
@@ -129,6 +131,7 @@ class Adyen_Payment_Block_Form_Sepa extends Adyen_Payment_Block_Form_Abstract
         if ($iban = $this->getMethod()->getInfoInstance()->getAdditionalInformation('iban')) {
             return $iban;
         }
+
         return '';
     }
 }

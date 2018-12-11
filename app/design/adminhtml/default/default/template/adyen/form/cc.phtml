@@ -60,11 +60,11 @@ $originKey = $this->getOriginKey();
                     <span class="input-label"><?php echo $this->__('Expiry year') ?>:</span>
                     <span class="input-field" data-cse="encryptedExpiryYear"></span>
                 </div>
-                <?php if( $this->hasVerification()):?>
-                <div class="input-container">
-                    <span class="input-label label-security-code"><?php echo $this->__('Security code') ?>:</span>
-                    <span class="input-field" data-cse="encryptedSecurityCode"></span>
-                </div>
+                <?php if ($this->hasVerification()): ?>
+                    <div class="input-container">
+                        <span class="input-label label-security-code"><?php echo $this->__('Security code') ?>:</span>
+                        <span class="input-field" data-cse="encryptedSecurityCode"></span>
+                    </div>
                 <?php endif; ?>
                 <div class="input-box">
                     <div class="v-fix">
@@ -76,20 +76,22 @@ $originKey = $this->getOriginKey();
                 </div>
             </div>
         </div>
-        <?php if($this->hasInstallments()): ?>
+        <?php if ($this->hasInstallments()): ?>
             <li>
                 <div class="input-box">
-                    <label for="<?php echo $_code ?>_installments" class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
+                    <label for="<?php echo $_code ?>_installments"
+                           class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
                     <div class="v-fix">
-                        <select id="<?php echo $_code ?>_installments" name="payment[additional_data]" class="number required-entry">
-                            <?php foreach ($this->getPossibleInstallments() as $k=>$v): ?>
-                                <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                        <select id="<?php echo $_code ?>_installments" name="payment[additional_data]"
+                                class="number required-entry">
+                            <?php foreach ($this->getPossibleInstallments() as $k => $v): ?>
+                                <option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
                             <?php endforeach ?>
                         </select>
                     </div>
                 </div>
             </li>
-        <?php endif;?>
+        <?php endif; ?>
 
         <input type="hidden" name="payment[encrypted_number]" id="encryptedCardNumber" value="">
         <input type="hidden" name="payment[encrypted_expiry_month]" id="encryptedExpiryMonth" value="">
@@ -103,10 +105,11 @@ $originKey = $this->getOriginKey();
 <script type="text/javascript">
 
     var ajaxReq;
+
     function getInstallments(variant) {
         // get the installments for this cardtype
         var ccType = variant;
-        var url = '<?php echo  Mage::helper('adminhtml')->getUrl('adminhtml/GetInstallmentsAdmin'); ?>';
+        var url = '<?php echo Mage::helper('adminhtml')->getUrl('adminhtml/GetInstallmentsAdmin'); ?>';
         if (ajaxReq && ajaxReq.readystate != 4) {
             ajaxReq.transport.abort();
         }
@@ -187,6 +190,7 @@ $originKey = $this->getOriginKey();
             }
         });
     }
+
     var secf = document.createElement("script");
     <?php $adyenHelper = Mage::helper('adyen'); ?>
     secf.src = "<?php echo $adyenHelper->getSecuredFieldsURL();?>";

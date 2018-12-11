@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -29,9 +29,11 @@
 /**
  * @method Adyen_Payment_Model_Adyen_Oneclick getMethod()
  */
-class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
+class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc
+{
 
-    protected function _construct() {
+    protected function _construct()
+    {
         parent::_construct();
         $this->setTemplate('adyen/form/oneclick.phtml');
     }
@@ -49,8 +51,7 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
             return '';
         }
 
-        if (! $this->hasData('_method_label_html')) {
-
+        if (!$this->hasData('_method_label_html')) {
             // get configuration of this specific payment method
             $methodCode = $this->getMethodCode();
 
@@ -63,12 +64,17 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
                 : $this->getSkinUrl("images/adyen/img_trans.gif");
 
 
-            $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
-                'template' => 'adyen/payment/payment_method_label.phtml',
-                'payment_method_icon' =>  $imageUrl,
-                'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
-                'payment_method_class' => $this->getMethod()->getCode()
-            ));
+            $labelBlock = Mage::app()->getLayout()->createBlock(
+                'core/template', null, array(
+                    'template' => 'adyen/payment/payment_method_label.phtml',
+                    'payment_method_icon' => $imageUrl,
+                    'payment_method_label' => Mage::helper('adyen')->getConfigData(
+                        'title',
+                        $this->getMethod()->getCode()
+                    ),
+                    'payment_method_class' => $this->getMethod()->getCode()
+                )
+            );
             $labelBlock->setParentBlock($this);
 
             $this->setData('_method_label_html', $labelBlock->toHtml());
@@ -96,9 +102,10 @@ class Adyen_Payment_Block_Form_Oneclick extends Adyen_Payment_Block_Form_Cc {
         $adyenHelper = Mage::helper('adyen');
         $methodCode = $this->getMethodCode();
         $adyenCcType = $adyenHelper->_getConfigData('variant', $methodCode);
-        if(empty($adyenCcType)){
+        if (empty($adyenCcType)) {
             $adyenCcType = $this->getRecurringDetails()['variant'];
         }
+
         $ccType = Mage::helper('adyen/data')->getMagentoCreditCartType($adyenCcType);
         $result = Mage::helper('adyen/installments')->getInstallmentForCreditCardType($ccType);
         return $result;

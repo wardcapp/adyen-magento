@@ -36,7 +36,9 @@
                             <fields>
                                 <fee translate="label">
                                     <label>Fee</label>
-                                    <tooltip>If you want to charge an extra fee for certain payment methods, set that fee here. Do not set any extra fees in the skin in the Adyen Customer Area.</tooltip>
+                                    <tooltip>If you want to charge an extra fee for certain payment methods, set that
+                                        fee here. Do not set any extra fees in the skin in the Adyen Customer Area.
+                                    </tooltip>
                                     <frontend_model>adyen_fee/adminhtml_system_config_hppPaymentMethodFee</frontend_model>
                                     <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
                                     <config_path>payment/adyen_hpp/fee</config_path>

@@ -50,6 +50,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract im
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
+
         $info = $this->getInfoInstance();
 
         // set number of installements
@@ -59,9 +60,11 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract im
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
             $info->setAdditionalInformation('store_cc', $data->getStoreCc());
         }
+
         if (empty($data->getCcType()) && !Mage::app()->getStore()->isAdmin()) {
             Mage::throwException(Mage::helper('adyen')->__('Invalid card type.'));
         }
+
         $info->setCcType($data->getCcType());
 
         $info->setCcOwner($data->getCcOwner());
@@ -189,8 +192,10 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract im
                     }
                 }
             }
+
             $this->_ccTypes = $types;
         }
+
         return $this->_ccTypes;
     }
 
@@ -202,6 +207,7 @@ class Adyen_Payment_Model_Adyen_Cc extends Adyen_Payment_Model_Adyen_Abstract im
         if ($recurringType == "RECURRING" || $recurringType == "ONECLICK,RECURRING") {
             return true;
         }
+
         return false;
     }
 

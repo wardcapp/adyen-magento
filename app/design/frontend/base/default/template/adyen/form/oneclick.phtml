@@ -54,14 +54,16 @@ $originKey = $this->getOriginKey();
                         <select id="<?php echo $_code ?>_expiration_<?php echo $_code; ?>" <?php echo("data-encrypted-name-oneclick-" . $_code . "=expiryMonth"); ?>
                                 class="month validate-oneclick-exp required-entry">
                             <?php foreach ($this->getCcMonths() as $k => $v): ?>
-                                <option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_recurringDetails["card_expiryMonth"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                                <option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_recurringDetails["card_expiryMonth"]): ?> selected="selected"<?php
+                               endif ?>><?php echo $v ?></option>
                             <?php endforeach ?>
                         </select>
 
                         <select id="<?php echo $_code ?>_expiration_yr_<?php echo $_code; ?>" <?php echo("data-encrypted-name-oneclick-" . $_code . "=expiryYear"); ?>
                                 class="year required-entry">
                             <?php foreach ($this->getCcYears() as $k => $v): ?>
-                                <option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_recurringDetails["card_expiryYear"]): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                                <option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_recurringDetails["card_expiryYear"]): ?> selected="selected"<?php
+                               endif ?>><?php echo $v ?></option>
                             <?php endforeach ?>
                         </select>
                     </div>
@@ -100,7 +102,8 @@ $originKey = $this->getOriginKey();
                             </div>
                             <?php if ($this->showCvc()): ?>
                                 <div class="input-container">
-                                    <span class="input-label label-security-code"><?php echo $this->__('Security code') ?>:</span>
+                                    <span class="input-label label-security-code"><?php echo $this->__('Security code') ?>
+                                        :</span>
                                     <span class="input-field" data-cse="encryptedSecurityCode"></span>
                                 </div>
                             <?php endif; ?>
@@ -111,9 +114,9 @@ $originKey = $this->getOriginKey();
                     <input type="hidden" name="payment[encrypted_expiry_year_<?php echo $_code; ?>]"
                            id="encryptedExpiryYear<?php echo $_code; ?>" value="">
                     <?php if ($this->showCvc()): ?>
-                    <input type="hidden" class="required-entry" name="payment[encrypted_cvc_<?php echo $_code; ?>]"
-                           id="encryptedSecurityCode<?php echo $_code; ?>"
-                           value="">
+                        <input type="hidden" class="required-entry" name="payment[encrypted_cvc_<?php echo $_code; ?>]"
+                               id="encryptedSecurityCode<?php echo $_code; ?>"
+                               value="">
                     <?php endif; ?>
                     <div class="validation-advice" id="advice-required-entry-encryptedSecurityCode<?php echo $_code; ?>"
                          style="display: none;"><?php echo $this->__('This is a required field.') ?></div>
@@ -131,6 +134,7 @@ $originKey = $this->getOriginKey();
                     $$('#update-expiration-date-<?php echo $_code; ?>').each(function (element) {
                         element.observe('click', updateExpirationDate);
                     });
+
                     function updateExpirationDate(event) {
                         // hide the link
                         this.hide();

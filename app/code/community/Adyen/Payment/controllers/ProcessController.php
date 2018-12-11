@@ -107,6 +107,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                 $additionalData[$key] = $value;
             }
         }
+
         $item->additionalData = $additionalData;
         return $item;
     }
@@ -232,11 +233,15 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                     }
                 } // otherwise, redirect to the external URL
                 else {
-                    $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, true,
-                        Mage::helper('adyen')->__('Customer was redirected to bank for 3D-secure validation. Once the shopper authenticated, the order status will be updated accordingly. 
+                    $order->setState(
+                        Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, true,
+                        Mage::helper('adyen')->__(
+                            'Customer was redirected to bank for 3D-secure validation. Once the shopper authenticated, the order status will be updated accordingly. 
                         <br />Make sure that your notifications are being processed! 
                         <br />If the order is stuck on this status, the shopper abandoned the session. The payment can be seen as unsuccessful. 
-                        <br />The order can be automatically cancelled based on the OFFER_CLOSED notification. Please contact Adyen Support to enable this.'))->save();
+                        <br />The order can be automatically cancelled based on the OFFER_CLOSED notification. Please contact Adyen Support to enable this.'
+                        )
+                    )->save();
                     $this->getResponse()->setBody(
                         $this->getLayout()->createBlock($this->_redirectBlockType)->setOrder($order)->toHtml()
                     );
@@ -349,7 +354,10 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
         $session->replaceQuote($quote);
 
         // if setting failed_attempt_disable is on and the payment method is openinvoice ignore this payment mehthod the second time
-        if ($this->_getConfigData('failed_attempt_disable', 'adyen_openinvoice') && $order->getPayment()->getMethod() == "adyen_openinvoice") {
+        if ($this->_getConfigData(
+            'failed_attempt_disable',
+            'adyen_openinvoice'
+        ) && $order->getPayment()->getMethod() == "adyen_openinvoice") {
             // check if payment failed
             $response = $this->getRequest()->getParams();
             if ($response['authResult'] == "REFUSED") {
@@ -388,8 +396,10 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
         }
 
         // if payment method is adyen_pos or adyen_cash redirect to checkout if the kiosk mode is turned off
-        if (!$this->_getConfigData('express_checkout_kiosk_mode', 'adyen_pos') && ($order->getPayment()->getMethod() == "adyen_pos" || $order->getPayment()->getMethod() == "adyen_cash")) {
-
+        if (!$this->_getConfigData(
+            'express_checkout_kiosk_mode',
+            'adyen_pos'
+        ) && ($order->getPayment()->getMethod() == "adyen_pos" || $order->getPayment()->getMethod() == "adyen_cash")) {
             // add email to session so this can be shown
             $session->setAdyenEmailShopper($order->getCustomerEmail());
 
@@ -454,7 +464,6 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                 $result = $this->processNotification($response);
 
                 if (!empty($result['response']) && $result['response'] == "401") {
-
                     $this->getResponse()->setBody($result['message']);
                     $this->_return401();
                     return;
@@ -476,10 +485,10 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                 );
                 return;
             }
-
         } catch (Exception $e) {
             Adyen_Payment_Exception::logException($e);
         }
+
         return $this;
     }
 
@@ -493,12 +502,13 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
             if ($notificationMode !== "" && $this->_validateNotificationMode($notificationMode)) {
                 foreach ($notificationItems['notificationItems'] as $notificationItem) {
                     $result = $this->processNotification($notificationItem['NotificationRequestItem']);
-                       if (!empty($result['response']) && $result['response'] == "401") {
+                    if (!empty($result['response']) && $result['response'] == "401") {
                         $this->getResponse()->setBody($result['message']);
                         $this->_return401();
                         return;
                     }
                 }
+
                 $acceptedMessage = "[accepted]";
                 $cronCheckTest = $notificationItems['notificationItems'][0]['NotificationRequestItem']['pspReference'];
                 // Run the query for checking unprocessed notifications, do this only for test notifications coming from the Adyen Customer Area
@@ -508,6 +518,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
                         $acceptedMessage .= "\nYou have " . $unprocessedNotifications . " unprocessed notifications.";
                     }
                 }
+
                 $this->getResponse()
                     ->clearHeader('Content-Type')
                     ->setHeader('Content-Type', 'text/html')
@@ -526,6 +537,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
         } catch (Exception $e) {
             Mage::logException($e);
         }
+
         return $this;
     }
 
@@ -609,6 +621,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
         if ($mode == 'Y' && ($notificationMode == "false" || $notificationMode == false) || $mode == 'N' && ($notificationMode == 'true' || $notificationMode == true)) {
             return true;
         }
+
         return false;
     }
 

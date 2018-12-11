@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abstract {
+class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abstract
+{
 
     const METHODCODE = 'adyen_pay_by_mail';
     protected $_code = self::METHODCODE;
@@ -39,7 +41,8 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
 
     protected $_paymentMethodType = 'hpp';
 
-    public function getPaymentMethodType() {
+    public function getPaymentMethodType()
+    {
         return $this->_paymentMethodType;
     }
 
@@ -51,27 +54,24 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
     public function __construct()
     {
         // check if this is adyen_cc payment method because this function is as well used for oneclick payments
-        if($this->getCode() == "adyen_pay_by_mail") {
+        if ($this->getCode() == "adyen_pay_by_mail") {
             $visible = Mage::getStoreConfig("payment/adyen_pay_by_mail/visible_type");
-            if($visible == "backend") {
+            if ($visible == "backend") {
                 $this->_canUseCheckout = false;
                 $this->_canUseInternal = true;
-            } else if($visible == "frontend") {
-                $this->_canUseCheckout = true;
-                $this->_canUseInternal = false;
             } else {
-                $this->_canUseCheckout = true;
-                $this->_canUseInternal = true;
+                if ($visible == "frontend") {
+                    $this->_canUseCheckout = true;
+                    $this->_canUseInternal = false;
+                } else {
+                    $this->_canUseCheckout = true;
+                    $this->_canUseInternal = true;
+                }
             }
         }
+
         parent::__construct();
     }
-
-    public function assignData($data)
-    {
-
-    }
-
 
     public function initialize($paymentAction, $stateObject)
     {
@@ -103,6 +103,7 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
         } else {
             $store = Mage::app()->getStore();
         }
+
         $paymentRoutine = Mage::getStoreConfig("payment/adyen_pay_by_mail/payment_routines", $store);
 
         return Mage::helper('adyen/payment')->prepareFieldsforUrl($fields, $isConfigDemoMode, $paymentRoutine);
@@ -115,17 +116,17 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
     {
         $this->_initOrder();
         /* @var $order Mage_Sales_Model_Order */
-        $order             = $this->_order;
-        $incrementId       = $order->getIncrementId();
-        $realOrderId       = $order->getRealOrderId();
+        $order = $this->_order;
+        $incrementId = $order->getIncrementId();
+        $realOrderId = $order->getRealOrderId();
         $orderCurrencyCode = $order->getOrderCurrencyCode();
-        $shopperIP         = trim($order->getRemoteIp());
+        $shopperIP = trim($order->getRemoteIp());
 
         $billingCountryCode = (is_object($order->getBillingAddress()) && $order->getBillingAddress()->getCountry() != "") ?
             $order->getBillingAddress()->getCountry() :
-            false ;
+            false;
 
-        $hasDeliveryAddress = $order->getShippingAddress()!= null;
+        $hasDeliveryAddress = $order->getShippingAddress() != null;
 
 
         $adyFields = Mage::helper('adyen/payment')->prepareFields(
@@ -142,7 +143,6 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
             $shopperIP,
             $this->getInfoInstance()->getCcType(),
             $this->getInfoInstance()->getMethod(),
-
             trim($this->getInfoInstance()->getPoNumber()),
             $this->_code,
             $hasDeliveryAddress,
@@ -174,22 +174,23 @@ class Adyen_Payment_Model_Adyen_PayByMail extends Adyen_Payment_Model_Adyen_Abst
     {
         // validate if recurringType is correctly configured
         $recurringType = $this->_getConfigData('recurringtypes', 'adyen_abstract');
-        if($recurringType == "RECURRING" || $recurringType == "ONECLICK,RECURRING") {
+        if ($recurringType == "RECURRING" || $recurringType == "ONECLICK,RECURRING") {
             return true;
         }
+
         return false;
     }
 
     /**
      * @param Adyen_Payment_Model_Billing_Agreement $billingAgreement
-     * @param Mage_Sales_Model_Quote_Payment        $paymentInfo
+     * @param Mage_Sales_Model_Quote_Payment $paymentInfo
      *
      * @return $this
      */
     public function initBillingAgreementPaymentInfo(
         Adyen_Payment_Model_Billing_Agreement $billingAgreement,
-        Mage_Sales_Model_Quote_Payment $paymentInfo)
-    {
+        Mage_Sales_Model_Quote_Payment $paymentInfo
+    ) {
         // do nothing for now
         return $this;
     }

@@ -28,17 +28,18 @@
 -->
 <layout version="0.1.0">
     <adyen_updatecart_index>
-        <update handle="checkout_cart_index" />
+        <update handle="checkout_cart_index"/>
     </adyen_updatecart_index>
 
     <default>
-        <block type="adyen/ApplePay" name="adyen.applepay.express.checkout" template="adyen/apple_pay.phtml" />
+        <block type="adyen/ApplePay" name="adyen.applepay.express.checkout" template="adyen/apple_pay.phtml"/>
     </default>
 
     <checkout_onepage_review>
         <!--<reference name="checkout.onepage.review.button">-->
         <reference name="checkout.onepage.review.info.items.after">
-            <block type="adyen/ApplePay" after="-" name="adyen.applepay.express.checkout" template="adyen/apple_pay.phtml">
+            <block type="adyen/ApplePay" after="-" name="adyen.applepay.express.checkout"
+                   template="adyen/apple_pay.phtml">
                 <action method="setData">
                     <name>reviewStep</name>
                     <value>1</value>
@@ -49,15 +50,21 @@
 
     <checkout_cart_index>
         <reference name="head">
-            <action method="addCss"><stylesheet>css/adyen.css</stylesheet></action>
-            <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
+            <action method="addCss">
+                <stylesheet>css/adyen.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
         </reference>
         <reference name="top.container">
             <block type="adyen/scanProduct" name="adyen.scanProduct" template="adyen/scan_product.phtml"/>
         </reference>
         <reference name="checkout.cart.methods">
-            <block type="adyen/posExpressCheckout" before="-" name="adyen.pos.express.checkout" template="adyen/pos_express_checkout.phtml"/>
-            <action method="append" after="adyen.pos.express.checkout" ifconfig="payment/adyen_apple_pay/show_outside_of_checkout">
+            <block type="adyen/posExpressCheckout" before="-" name="adyen.pos.express.checkout"
+                   template="adyen/pos_express_checkout.phtml"/>
+            <action method="append" after="adyen.pos.express.checkout"
+                    ifconfig="payment/adyen_apple_pay/show_outside_of_checkout">
                 <block>adyen.applepay.express.checkout</block>
             </action>
         </reference>
@@ -65,13 +72,21 @@
 
     <checkout_onepage_index>
         <reference name="head">
-            <action method="addJs"><script>adyen/payment/cc.js</script></action>
-            <action method="addJs"><script>adyen/payment/iban.js</script></action>
-            <action method="addCss"><stylesheet>css/adyen.css</stylesheet></action>
-            <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
+            <action method="addJs">
+                <script>adyen/payment/cc.js</script>
+            </action>
+            <action method="addJs">
+                <script>adyen/payment/iban.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyen.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
-            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml" />
+            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
             <block type="core/text" name="adyen.diners.validation" after="-">
                 <action method="setText">
                     <text>
@@ -92,12 +107,18 @@
     <!-- For the Idev onestepcheckout module !-->
     <onestepcheckout_index_index>
         <reference name="head">
-            <action method="addJs"><script>adyen/payment/cc.js</script></action>
-            <action method="addJs"><script>adyen/payment/iban.js</script></action>
-            <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
+            <action method="addJs">
+                <script>adyen/payment/cc.js</script>
+            </action>
+            <action method="addJs">
+                <script>adyen/payment/iban.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
-            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml" />
+            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
             <block type="core/text" name="adyen.diners.validation" after="-">
                 <action method="setText">
                     <text>
@@ -117,12 +138,18 @@
     <!-- For the IWD onestep checkout module !-->
     <opc_index_index>
         <reference name="head">
-            <action method="addJs"><script>adyen/payment/cc.js</script></action>
-            <action method="addJs"><script>adyen/payment/iban.js</script></action>
-            <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
+            <action method="addJs">
+                <script>adyen/payment/cc.js</script>
+            </action>
+            <action method="addJs">
+                <script>adyen/payment/iban.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
-            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml" />
+            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
             <block type="core/text" name="adyen.diners.validation" after="-">
                 <action method="setText">
                     <text>
@@ -142,12 +169,18 @@
     <!-- For the Made Streamcheckout module !-->
     <streamcheckout_index_index>
         <reference name="head">
-            <action method="addJs"><script>adyen/payment/cc.js</script></action>
-            <action method="addJs"><script>adyen/payment/iban.js</script></action>
-            <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
+            <action method="addJs">
+                <script>adyen/payment/cc.js</script>
+            </action>
+            <action method="addJs">
+                <script>adyen/payment/iban.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
-            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml" />
+            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
             <block type="core/text" name="adyen.diners.validation" after="-">
                 <action method="setText">
                     <text>
@@ -167,12 +200,18 @@
     <!-- For gomage checkout !-->
     <gomage_checkout_onepage_index>
         <reference name="head">
-            <action method="addJs"><script>adyen/payment/cc.js</script></action>
-            <action method="addJs"><script>adyen/payment/iban.js</script></action>
-            <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
+            <action method="addJs">
+                <script>adyen/payment/cc.js</script>
+            </action>
+            <action method="addJs">
+                <script>adyen/payment/iban.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
-            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml" />
+            <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
             <block type="core/text" name="adyen.diners.validation" after="-">
                 <action method="setText">
                     <text>
@@ -192,9 +231,15 @@
 
     <checkout_multishipping_billing>
         <reference name="head">
-            <action method="addJs"><script>adyen/payment/cc.js</script></action>
-            <action method="addJs"><script>adyen/payment/iban.js</script></action>
-            <action method="addCss"><stylesheet>css/adyenstyle.css</stylesheet></action>
+            <action method="addJs">
+                <script>adyen/payment/cc.js</script>
+            </action>
+            <action method="addJs">
+                <script>adyen/payment/iban.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
         </reference>
     </checkout_multishipping_billing>
     <checkout_onepage_success>
@@ -211,7 +256,9 @@
 
     <catalog_product_view>
         <reference name="head">
-            <action method="addCss"><stylesheet>css/adyen.css</stylesheet></action>
+            <action method="addCss">
+                <stylesheet>css/adyen.css</stylesheet>
+            </action>
         </reference>
         <reference name="product.info.addtocart">
             <action method="append" ifconfig="payment/adyen_apple_pay/show_outside_of_checkout">

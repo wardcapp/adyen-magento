@@ -29,8 +29,10 @@
 if ($_info = $this->getInfo()) {
     echo $this->htmlEscape($this->getMethod()->getTitle());
     if ($this->hasInstallments()):
-        echo "<br />" . $this->__('Installments: %s',
-                $this->htmlEscape($this->getInfo()->getAdditionalInformation('number_of_installments'))) . "<br/>";
+        echo "<br />" . $this->__(
+            'Installments: %s',
+            $this->htmlEscape($this->getInfo()->getAdditionalInformation('number_of_installments'))
+        ) . "<br/>";
     endif;
 }
 ?>

@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,8 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-
-class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml_Controller_Action {
+class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml_Controller_Action
+{
 
 
     /**
@@ -36,7 +37,8 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
      */
     protected $_debugData = array();
 
-    public function indexAction() {
+    public function indexAction()
+    {
 
         Mage::getSingleton('adminhtml/session')->addNotice(Mage::helper('adyen')->__('If you are using Adyen CreditCard payment method it could be that the notifcation that is send from the Adyen Platform is faster then Magento saves the order. The notification is saved and when a new notification is send it will try to update the previous notification as well. You can see here what notifications did not processed yet and you can proccess it here manual if you want to by selecting "Execute" under the Actions column '));
 
@@ -60,13 +62,15 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
         } catch (Exception $e) {
             Adyen_Payment_Exception::logException($e);
         }
+
         $this->_redirect('*/*/');
     }
 
     /**
      * This tries to process the notification again
      */
-    public function executeAction() {
+    public function executeAction()
+    {
         // get event queue id
         $eventQueueId = $this->getRequest()->getParam('event_queue_id');
         $this->_executeEventQueue($eventQueueId);
@@ -75,7 +79,8 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
         $this->_redirect('*/*/');
     }
 
-    private function _executeEventQueue($eventQueueId) {
+    private function _executeEventQueue($eventQueueId)
+    {
 
         $eventQueue = Mage::getModel('adyen/event_queue')->load($eventQueueId);
 
@@ -105,7 +110,8 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
         }
     }
 
-    public function deleteAction() {
+    public function deleteAction()
+    {
 
         $eventQueueId = $this->getRequest()->getParam('event_queue_id');
         $eventQueue = Mage::getModel('adyen/event_queue')->load($eventQueueId);
@@ -118,7 +124,7 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
     {
         $queueIds = $this->getRequest()->getParam('queue_id');      // $this->getMassactionBlock()->setFormFieldName('queue_id'); from Adyen_Payment_Block_Adminhtml_Adyen_Event_Queue_Grid
 
-        if(!is_array($queueIds)) {
+        if (!is_array($queueIds)) {
             Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adyen')->__('Please select notification queue(s).'));
         } else {
             try {
@@ -126,6 +132,7 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
                 foreach ($queueIds as $queueId) {
                     $eventQueueModel->load($queueId)->delete();
                 }
+
                 Mage::getSingleton('adminhtml/session')->addSuccess(
                     Mage::helper('adyen')->__(
                         'Total of %d record(s) were deleted.', count($queueIds)
@@ -143,7 +150,7 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
     {
         $queueIds = $this->getRequest()->getParam('queue_id');      // $this->getMassactionBlock()->setFormFieldName('queue_id'); from Adyen_Payment_Block_Adminhtml_Adyen_Event_Queue_Grid
 
-        if(!is_array($queueIds)) {
+        if (!is_array($queueIds)) {
             Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adyen')->__('Please select notification queue(s).'));
         } else {
             try {
@@ -151,6 +158,7 @@ class Adyen_Payment_Adminhtml_Adyen_Event_QueueController extends Mage_Adminhtml
                 foreach ($queueIds as $queueId) {
                     $this->_executeEventQueue($queueId);
                 }
+
                 Mage::getSingleton('adminhtml/session')->addSuccess(
                     Mage::helper('adyen')->__(
                         'Total of %d record(s) were deleted.', count($queueIds)

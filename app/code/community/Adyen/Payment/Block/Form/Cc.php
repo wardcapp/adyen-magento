@@ -57,12 +57,17 @@ class Adyen_Payment_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
                 ? $this->getSkinUrl("images/adyen/{$imgFileName}.png")
                 : $this->getSkinUrl("images/adyen/img_trans.gif");
 
-            $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
-                'template' => 'adyen/payment/payment_method_label.phtml',
-                'payment_method_icon' => $imageUrl,
-                'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
-                'payment_method_class' => $this->getMethod()->getCode()
-            ));
+            $labelBlock = Mage::app()->getLayout()->createBlock(
+                'core/template', null, array(
+                    'template' => 'adyen/payment/payment_method_label.phtml',
+                    'payment_method_icon' => $imageUrl,
+                    'payment_method_label' => Mage::helper('adyen')->getConfigData(
+                        'title',
+                        $this->getMethod()->getCode()
+                    ),
+                    'payment_method_class' => $this->getMethod()->getCode()
+                )
+            );
             $labelBlock->setParentBlock($this);
 
             $this->setData('_method_label_html', $labelBlock->toHtml());

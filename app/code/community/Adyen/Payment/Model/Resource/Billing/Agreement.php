@@ -12,11 +12,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	    Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package        Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -24,9 +25,9 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2015 Adyen BV (http://www.adyen.com)
  */
-
 class Adyen_Payment_Model_Resource_Billing_Agreement
-    extends Mage_Sales_Model_Resource_Billing_Agreement {
+    extends Mage_Sales_Model_Resource_Billing_Agreement
+{
 
     /**
      * Add order relation to billing agreement
@@ -40,21 +41,24 @@ class Adyen_Payment_Model_Resource_Billing_Agreement
         /*
          * needed for subscription module, only available in version >= 1.8
          */
-        if(method_exists($this->_getWriteAdapter(), 'insertIgnore')) {
+        if (method_exists($this->_getWriteAdapter(), 'insertIgnore')) {
             $this->_getWriteAdapter()->insertIgnore(
                 $this->getTable('sales/billing_agreement_order'), array(
-                    'agreement_id'  => $agreementId,
-                    'order_id'      => $orderId
+                    'agreement_id' => $agreementId,
+                    'order_id' => $orderId
                 )
             );
         } else {
             // use the default insert for <= 1.7 version
+            // @codingStandardsIgnoreStart
             try {
                 parent::addOrderRelation($agreementId, $orderId);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 // do not log this because this is a Integrity constraint violation solved in 1.8 by insertIgnore
             }
+            // @codingStandardsIgnoreEnd
         }
+
         return $this;
     }
 }

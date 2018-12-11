@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,20 +26,19 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-
-class Adyen_Payment_CheckoutCashController extends Mage_Core_Controller_Front_Action {
+class Adyen_Payment_CheckoutCashController extends Mage_Core_Controller_Front_Action
+{
 
     public function indexAction()
     {
         $customer = Mage::getSingleton('customer/session');
 
         // only proceed if customer is logged in
-        if($customer->isLoggedIn()) {
-
+        if ($customer->isLoggedIn()) {
             // get email
             $params = $this->getRequest()->getParams();
             $adyenPosEmail = isset($params['adyenPosEmail']) ? $params['adyenPosEmail'] : "";
-            $quote = (Mage::getModel('checkout/type_onepage') !== false)? Mage::getModel('checkout/type_onepage')->getQuote(): Mage::getModel('checkout/session')->getQuote();
+            $quote = (Mage::getModel('checkout/type_onepage') !== false) ? Mage::getModel('checkout/type_onepage')->getQuote() : Mage::getModel('checkout/session')->getQuote();
 
             // get customer object from session
             $customerObject = Mage::getModel('customer/customer')->load($customer->getId());
@@ -47,7 +47,7 @@ class Adyen_Payment_CheckoutCashController extends Mage_Core_Controller_Front_Ac
             $quote->assignCustomerWithAddressChange($customerObject);
 
             // update email with customer Email
-            if($adyenPosEmail != "") {
+            if ($adyenPosEmail != "") {
                 $quote->setCustomerEmail($adyenPosEmail);
             }
 
@@ -83,26 +83,33 @@ class Adyen_Payment_CheckoutCashController extends Mage_Core_Controller_Front_Ac
 
             // redirect to page where cash drawer is open, do it in a seperate page bercause in checkout page it is not working looks like conflict with prototype
             $openCashDrawer = Mage::helper('adyen')->getConfigData("cash_drawer", "adyen_cash", null);
-            if($openCashDrawer) {
+            if ($openCashDrawer) {
+                $cashDrawerIp = Mage::helper('adyen')->getConfigData(
+                    "cash_drawer_printer_ip", "adyen_cash",
+                    $order->getStoreId()
+                );
+                $cashDrawerPort = Mage::helper('adyen')->getConfigData(
+                    "cash_drawer_printer_port", "adyen_cash",
+                    $order->getStoreId()
+                );
+                $cashDrawerDeviceId = Mage::helper('adyen')->getConfigData(
+                    "cash_drawer_printer_device_id",
+                    "adyen_cash", $order->getStoreId()
+                );
 
-                $cashDrawerIp = Mage::helper('adyen')->getConfigData("cash_drawer_printer_ip", "adyen_cash", $order->getStoreId());
-                $cashDrawerPort = Mage::helper('adyen')->getConfigData("cash_drawer_printer_port", "adyen_cash", $order->getStoreId());
-                $cashDrawerDeviceId = Mage::helper('adyen')->getConfigData("cash_drawer_printer_device_id", "adyen_cash", $order->getStoreId());
-
-                if($cashDrawerIp != '' && $cashDrawerPort != '' && $cashDrawerDeviceId != '') {
-
-                    $html = '<html><head><link rel="stylesheet" type="text/css" href="'.Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN).'frontend/base/default/css/adyenstyle.css"><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>';
+                if ($cashDrawerIp != '' && $cashDrawerPort != '' && $cashDrawerDeviceId != '') {
+                    $html = '<html><head><link rel="stylesheet" type="text/css" href="' . Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . 'frontend/base/default/css/adyenstyle.css"><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>';
 
                     // for cash add epson libary to open the cash drawer
                     $jsPath = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS);
 
-                    $html .= '<script src="'.$jsPath.'adyen/payment/epos-device-2.6.0.js"></script>';
+                    $html .= '<script src="' . $jsPath . 'adyen/payment/epos-device-2.6.0.js"></script>';
                     $html .= '</head><body class="redirect-body-adyen">';
-                    $html.= '
+                    $html .= '
                             <script type="text/javascript">
-                                var ipAddress = "'.$cashDrawerIp.'";
-                                var port = "'.$cashDrawerPort.'";
-                                var deviceID = "'.$cashDrawerDeviceId.'";
+                                var ipAddress = "' . $cashDrawerIp . '";
+                                var port = "' . $cashDrawerPort . '";
+                                var deviceID = "' . $cashDrawerDeviceId . '";
                                 var ePosDev = new epson.ePOSDevice();
                                 ePosDev.connect(ipAddress, port, Callback_connect);
 
@@ -121,12 +128,12 @@ class Adyen_Payment_CheckoutCashController extends Mage_Core_Controller_Front_Ac
                                     var time = print.PULSE_100
                                     print.addPulse();
                                     print.send();
-                                    window.location = "'. Mage::getUrl('checkout/onepage/success') .'";
+                                    window.location = "' . Mage::getUrl('checkout/onepage/success') . '";
                                 }
                             </script>
                     ';
 
-                    $html.= '</body></html>';
+                    $html .= '</body></html>';
 
                     $this->getResponse()->setBody($html);
                 } else {

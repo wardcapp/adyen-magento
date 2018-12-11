@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -50,33 +51,32 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_PaymentInstallmentFee extends Ma
         $quote = $address->getQuote();
 
         if ($address->getAllItems()) {
-
             $currentAmount = $address->getPaymentInstallmentFeeAmount();
             $payment = $quote->getPayment();
 
-            if($payment && !empty($payment)) {
+            if ($payment && !empty($payment)) {
+                $paymentMethod = $quote->getPayment()->getMethod();
 
-                $paymentMethod = $quote->getPayment()->getMethod() ;
-
-                if($paymentMethod == "adyen_cc" || substr($paymentMethod, 0, 14) == 'adyen_oneclick') {
-
+                if ($paymentMethod == "adyen_cc" || substr($paymentMethod, 0, 14) == 'adyen_oneclick') {
                     $info = $payment->getMethodInstance();
 
                     $instance = $info->getInfoInstance();
                     $numberOfInstallments = $instance->getAdditionalInformation('number_of_installments');
 
-                    if($numberOfInstallments > 0)
-                    {
+                    if ($numberOfInstallments > 0) {
                         // get the Interest Rate of this installment
 
                         // get cc type
                         $ccType = $instance->getCcType();
 
                         // get installment for this specific card type
-                        $ccTypeInstallments = "installments_".$ccType;
+                        $ccTypeInstallments = "installments_" . $ccType;
 
-                        $all_installments = Mage::helper('adyen/installments')->getInstallments(null, $ccTypeInstallments);
-                        if(empty($all_installments)) {
+                        $all_installments = Mage::helper('adyen/installments')->getInstallments(
+                            null,
+                            $ccTypeInstallments
+                        );
+                        if (empty($all_installments)) {
                             // use default installments
                             $all_installments = Mage::helper('adyen/installments')->getInstallments();
                         }
@@ -84,11 +84,9 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_PaymentInstallmentFee extends Ma
                         $installmentKey = $numberOfInstallments - 1;
                         $installment = $all_installments[$installmentKey];
 
-                        if($installment != null && is_array($installment)) {
-
+                        if ($installment != null && is_array($installment)) {
                             // check if interest rate is filled in
-                            if(isset($installment[3]) && $installment[3] > 0) {
-
+                            if (isset($installment[3]) && $installment[3] > 0) {
                                 $this->_setAmount(0);
                                 $this->_setBaseAmount(0);
 
@@ -118,11 +116,13 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_PaymentInstallmentFee extends Ma
         $amt = $address->getPaymentInstallmentFeeAmount();
 
         if ($amt != 0) {
-            $address->addTotal(array(
-                'code'=>$this->getCode(),
-                'title'=> Mage::helper('adyen')->__('Installment Fee'),
-                'value'=> $amt
-            ));
+            $address->addTotal(
+                array(
+                    'code' => $this->getCode(),
+                    'title' => Mage::helper('adyen')->__('Installment Fee'),
+                    'value' => $amt
+                )
+            );
         } else {
             Mage::helper('adyen_fee')->removeTotal($address, $this->getCode());
         }
