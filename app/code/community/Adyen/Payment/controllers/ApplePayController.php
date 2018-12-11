@@ -284,7 +284,7 @@ class Adyen_Payment_ApplePayController extends Mage_Core_Controller_Front_Action
             $customer = Mage::getSingleton('customer/session')->getCustomer();
             $quote = $quote->assignCustomer($customer);
         }
-        else {
+        elseif(!$quote->getCustomerEmail()) {
             // set the customer email address
             if(!isset($payment->shippingContact->emailAddress) || $payment->shippingContact->emailAddress == "") {
                 Mage::throwException(Mage::helper('adyen')->__('Missing email address in payment'));
