@@ -191,7 +191,7 @@ class Adyen_Payment_CheckoutPosController extends Mage_Core_Controller_Front_Act
                     $recurringCards = $adyenHelper->getRecurringCards($merchantAccount, $customerId, $recurringType);
                     $jsonData['recurringCards'] = $recurringCards;
                 } catch (Exception $e) {
-                    Mage::log($e->getMessage(), Zend_Log::ERR);
+                    Mage::log($e->getMessage(), Zend_Log::ERR, 'adyen_exception.log');
                 }
             }
         }
