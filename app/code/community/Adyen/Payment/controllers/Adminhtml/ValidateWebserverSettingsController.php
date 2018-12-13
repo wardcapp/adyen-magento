@@ -12,11 +12,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -24,7 +25,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Adminhtml_ValidateWebserverSettingsController extends Mage_Adminhtml_Controller_Action {
+class Adyen_Payment_Adminhtml_ValidateWebserverSettingsController extends Mage_Adminhtml_Controller_Action
+{
 
     public function indexAction()
     {
@@ -36,11 +38,10 @@ class Adyen_Payment_Adminhtml_ValidateWebserverSettingsController extends Mage_A
 
         // check if password is encrypted if so get it from database
         if (preg_match('/^\*+$/', $password)) {
-
             $websiteCode = Mage::app()->getRequest()->getParam('website');
             $storeCode = Mage::app()->getRequest()->getParam('store');
 
-            if($storeCode) {
+            if ($storeCode) {
                 $store = Mage::getModel('core/store')->load($storeCode);
                 $storeId = $store->getId();
             } elseif ($websiteCode) {
@@ -51,25 +52,30 @@ class Adyen_Payment_Adminhtml_ValidateWebserverSettingsController extends Mage_A
                 $storeId = 0;
             }
 
-            if($modus == 'test') {
+            if ($modus == 'test') {
                 $configValue = 'ws_password_test';
             } else {
                 $configValue = 'ws_password_live';
             }
 
-            $password = Mage::helper('core')->decrypt(Mage::helper('adyen')->getConfigData($configValue, 'adyen_abstract', $storeId));
+            $password = Mage::helper('core')->decrypt(
+                Mage::helper('adyen')->getConfigData(
+                    $configValue,
+                    'adyen_abstract', $storeId
+                )
+            );
         }
 
         $ch = curl_init();
-        if($modus == 'test') {
+        if ($modus == 'test') {
             curl_setopt($ch, CURLOPT_URL, "https://pal-test.adyen.com/pal/adapter/httppost?Payment");
         } else {
             curl_setopt($ch, CURLOPT_URL, "https://pal-live.adyen.com/pal/adapter/httppost?Payment");
         }
 
         curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC  );
-        curl_setopt($ch, CURLOPT_USERPWD,$username.":".$password);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $results = curl_exec($ch);

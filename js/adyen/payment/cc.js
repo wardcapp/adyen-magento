@@ -202,6 +202,7 @@ function checkCardNumber() {
 
     return true;
 }
+
 /*************************************************************************\
  String getCardType()
  return the cardtype.
@@ -209,6 +210,7 @@ function checkCardNumber() {
 function getCardType() {
     return this.cardtype;
 }
+
 /*************************************************************************\
  String getExpiryDate()
  return the expiry date.
@@ -216,6 +218,7 @@ function getCardType() {
 function getExpiryDate() {
     return this.month + "/" + this.year;
 }
+
 /*************************************************************************\
  boolean isCardNumber([String cardnumber])
  return true if cardnumber pass the luhncheck and the rules, else return

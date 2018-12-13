@@ -33,7 +33,10 @@
 <?php if ($_info = $this->getInfo()): ?>
     <?php $paymentMethod = $_info->getCcType() ?>
     <?php if (!empty($paymentMethod)): ?>
-        <?php echo $this->__('Payment Method: %s', $this->htmlEscape($_info->getAdditionalInformation('hpp_type_label'))) ?>
+        <?php echo $this->__(
+            'Payment Method: %s',
+            $this->htmlEscape($_info->getAdditionalInformation('hpp_type_label'))
+        ) ?>
         <br/>
     <?php endif; ?>
     <?php if (strpos($paymentMethod, "ideal") !== false): ?>

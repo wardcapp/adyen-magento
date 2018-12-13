@@ -46,7 +46,8 @@
                 <option value=""><?php echo $this->__('Choose Your Bank'); ?></option>
                 <?php foreach ($this->getIssuers() as $_issuerId => $_issuerData): ?>
                     <option value="<?php echo $_issuerId ?>"
-                            <?php if (isset($_issuerData['selected'])): ?>selected<?php endif; ?>>
+                            <?php if (isset($_issuerData['selected'])): ?>selected<?php
+                            endif; ?>>
                         <?php echo $_issuerData['label']; ?>
                     </option>
                 <?php endforeach; ?>

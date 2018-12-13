@@ -68,38 +68,86 @@
             <adyen_fee_setup>
                 <setup>
                     <module>Adyen_Fee</module>
-                    <class>Adyen_Fee_Model_Resource_Setup</class>
+                    <class>Mage_Sales_Model_Resource_Setup</class>
                 </setup>
             </adyen_fee_setup>
         </resources>
         <fieldsets>
             <sales_convert_quote_address>
-                <payment_fee_amount><to_order>*</to_order></payment_fee_amount>
-                <base_payment_fee_amount><to_order>*</to_order></base_payment_fee_amount>
-                <payment_fee_tax><to_order>*</to_order></payment_fee_tax>
-                <base_payment_fee_tax><to_order>*</to_order></base_payment_fee_tax>
-                <payment_percentage_fee><to_order>*</to_order></payment_percentage_fee>
-                <base_payment_percentage_fee><to_order>*</to_order></base_payment_percentage_fee>
-                <payment_installment_fee_amount><to_order>*</to_order></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_order>*</to_order></base_payment_installment_fee_amount>
+                <payment_fee_amount>
+                    <to_order>*</to_order>
+                </payment_fee_amount>
+                <base_payment_fee_amount>
+                    <to_order>*</to_order>
+                </base_payment_fee_amount>
+                <payment_fee_tax>
+                    <to_order>*</to_order>
+                </payment_fee_tax>
+                <base_payment_fee_tax>
+                    <to_order>*</to_order>
+                </base_payment_fee_tax>
+                <payment_percentage_fee>
+                    <to_order>*</to_order>
+                </payment_percentage_fee>
+                <base_payment_percentage_fee>
+                    <to_order>*</to_order>
+                </base_payment_percentage_fee>
+                <payment_installment_fee_amount>
+                    <to_order>*</to_order>
+                </payment_installment_fee_amount>
+                <base_payment_installment_fee_amount>
+                    <to_order>*</to_order>
+                </base_payment_installment_fee_amount>
             </sales_convert_quote_address>
             <sales_convert_order>
-                <payment_fee_amount><to_invoice>*</to_invoice></payment_fee_amount>
-                <base_payment_fee_amount><to_invoice>*</to_invoice></base_payment_fee_amount>
-                <payment_fee_tax><to_invoice>*</to_invoice></payment_fee_tax>
-                <base_payment_fee_tax><to_invoice>*</to_invoice></base_payment_fee_tax>
-                <payment_percentage_fee><to_invoice>*</to_invoice></payment_percentage_fee>
-                <base_payment_percentage_fee><to_invoice>*</to_invoice></base_payment_percentage_fee>
-                <payment_installment_fee_amount><to_invoice>*</to_invoice></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_invoice>*</to_invoice></base_payment_installment_fee_amount>
-                <payment_fee_amount><to_cm>*</to_cm></payment_fee_amount>
-                <base_payment_fee_amount><to_cm>*</to_cm></base_payment_fee_amount>
-                <payment_fee_tax><to_cm>*</to_cm></payment_fee_tax>
-                <base_payment_fee_tax><to_cm>*</to_cm></base_payment_fee_tax>
-                <payment_percentage_fee><to_cm>*</to_cm></payment_percentage_fee>
-                <base_payment_percentage_fee><to_cm>*</to_cm></base_payment_percentage_fee>
-                <payment_installment_fee_amount><to_cm>*</to_cm></payment_installment_fee_amount>
-                <base_payment_installment_fee_amount><to_cm>*</to_cm></base_payment_installment_fee_amount>
+                <payment_fee_amount>
+                    <to_invoice>*</to_invoice>
+                </payment_fee_amount>
+                <base_payment_fee_amount>
+                    <to_invoice>*</to_invoice>
+                </base_payment_fee_amount>
+                <payment_fee_tax>
+                    <to_invoice>*</to_invoice>
+                </payment_fee_tax>
+                <base_payment_fee_tax>
+                    <to_invoice>*</to_invoice>
+                </base_payment_fee_tax>
+                <payment_percentage_fee>
+                    <to_invoice>*</to_invoice>
+                </payment_percentage_fee>
+                <base_payment_percentage_fee>
+                    <to_invoice>*</to_invoice>
+                </base_payment_percentage_fee>
+                <payment_installment_fee_amount>
+                    <to_invoice>*</to_invoice>
+                </payment_installment_fee_amount>
+                <base_payment_installment_fee_amount>
+                    <to_invoice>*</to_invoice>
+                </base_payment_installment_fee_amount>
+                <payment_fee_amount>
+                    <to_cm>*</to_cm>
+                </payment_fee_amount>
+                <base_payment_fee_amount>
+                    <to_cm>*</to_cm>
+                </base_payment_fee_amount>
+                <payment_fee_tax>
+                    <to_cm>*</to_cm>
+                </payment_fee_tax>
+                <base_payment_fee_tax>
+                    <to_cm>*</to_cm>
+                </base_payment_fee_tax>
+                <payment_percentage_fee>
+                    <to_cm>*</to_cm>
+                </payment_percentage_fee>
+                <base_payment_percentage_fee>
+                    <to_cm>*</to_cm>
+                </base_payment_percentage_fee>
+                <payment_installment_fee_amount>
+                    <to_cm>*</to_cm>
+                </payment_installment_fee_amount>
+                <base_payment_installment_fee_amount>
+                    <to_cm>*</to_cm>
+                </base_payment_installment_fee_amount>
             </sales_convert_order>
         </fieldsets>
         <sales>
@@ -186,11 +234,11 @@
                 </payment_fee>
                 <!-- Do not show payment_fee_tax because this is already included into the tax node-->
                 <!--<payment_fee_tax translate="title">-->
-                    <!--<title>Payment Fee Tax</title>-->
-                    <!--<source_field>payment_fee_tax</source_field>-->
-                    <!--<font_size>7</font_size>-->
-                    <!--<display_zero>0</display_zero>-->
-                    <!--<sort_order>101</sort_order>-->
+                <!--<title>Payment Fee Tax</title>-->
+                <!--<source_field>payment_fee_tax</source_field>-->
+                <!--<font_size>7</font_size>-->
+                <!--<display_zero>0</display_zero>-->
+                <!--<sort_order>101</sort_order>-->
                 <!--</payment_fee_tax>-->
                 <payment_percentage_fee translate="title">
                     <title>Payment Percentage Fee</title>

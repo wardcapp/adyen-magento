@@ -6,10 +6,17 @@
  */
 class Adyen_Payment_Helper_Pci
 {
-    /** @var array  */
-    protected static $_sensitiveDataKeys = array('holdername', 'expiryyear', 'expirymonth', 'issuenumber', 'cvc', 'number');
+    /** @var array */
+    protected static $_sensitiveDataKeys = array(
+        'holdername',
+        'expiryyear',
+        'expirymonth',
+        'issuenumber',
+        'cvc',
+        'number'
+    );
 
-    /** @var array  */
+    /** @var array */
     protected static $_sensitiveElementPatterns;
 
     /**
@@ -58,6 +65,7 @@ class Adyen_Payment_Helper_Pci
         foreach ($array as $key => $value) {
             $array[$key] = $this->_obscureSensitiveKeyValue($key, $value);
         }
+
         return $array;
     }
 
@@ -70,6 +78,7 @@ class Adyen_Payment_Helper_Pci
         foreach ($object as $key => $value) {
             $object[$key] = $this->_obscureSensitiveKeyValue($key, $value);
         }
+
         return $object;
     }
 
@@ -80,9 +89,11 @@ class Adyen_Payment_Helper_Pci
      */
     protected function _obscureSensitiveElements($string)
     {
-        return preg_replace_callback(self::$_sensitiveElementPatterns, function($matches) {
+        return preg_replace_callback(
+            self::$_sensitiveElementPatterns, function ($matches) {
             return $matches[1] . $this->_obscureString($matches[2]) . $matches[3];
-        }, $string);
+            }, $string
+        );
     }
 
     /**
@@ -96,6 +107,7 @@ class Adyen_Payment_Helper_Pci
         if ($len > 3) {
             return substr($string, 0, 1) . str_repeat('*', $len - 2) . substr($string, -1);
         }
+
         return str_repeat('*', $len);
     }
 
@@ -108,12 +120,13 @@ class Adyen_Payment_Helper_Pci
     protected function _obscureSensitiveKeyValue($key, $value)
     {
         // do not log additionalData in request
-        if($key == "additionalData") {
+        if ($key == "additionalData") {
             $value = "NOT BEING LOGGED FOR SECURITY PURPOSES";
         }
+
         // Is this a sensitive key with a string or numeric value?
         if (in_array(strtolower($key), self::$_sensitiveDataKeys) && (is_string($value) || is_numeric($value))) {
-            $strVal = (string) $value;
+            $strVal = (string)$value;
             return $this->_obscureString($strVal);
         }
 

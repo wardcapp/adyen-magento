@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form {
+class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form
+{
 
     protected $_dateInputs = array();
 
@@ -46,9 +48,8 @@ class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form {
             $this->setMethodTitle('');
         }
 
-                /* Check if the customer is logged in or not */
+        /* Check if the customer is logged in or not */
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-
             /* Get the customer data */
             $customer = Mage::getSingleton('customer/session')->getCustomer();
 
@@ -65,18 +66,23 @@ class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form {
             return '';
         }
 
-        if (! $this->hasData('_method_label_html')) {
+        if (!$this->hasData('_method_label_html')) {
             $openinvoiceType = Mage::helper('adyen')->_getConfigData("openinvoicetypes", "adyen_openinvoice");
 
             $imageUrl = $this->getSkinUrl("images/adyen/{$openinvoiceType}.png");
 
 
-            $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
-                'template' => 'adyen/payment/payment_method_label.phtml',
-                'payment_method_icon' =>  $imageUrl,
-                'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()) //,
-                //'payment_method_class' => 'adyen_openinvoice_' . $openinvoiceType
-            ));
+            $labelBlock = Mage::app()->getLayout()->createBlock(
+                'core/template', null, array(
+                    'template' => 'adyen/payment/payment_method_label.phtml',
+                    'payment_method_icon' => $imageUrl,
+                    'payment_method_label' => Mage::helper('adyen')->getConfigData(
+                        'title',
+                        $this->getMethod()->getCode()
+                    ) //,
+                    //'payment_method_class' => 'adyen_openinvoice_' . $openinvoiceType
+                )
+            );
             $labelBlock->setParentBlock($this);
 
             $this->setData('_method_label_html', $labelBlock->toHtml());
@@ -148,19 +154,24 @@ class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form {
 
         $dateFormat = preg_replace('/[^\%\w]/', '\\1', $this->getDateFormat());
 
-        return sprintf(strtr($dateFormat, $strtr),
-            $this->_dateInputs['m'], $this->_dateInputs['d'], $this->_dateInputs['y']);
+        return sprintf(
+            strtr($dateFormat, $strtr),
+            $this->_dateInputs['m'], $this->_dateInputs['d'], $this->_dateInputs['y']
+        );
     }
 
-    public function genderShow() {
+    public function genderShow()
+    {
         return $this->getMethod()->genderShow();
     }
 
-    public function dobShow() {
+    public function dobShow()
+    {
         return $this->getMethod()->dobShow();
     }
 
-    public function telephoneShow() {
+    public function telephoneShow()
+    {
         return $this->getMethod()->telephoneShow();
     }
 
@@ -191,7 +202,7 @@ class Adyen_Payment_Block_Form_Openinvoice extends Mage_Payment_Block_Form {
     public function calculateDeviceIdentToken()
     {
         $quote = Mage::helper('checkout/cart')->getQuote();
-        return md5($quote->getReservedOrderId().date('c'));
+        return md5($quote->getReservedOrderId() . date('c'));
     }
 
 }

@@ -81,7 +81,7 @@
             <adyen_setup>
                 <setup>
                     <module>Adyen_Payment</module>
-                    <class>Adyen_Payment_Model_Resource_Setup</class>
+                    <class>Mage_Sales_Model_Resource_Setup</class>
                 </setup>
                 <connection>
                     <use>core_setup</use>
@@ -129,7 +129,7 @@
             <quote>
                 <item>
                     <product_attributes>
-                        <adyen_pre_order />
+                        <adyen_pre_order/>
                     </product_attributes>
                 </item>
             </quote>

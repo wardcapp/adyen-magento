@@ -1,18 +1,18 @@
 var _ = _ ? _ : {};
-_.X = function(b, c, e, a) {
-    a = new(window.ActiveXObject ? ActiveXObject : XMLHttpRequest)("Microsoft.XMLHTTP");
+_.X = function (b, c, e, a) {
+    a = new (window.ActiveXObject ? ActiveXObject : XMLHttpRequest)("Microsoft.XMLHTTP");
     a.open(e ? "POST" : "GET", b, 1);
     e ? a.setRequestHeader("Content-type", "application/x-www-form-urlencoded") : 0;
-    a.onreadystatechange = function() {
+    a.onreadystatechange = function () {
         a.readyState > 3 && c ? c(a.responseText, a) : 0
     };
     a.send(e)
 };
-_.E = function(d, a, c, b) {
+_.E = function (d, a, c, b) {
 
 
-    if(d.attachEvent) {
-        if(b) {
+    if (d.attachEvent) {
+        if (b) {
             d.detachEvent("on" + a, d[a + c]);
         } else {
             !0;
@@ -20,7 +20,7 @@ _.E = function(d, a, c, b) {
 
     } else {
 
-        if(b) {
+        if (b) {
             d.removeEventListener(a, c, !1);
         } else {
             d.addEventListener(a, c, !1);
@@ -31,42 +31,42 @@ _.E = function(d, a, c, b) {
 
     if (d.attachEvent ? (b ? d.detachEvent("on" + a, d[a + c]) : !0) : (b ? d.removeEventListener(a, c, !1) : d.addEventListener(a, c, !1))) {
         d["e" + a + c] = c;
-        d[a + c] = function() {
+        d[a + c] = function () {
             d["e" + a + c](window.event)
         };
         d.attachEvent("on" + a, d[a + c])
     }
 };
-_.G = function(a) {
+_.G = function (a) {
     return a.style ? a : document.getElementById(a)
 };
-_.A = function(a, f, e, b, d) {
+_.A = function (a, f, e, b, d) {
     if (b === undefined) {
         var b = new Object();
         b.value = 0
     }
     b.value ? 0 : b.value = 0;
-    return d.value = setInterval(function() {
+    return d.value = setInterval(function () {
         e(b.value / a);
         ++b.value > a ? clearInterval(d.value) : 0
     }, f)
 };
-_.F = function(e, b, c, a) {
+_.F = function (e, b, c, a) {
     e = e == "in";
-    _.A(c ? c : 15, a ? a : 50, function(d) {
+    _.A(c ? c : 15, a ? a : 50, function (d) {
         d = (e ? 0 : 1) + (e ? 1 : -1) * d;
         b.style.opacity = d;
         b.style.filter = "alpha(opacity=" + 100 * d + ")"
     })
 };
-_.S = function(k, g, j, e, a, b, m) {
+_.S = function (k, g, j, e, a, b, m) {
     k = k == "in";
-    _.A(j ? j : 15, e ? e : 50, function(c) {
+    _.A(j ? j : 15, e ? e : 50, function (c) {
         c = (k ? 0 : 1) + (k ? 1 : -1) * c;
         g.style.width = parseInt(c * a) + "px"
     }, m, b)
 };
-_.Q = function(d) {
+_.Q = function (d) {
     var h = new Object();
     var c = new Array();
     for (var a = 0; a < d.elements.length; a++) {
@@ -112,16 +112,17 @@ _.Q = function(d) {
                     h[n][h[n].length] = encodeURIComponent(l.value);
                     break
             }
-        } catch (g) {}
+        } catch (g) {
+        }
     }
     for (x in h) {
         c[c.length] = x + "=" + h[x].join(",")
     }
     return c.join("&")
 };
-_.R = function(a) {
+_.R = function (a) {
 
-    if(("\v" == "v" || document.documentElement.style.scrollbar3dLightColor != undefined)) {
+    if (("\v" == "v" || document.documentElement.style.scrollbar3dLightColor != undefined)) {
         setTimeout(a, 0);
     } else {
         _.E(document, "DOMContentLoaded", a, undefined);
@@ -172,7 +173,8 @@ function dfGetPlug() {
             d += dfGetIEAV();
             j++
         }
-    } catch (g) {}
+    } catch (g) {
+    }
     var k = {
         nr: j,
         obj: d
@@ -189,23 +191,27 @@ function dfGetIEAV() {
                     if (oAcro) {
                         return "Adobe Acrobat version" + x + ".?"
                     }
-                } catch (ex) {}
+                } catch (ex) {
+                }
             }
             try {
                 oAcro4 = new ActiveXObject("PDF.PdfCtrl.1");
                 if (oAcro4) {
                     return "Adobe Acrobat version 4.?"
                 }
-            } catch (ex) {}
+            } catch (ex) {
+            }
             try {
                 oAcro7 = new ActiveXObject("AcroPDF.PDF.1");
                 if (oAcro7) {
                     return "Adobe Acrobat version 7.?"
                 }
-            } catch (ex) {}
+            } catch (ex) {
+            }
             return ""
         }
-    } catch (e) {}
+    } catch (e) {
+    }
     return ""
 }
 
@@ -221,11 +227,13 @@ function dfGetFonts() {
                 }
                 h += " (Java)"
             }
-        } catch (b) {}
+        } catch (b) {
+        }
         if (h === "") {
             h = "No Flash or Java"
         }
-    } catch (f) {}
+    } catch (f) {
+    }
     var d = {
         nr: h.split(",").length,
         obj: h
@@ -236,10 +244,12 @@ function dfGetFonts() {
 function dfInitDS() {
     try {
         localStorage.dfValue = "value"
-    } catch (a) {}
+    } catch (a) {
+    }
     try {
         sessionStorage.dfValue = "value"
-    } catch (a) {}
+    } catch (a) {
+    }
 }
 
 function dfGetDS() {
@@ -305,7 +315,8 @@ function getWebglFp() {
         h(g, e + f, c - 2 * f * a, f, a);
         h(g, e, c - 2 * f * a, f, a);
         h(g, e - f, c - 2 * f * a, f, a)
-    } catch (j) {}
+    } catch (j) {
+    }
     if (g.canvas !== null) {
         m.push(g.canvas.toDataURL() + "§")
     }
@@ -376,7 +387,7 @@ function getWebglFp() {
 }
 
 function getJsFonts() {
-    var e = function() {
+    var e = function () {
         return (new Date()).getTime()
     };
     var f = e() + 3000;
@@ -495,13 +506,15 @@ function dfGetProp() {
                 f = 0;
                 try {
                     f = a[q].length
-                } catch (m) {}
+                } catch (m) {
+                }
                 if (typeof a[q] === "undefined" || a[q] === null || f !== p[q]) {
                     a[q] = padString("", p[q])
                 }
             }
         }
-    } catch (j) {}
+    } catch (j) {
+    }
     return a
 }
 
@@ -524,7 +537,8 @@ function dfCanvasFingerprint() {
     return padString("", 10)
 }
 
-function populateFontList(a) {}
+function populateFontList(a) {
+}
 
 function dfGetEntropy() {
     var a = ["iPad", "iPhone", "iPod"];
@@ -546,7 +560,8 @@ function dfSet(f, b) {
         var h = dfGetEntropy();
         var g = _.G(f);
         g.value = c + ":" + h
-    } catch (d) {}
+    } catch (d) {
+    }
 }
 
 function dfHashConcat(a) {
@@ -570,19 +585,21 @@ function dfDo(b) {
             return
         }
         dfInitDS();
-        _.R(function() {
-            setTimeout(function() {
+        _.R(function () {
+            setTimeout(function () {
                 dfSet(b, 0)
             }, 500)
         })
-    } catch (a) {}
+    } catch (a) {
+    }
 }
 
 function padString(c, a) {
     if (c.length >= a) {
         return (c.substring(0, a))
     } else {
-        for (var b = ""; b.length < a - c.length; b += "0") {}
+        for (var b = ""; b.length < a - c.length; b += "0") {
+        }
         return (b.concat(c))
     }
 }
@@ -730,40 +747,41 @@ function md5_binl2b64(f) {
     }
     return o
 }
+
 var PluginDetect = {
     version: "0.7.5",
     name: "PluginDetect",
-    handler: function(f, d, e) {
-        return function() {
+    handler: function (f, d, e) {
+        return function () {
             f(d, e)
         }
     },
-    isDefined: function(a) {
+    isDefined: function (a) {
         return typeof a != "undefined"
     },
-    isArray: function(a) {
+    isArray: function (a) {
         return (/array/i).test(Object.prototype.toString.call(a))
     },
-    isFunc: function(a) {
+    isFunc: function (a) {
         return typeof a == "function"
     },
-    isString: function(a) {
+    isString: function (a) {
         return typeof a == "string"
     },
-    isNum: function(a) {
+    isNum: function (a) {
         return typeof a == "number"
     },
-    isStrNum: function(a) {
+    isStrNum: function (a) {
         return (typeof a == "string" && (/\d/).test(a))
     },
     getNumRegx: /[\d][\d\.\_,-]*/,
     splitNumRegx: /[\.\_,-]/g,
-    getNum: function(e, h) {
+    getNum: function (e, h) {
         var g = this,
             f = g.isStrNum(e) ? (g.isDefined(h) ? new RegExp(h) : g.getNumRegx).exec(e) : null;
         return f ? f[0] : null
     },
-    compareNums: function(k, o, q) {
+    compareNums: function (k, o, q) {
         var p = this,
             r, i, j, m = parseInt;
         if (p.isStrNum(k) && p.isStrNum(o)) {
@@ -783,7 +801,7 @@ var PluginDetect = {
         }
         return 0
     },
-    formatNum: function(f, j) {
+    formatNum: function (f, j) {
         var i = this,
             g, h;
         if (!i.isStrNum(f)) {
@@ -804,8 +822,8 @@ var PluginDetect = {
         }
         return h.slice(0, 4).join(",")
     },
-    $$hasMimeType: function(b) {
-        return function(i) {
+    $$hasMimeType: function (b) {
+        return function (i) {
             if (!b.isIE && i) {
                 var j, a, h, g = b.isString(i) ? [i] : i;
                 if (!g || !g.length) {
@@ -820,7 +838,7 @@ var PluginDetect = {
             return null
         }
     },
-    findNavPlugin: function(o, u, w) {
+    findNavPlugin: function (o, u, w) {
         var q = this,
             r = new RegExp(o, "i"),
             v = (!q.isDefined(u) || u) ? /\d/ : 0,
@@ -839,7 +857,7 @@ var PluginDetect = {
         }
         return null
     },
-    getMimeEnabledPlugin: function(h, i) {
+    getMimeEnabledPlugin: function (h, i) {
         var j = this,
             g, m = new RegExp(i, "i"),
             k = "";
@@ -848,7 +866,7 @@ var PluginDetect = {
         }
         return 0
     },
-    getPluginFileVersion: function(o, i) {
+    getPluginFileVersion: function (o, i) {
         var k = this,
             p, q, m, j, r = -1;
         if (k.OS > 2 || !o || !o.version || !(p = k.getNum(o.version))) {
@@ -877,16 +895,17 @@ var PluginDetect = {
         return p
     },
     AXO: window.ActiveXObject,
-    getAXO: function(e) {
+    getAXO: function (e) {
         var h = null,
             i, j = this,
             g;
         try {
             h = new j.AXO(e)
-        } catch (i) {}
+        } catch (i) {
+        }
         return h
     },
-    convertFuncs: function(k) {
+    convertFuncs: function (k) {
         var i, j, m, e = /^[\$][\$]/,
             o = {},
             p = this;
@@ -902,10 +921,11 @@ var PluginDetect = {
                     k[j] = k[i](k);
                     delete k[i]
                 }
-            } catch (m) {}
+            } catch (m) {
+            }
         }
     },
-    initScript: function() {
+    initScript: function () {
         var t = this,
             v = navigator,
             r = "/",
@@ -915,7 +935,8 @@ var PluginDetect = {
             o = v.product || "";
         t.OS = 100;
         if (u) {
-            var q, s = ["Win", 1, "Mac", 2, "Linux", 3, "FreeBSD", 4, "iPhone", 21.1, "iPod", 21.2, "iPad", 21.3, "Win.*CE", 22.1, "Win.*Mobile", 22.2, "Pocket\\s*PC", 22.3, "", 100];
+            var q,
+                s = ["Win", 1, "Mac", 2, "Linux", 3, "FreeBSD", 4, "iPhone", 21.1, "iPod", 21.2, "iPad", 21.3, "Win.*CE", 22.1, "Win.*Mobile", 22.2, "Pocket\\s*PC", 22.3, "", 100];
             for (q = s.length - 2; q >= 0; q = q - 2) {
                 if (s[q] && new RegExp(s[q], "i").test(u)) {
                     t.OS = s[q + 1];
@@ -924,8 +945,8 @@ var PluginDetect = {
             }
         }
         t.convertFuncs(t);
-        t.isIE = (function() {
-            var a = (function(z, g) {
+        t.isIE = (function () {
+            var a = (function (z, g) {
                 var N = "0.7.10",
                     P = "",
                     O = "?",
@@ -947,7 +968,7 @@ var PluginDetect = {
                     M = "wearable",
                     H = "embedded";
                 var d = {
-                    extend: function(Q, S) {
+                    extend: function (Q, S) {
                         for (var R in S) {
                             if ("browser cpu device engine os".indexOf(R) !== -1 && S[R].length % 2 === 0) {
                                 Q[R] = S[R].concat(Q[R])
@@ -955,22 +976,22 @@ var PluginDetect = {
                         }
                         return Q
                     },
-                    has: function(R, Q) {
+                    has: function (R, Q) {
                         if (typeof R === "string") {
                             return Q.toLowerCase().indexOf(R.toLowerCase()) !== -1
                         } else {
                             return false
                         }
                     },
-                    lowerize: function(Q) {
+                    lowerize: function (Q) {
                         return Q.toLowerCase()
                     },
-                    major: function(Q) {
+                    major: function (Q) {
                         return typeof(Q) === E ? Q.split(".")[0] : g
                     }
                 };
                 var J = {
-                    rgx: function() {
+                    rgx: function () {
                         var aa, U = 0,
                             T, S, R, Q, V, W, X = arguments;
                         while (U < X.length && !V) {
@@ -1026,7 +1047,7 @@ var PluginDetect = {
                         }
                         return aa
                     },
-                    str: function(T, S) {
+                    str: function (T, S) {
                         for (var R in S) {
                             if (typeof S[R] === e && S[R].length > 0) {
                                 for (var Q = 0; Q < S[R].length; Q++) {
@@ -1158,21 +1179,21 @@ var PluginDetect = {
                         [h, K]
                     ]
                 };
-                var w = function(R, T) {
+                var w = function (R, T) {
                     if (!(this instanceof w)) {
                         return new w(R, T).getResult()
                     }
                     var S = R || ((z && z.navigator && z.navigator.userAgent) ? z.navigator.userAgent : P);
                     var Q = T ? d.extend(A, T) : A;
-                    this.getBrowser = function() {
+                    this.getBrowser = function () {
                         var U = J.rgx.apply(this, Q.browser);
                         U.major = d.major(U.version);
                         return U
                     };
-                    this.getUA = function() {
+                    this.getUA = function () {
                         return S
                     };
-                    this.setUA = function(U) {
+                    this.setUA = function (U) {
                         S = U;
                         return this
                     };
@@ -1215,7 +1236,8 @@ var PluginDetect = {
         t.verIE = t.isIE && (/MSIE\s*(\d+\.?\d*)/i).test(m) ? parseFloat(RegExp.$1, 10) : null;
         t.ActiveXEnabled = false;
         if (t.isIE) {
-            var q, k = ["Msxml2.XMLHTTP", "Msxml2.DOMDocument", "Microsoft.XMLDOM", "ShockwaveFlash.ShockwaveFlash", "TDCCtl.TDCCtl", "Shell.UIHelper", "Scripting.Dictionary", "wmplayer.ocx"];
+            var q,
+                k = ["Msxml2.XMLHTTP", "Msxml2.DOMDocument", "Microsoft.XMLDOM", "ShockwaveFlash.ShockwaveFlash", "TDCCtl.TDCCtl", "Shell.UIHelper", "Scripting.Dictionary", "wmplayer.ocx"];
             for (q = 0; q < k.length; q++) {
                 if (t.getAXO(k[q])) {
                     t.ActiveXEnabled = true;
@@ -1233,7 +1255,7 @@ var PluginDetect = {
         t.verOpera = t.isOpera && ((/Version\s*\/\s*(\d+\.?\d*)/i).test(m) || 1) ? parseFloat(RegExp.$1, 10) : null;
         t.addWinEvent("load", t.handler(t.runWLfuncs, t))
     },
-    init: function(f) {
+    init: function (f) {
         var d = this,
             e, f;
         if (!d.isString(f)) {
@@ -1262,13 +1284,13 @@ var PluginDetect = {
         }
         return 1
     },
-    fPush: function(d, e) {
+    fPush: function (d, e) {
         var f = this;
         if (f.isArray(e) && (f.isFunc(d) || (f.isArray(d) && d.length > 0 && f.isFunc(d[0])))) {
             e.push(d)
         }
     },
-    callArray: function(d) {
+    callArray: function (d) {
         var f = this,
             e;
         if (f.isArray(d)) {
@@ -1281,7 +1303,7 @@ var PluginDetect = {
             }
         }
     },
-    call: function(f) {
+    call: function (f) {
         var d = this,
             e = d.isArray(f) ? f.length : -1;
         if (e > 0 && d.isFunc(f[0])) {
@@ -1293,8 +1315,8 @@ var PluginDetect = {
         }
     },
     getVersionDelimiter: ",",
-    $$getVersion: function(b) {
-        return function(j, o, p) {
+    $$getVersion: function (b) {
+        return function (j, o, p) {
             var m = b.init(j),
                 k, a, i;
             if (m < 0) {
@@ -1313,13 +1335,13 @@ var PluginDetect = {
             return a
         }
     },
-    cleanup: function() {
+    cleanup: function () {
         var b = this;
         if (b.garbage && b.isDefined(window.CollectGarbage)) {
             window.CollectGarbage()
         }
     },
-    isActiveXObject: function(m, e) {
+    isActiveXObject: function (m, e) {
         var k = this,
             i = false,
             j, p = "<",
@@ -1335,21 +1357,24 @@ var PluginDetect = {
         k.head.firstChild.outerHTML = o;
         try {
             k.head.firstChild.classid = m.classID
-        } catch (j) {}
+        } catch (j) {
+        }
         try {
             if (k.head.firstChild.object) {
                 i = true
             }
-        } catch (j) {}
+        } catch (j) {
+        }
         try {
             if (i && k.head.firstChild.readyState < 4) {
                 k.garbage = true
             }
-        } catch (j) {}
+        } catch (j) {
+        }
         k.head.removeChild(k.head.firstChild);
         return i
     },
-    codebaseSearch: function(z, D) {
+    codebaseSearch: function (z, D) {
         var C = this;
         if (!C.ActiveXEnabled || !z) {
             return null
@@ -1378,7 +1403,7 @@ var PluginDetect = {
         var A = [0, 0, 0, 0],
             t = [].concat(p.digits),
             E = p.min ? 1 : 0,
-            u, v, w, y, s, r = function(c, a) {
+            u, v, w, y, s, r = function (c, a) {
                 var b = [].concat(A);
                 b[c] = a;
                 return C.isActiveXObject(z, b.join(","))
@@ -1450,7 +1475,7 @@ var PluginDetect = {
         }
         return E ? A.join(",") : null
     },
-    addWinEvent: function(i, j) {
+    addWinEvent: function (i, j) {
         var h = this,
             g = window,
             f;
@@ -1467,8 +1492,8 @@ var PluginDetect = {
             }
         }
     },
-    winHandler: function(a, b) {
-        return function() {
+    winHandler: function (a, b) {
+        return function () {
             a();
             if (typeof b == "function") {
                 b()
@@ -1477,7 +1502,7 @@ var PluginDetect = {
     },
     WLfuncs0: [],
     WLfuncs: [],
-    runWLfuncs: function(b) {
+    runWLfuncs: function (b) {
         b.winLoaded = true;
         b.callArray(b.WLfuncs0);
         b.callArray(b.WLfuncs);
@@ -1486,8 +1511,8 @@ var PluginDetect = {
         }
     },
     winLoaded: false,
-    $$onWindowLoaded: function(b) {
-        return function(a) {
+    $$onWindowLoaded: function (b) {
+        return function (a) {
             if (b.winLoaded) {
                 b.call(a)
             } else {
@@ -1498,7 +1523,7 @@ var PluginDetect = {
     div: null,
     divWidth: 50,
     pluginSize: 1,
-    emptyDiv: function() {
+    emptyDiv: function () {
         var j = this,
             g, h, f, i = 0;
         if (j.div && j.div.childNodes) {
@@ -1510,13 +1535,14 @@ var PluginDetect = {
                             f.removeChild(f.childNodes[h])
                         }
                         j.div.removeChild(f)
-                    } else {}
+                    } else {
+                    }
                 }
             }
         }
     },
     DONEfuncs: [],
-    onDoneEmptyDiv: function() {
+    onDoneEmptyDiv: function () {
         var f = this,
             e, d;
         if (!f.winLoaded) {
@@ -1541,7 +1567,7 @@ var PluginDetect = {
         }
         f.emptyDiv()
     },
-    getWidth: function(f) {
+    getWidth: function (f) {
         if (f) {
             var e = f.scrollWidth || f.offsetWidth,
                 d = this;
@@ -1551,7 +1577,7 @@ var PluginDetect = {
         }
         return -1
     },
-    getTagStatus: function(e, t, z, y) {
+    getTagStatus: function (e, t, z, y) {
         var w = this,
             u, p = e.span,
             o = w.getWidth(p),
@@ -1582,10 +1608,11 @@ var PluginDetect = {
                     }
                 }
             }
-        } catch (u) {}
+        } catch (u) {
+        }
         return 0
     },
-    getDOMobj: function(i, h) {
+    getDOMobj: function (i, h) {
         var j, k = this,
             m = i ? i.span : 0,
             e = m && m.firstChild ? 1 : 0;
@@ -1593,21 +1620,23 @@ var PluginDetect = {
             if (e && h) {
                 m.firstChild.focus()
             }
-        } catch (j) {}
+        } catch (j) {
+        }
         return e ? m.firstChild : null
     },
-    setStyle: function(e, i) {
+    setStyle: function (e, i) {
         var j = e.style,
             h, k, m = this;
         if (j && i) {
             for (h = 0; h < i.length; h = h + 2) {
                 try {
                     j[i[h]] = i[h + 1]
-                } catch (k) {}
+                } catch (k) {
+                }
             }
         }
     },
-    insertDivInBody: function(k) {
+    insertDivInBody: function (k) {
         var o, q = this,
             m = "pd33993399",
             r = null,
@@ -1618,7 +1647,8 @@ var PluginDetect = {
             try {
                 p.write(e + 'div id="' + m + '">o' + e + "/div>");
                 r = p.getElementById(m)
-            } catch (o) {}
+            } catch (o) {
+            }
         }
         j = (p.getElementsByTagName("body")[0] || p.body);
         if (j) {
@@ -1630,9 +1660,10 @@ var PluginDetect = {
             if (r) {
                 j.removeChild(r)
             }
-        } else {}
+        } else {
+        }
     },
-    insertHTML: function(y, B, w, C, t) {
+    insertHTML: function (y, B, w, C, t) {
         var s, r = document,
             u = this,
             d, e = r.createElement("span"),
@@ -1679,10 +1710,12 @@ var PluginDetect = {
                 if (e && e.parentNode) {
                     e.focus()
                 }
-            } catch (s) {}
+            } catch (s) {
+            }
             try {
                 e.innerHTML = d
-            } catch (s) {}
+            } catch (s) {
+            }
             if (e.childNodes.length == 1 && !(u.isGecko && u.compareNums(u.verGecko, "1,5,0,0") < 0)) {
                 u.setStyle(e.firstChild, A.concat(["display", "inline"]))
             }
@@ -1705,7 +1738,7 @@ var PluginDetect = {
         classID: "clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B",
         minIEver: 7,
         HTML: ("<") + 'param name="src" value="" />' + ("<") + 'param name="controller" value="false" />',
-        getCodeBaseVersion: function(b) {
+        getCodeBaseVersion: function (b) {
             return 'codebase="#version=' + b + '"'
         },
         SEARCH: {
@@ -1714,7 +1747,7 @@ var PluginDetect = {
             match: 0,
             digits: [16, 128, 128, 0]
         },
-        getVersion: function(m) {
+        getVersion: function (m) {
             var i = this,
                 k = i.$,
                 h = null,
@@ -1757,11 +1790,11 @@ var PluginDetect = {
         },
         cdbaseUpper: ["7,60,0,0", "0,0,0,0"],
         cdbaseLower: ["7,50,0,0", null],
-        cdbase2ver: [function(f, d) {
+        cdbase2ver: [function (f, d) {
             var e = d.split(f.$.splitNumRegx);
             return [e[0], e[1].charAt(0), e[1].charAt(1), e[2]].join(",")
         }, null],
-        CDBASE2VER: function(i) {
+        CDBASE2VER: function (i) {
             var j = this,
                 m = j.$,
                 g, h = j.cdbaseUpper,
@@ -1776,7 +1809,7 @@ var PluginDetect = {
             }
             return i
         },
-        canUseIsMin: function() {
+        canUseIsMin: function () {
             var i = this,
                 k = i.$,
                 g, m = i.canUseIsMin,
@@ -1798,7 +1831,7 @@ var PluginDetect = {
             i.SEARCH.match = m.value == 1 ? 1 : 0;
             return m.value
         },
-        isMin: function(f) {
+        isMin: function (f) {
             var d = this,
                 e = d.$;
             return e.codebaseSearch(d, f) ? 0.7 : -1
@@ -1808,8 +1841,8 @@ var PluginDetect = {
         mimeType: ["application/x-shockwave-flash", "application/futuresplash"],
         progID: "ShockwaveFlash.ShockwaveFlash",
         classID: "clsid:D27CDB6E-AE6D-11CF-96B8-444553540000",
-        getVersion: function() {
-            var s = function(a) {
+        getVersion: function () {
+            var s = function (a) {
                 if (!a) {
                     return null
                 }
@@ -1846,7 +1879,8 @@ var PluginDetect = {
                 }
                 try {
                     e = s(r.GetVariable("$version"))
-                } catch (i) {}
+                } catch (i) {
+                }
                 if (!e && t) {
                     e = t
                 }
@@ -1860,7 +1894,7 @@ var PluginDetect = {
         mimeType: "application/x-director",
         progID: "SWCtl.SWCtl",
         classID: "clsid:166B1BCA-3F9C-11CF-8075-444553540000",
-        getVersion: function() {
+        getVersion: function () {
             var h = null,
                 e = null,
                 i, j, k = this,
@@ -1876,7 +1910,8 @@ var PluginDetect = {
             } else {
                 try {
                     e = m.getAXO(k.progID).ShockwaveVersion("")
-                } catch (i) {}
+                } catch (i) {
+                }
                 if (m.isString(e) && e.length > 0) {
                     h = m.getNum(e)
                 } else {
@@ -1901,7 +1936,7 @@ var PluginDetect = {
         mimeType: ["application/x-mplayer2", "application/asx", "application/x-ms-wmp"],
         progID: "wmplayer.ocx",
         classID: "clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6",
-        getVersion: function() {
+        getVersion: function () {
             var g = this,
                 h = null,
                 j = g.$,
@@ -1934,7 +1969,7 @@ var PluginDetect = {
         mimeType: "application/x-silverlight",
         progID: "AgControl.AgControl",
         digits: [20, 20, 9, 12, 31],
-        getVersion: function() {
+        getVersion: function () {
             var E = this,
                 F = E.$,
                 y = document,
@@ -1944,20 +1979,21 @@ var PluginDetect = {
                 B = true,
                 H = [1, 0, 1, 1, 1],
                 I = [1, 0, 1, 1, 1],
-                z = function(a) {
+                z = function (a) {
                     return (a < 10 ? "0" : "") + a.toString()
                 },
-                t = function(e, f, b, a, c) {
+                t = function (e, f, b, a, c) {
                     return (e + "." + f + "." + b + z(a) + z(c) + ".0")
                 },
-                s = function(b, c, a) {
+                s = function (b, c, a) {
                     return d(b, (c == 0 ? a : I[0]), (c == 1 ? a : I[1]), (c == 2 ? a : I[2]), (c == 3 ? a : I[3]), (c == 4 ? a : I[4]))
                 },
-                d = function(b, e, f, g, a, c) {
+                d = function (b, e, f, g, a, c) {
                     var c;
                     try {
                         return b.IsVersionSupported(t(e, f, g, a, c))
-                    } catch (c) {}
+                    } catch (c) {
+                    }
                     return false
                 };
             if (!F.isIE) {
@@ -2062,7 +2098,7 @@ var PluginDetect = {
             [11, 2749],
             [11, 2700]
         ],
-        compare: function(j, k) {
+        compare: function (j, k) {
             var m, o = j.length,
                 a = k.length,
                 p, b;
@@ -2078,7 +2114,7 @@ var PluginDetect = {
             }
             return 0
         },
-        convertNum: function(t, o, p) {
+        convertNum: function (t, o, p) {
             var m = this,
                 r = m.$,
                 q, s, k, j = null;
@@ -2109,7 +2145,7 @@ var PluginDetect = {
             }
             return p[0].join(".") + "." + p[k].join(".")
         },
-        getVersion: function(z, y) {
+        getVersion: function (z, y) {
             var C = this,
                 B = null,
                 I = 0,
@@ -2184,7 +2220,8 @@ var PluginDetect = {
                             e = H.getDOMobj(e);
                             try {
                                 B = H.getNum(e.GetVersionInfo())
-                            } catch (u) {}
+                            } catch (u) {
+                            }
                             H.setStyle(e, ["display", "none"])
                         }
                         if (!B && J && p === false) {
@@ -2204,7 +2241,8 @@ var PluginDetect = {
                         try {
                             B = H.getNum(e.GetVersionInfo());
                             break
-                        } catch (u) {}
+                        } catch (u) {
+                        }
                     }
                 }
                 C.installed = B ? 1 : -1

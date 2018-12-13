@@ -63,7 +63,6 @@ $originKey = $this->getOriginKey();
     <?php endif; ?>
 
     <?php if ($this->canCreateBillingAgreement()): ?>
-
         <script type="text/javascript">
             // don't show save cc for guest checkout. Only possible to detect with javascript
             if ($('login:guest') && $('login:guest').checked) {
@@ -154,6 +153,7 @@ $originKey = $this->getOriginKey();
                 }
             });
         }
+
         function initiateSecuredFields() {
             var cardGroupTypes = alt_types.slice();
             //cardDefault is added to since the onBrand callback is not fired with only one Type

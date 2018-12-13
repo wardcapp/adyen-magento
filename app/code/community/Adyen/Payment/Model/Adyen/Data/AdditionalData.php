@@ -44,6 +44,7 @@ class Adyen_Payment_Model_Adyen_Data_AdditionalData extends Adyen_Payment_Model_
         foreach ($this->entry as $kv) {
             $data[$kv->key] = $kv->value;
         }
+
         return $data;
     }
 }

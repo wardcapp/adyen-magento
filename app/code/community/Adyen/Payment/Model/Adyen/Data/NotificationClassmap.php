@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,19 +26,22 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Data_NotificationClassmap extends Varien_Object {
+class Adyen_Payment_Model_Adyen_Data_NotificationClassmap extends Varien_Object
+{
 
     public $amount;
     public $notificationRequest;
     public $notificationRequestItem;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->amount = new Adyen_Payment_Model_Adyen_Data_Amount();
         $this->notificationRequest = new Adyen_Payment_Model_Adyen_Data_NotificationRequest();
         $this->notificationRequestItem = new Adyen_Payment_Model_Adyen_Data_NotificationRequestItem();
     }
 
-    public function create() {
+    public function create()
+    {
         return array(
             'Amount' => $this->amount,
             'NotificationRequest' => $this->notificationRequest,

@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,12 +26,20 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Source_PaymentAction {
+class Adyen_Payment_Model_Source_PaymentAction
+{
 
-    public function toOptionArray() {
+    public function toOptionArray()
+    {
         return array(
-            array('value' => Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE, 'label' => Mage::helper('adyen')->__('Authorize Only')),
-            array('value' => Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE_CAPTURE, 'label' => Mage::helper('adyen')->__('Authorize and Capture')),
+            array(
+                'value' => Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE,
+                'label' => Mage::helper('adyen')->__('Authorize Only')
+            ),
+            array(
+                'value' => Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE_CAPTURE,
+                'label' => Mage::helper('adyen')->__('Authorize and Capture')
+            ),
         );
     }
 

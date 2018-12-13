@@ -12,10 +12,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -34,7 +34,7 @@ $path = "payment/adyen_ideal/allowspecific";
 
 try {
     $collection = Mage::getModel('core/config_data')->getCollection()
-        ->addFieldToFilter('path', array('like' => $path ));
+        ->addFieldToFilter('path', array('like' => $path));
 
     if ($collection->count() > 0) {
         foreach ($collection as $coreConfig) {

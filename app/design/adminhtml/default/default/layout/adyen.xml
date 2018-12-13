@@ -69,7 +69,9 @@
 
     <adminhtml_sales_order_create_index>
         <reference name="head">
-            <action method="addCss"><stylesheet>adyenstyle.css</stylesheet></action>
+            <action method="addCss">
+                <stylesheet>adyenstyle.css</stylesheet>
+            </action>
             <action method="addJs">
                 <script>adyen/payment/iban.js</script>
             </action>

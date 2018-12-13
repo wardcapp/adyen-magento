@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
+class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract
+{
 
     /**
      * Collected debug information
@@ -75,22 +77,28 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
 
         $incrementId = $params->getData('merchantReference');
 
-        if($incrementId) {
+        if ($incrementId) {
             $order = Mage::getModel('sales/order')->loadByIncrementId($incrementId);
             if ($order->getId()) {
-
-                Mage::dispatchEvent('adyen_payment_process_resulturl_before', array('order' => $order, 'adyen_response' => $params));
+                Mage::dispatchEvent(
+                    'adyen_payment_process_resulturl_before',
+                    array('order' => $order, 'adyen_response' => $params)
+                );
                 if ($params->getData('handled')) {
                     $this->_debug($storeId);
                     return;
                 }
+
                 // set StoreId for retrieving debug log setting
                 $storeId = $order->getStoreId();
 
                 // update the order
                 $result = $this->_validateUpdateOrder($order, $params);
 
-                Mage::dispatchEvent('adyen_payment_process_resulturl_after', array('order' => $order, 'adyen_response' => $params));
+                Mage::dispatchEvent(
+                    'adyen_payment_process_resulturl_after',
+                    array('order' => $order, 'adyen_response' => $params)
+                );
             } else {
                 Mage::throwException(
                     Mage::helper('adyen')->__('Order does not exists with increment_id: %s', $incrementId)
@@ -101,6 +109,7 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
                 Mage::helper('adyen')->__('Empty merchantReference')
             );
         }
+
         $this->_debug($storeId);
 
         return $result;
@@ -123,10 +132,12 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
 
         $type = 'Adyen Result URL Notification(s):';
         $comment = Mage::helper('adyen')
-            ->__('%s <br /> authResult: %s <br /> pspReference: %s <br /> paymentMethod: %s', $type, $authResult, $pspReference, $paymentMethod);
+            ->__(
+                '%s <br /> authResult: %s <br /> pspReference: %s <br /> paymentMethod: %s', $type, $authResult,
+                $pspReference, $paymentMethod
+            );
 
         switch ($authResult) {
-
             case Adyen_Payment_Model_Event::ADYEN_EVENT_AUTHORISED:
                 // do nothing wait for the notification
                 $this->_debugData['Step4'] = 'Add AUTHORISED to adyen event code, further wait for the notification';
@@ -137,19 +148,17 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
                 break;
             case Adyen_Payment_Model_Event::ADYEN_EVENT_PENDING:
                 // do nothing wait for the notification
-                if (strpos($paymentMethod,"bankTransfer") !== false){
+                if (strpos($paymentMethod, "bankTransfer") !== false) {
                     $comment .= "<br /><br />Waiting for the customer to transfer the money.";
-                }
-                elseif($paymentMethod == "sepadirectdebit"){
+                } elseif ($paymentMethod == "sepadirectdebit") {
                     $comment .= "<br /><br />This request will be send to the bank at the end of the day.";
-                }
-                else {
+                } else {
                     $comment .= "<br /><br />The payment result is not confirmed (yet).
                                  <br />Once the payment is authorised, the order status will be updated accordingly. 
                                  <br />If the order is stuck on this status, the payment can be seen as unsuccessful. 
                                  <br />The order can be automatically cancelled based on the OFFER_CLOSED notification. Please contact Adyen Support to enable this.";
-
                 }
+
                 $this->_debugData['Step4'] = 'Do nothing wait for the notification';
                 break;
             case Adyen_Payment_Model_Event::ADYEN_EVENT_CANCELLED:
@@ -182,7 +191,6 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
     }
 
 
-
     /**
      * Log debug data to file
      *
@@ -202,11 +210,12 @@ class Adyen_Payment_Model_ValidateResultUrl extends Mage_Core_Model_Abstract {
      */
     protected function _isBankTransfer($paymentMethod)
     {
-        if(strlen($paymentMethod) >= 22 &&  substr($paymentMethod, 0, 22) == 'adyen_hpp_bankTransfer') {
+        if (strlen($paymentMethod) >= 22 && substr($paymentMethod, 0, 22) == 'adyen_hpp_bankTransfer') {
             $isBankTransfer = true;
         } else {
             $isBankTransfer = false;
         }
+
         return $isBankTransfer;
     }
 

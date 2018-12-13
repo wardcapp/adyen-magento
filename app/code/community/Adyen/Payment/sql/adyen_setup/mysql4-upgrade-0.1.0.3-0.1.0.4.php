@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -25,11 +25,12 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-/** @var Adyen_Payment_Model_Resource_Setup $installer */
+/** @var Mage_Sales_Model_Resource_Setup $installer */
 $installer = $this;
 
 $installer->startSetup();
-$installer->run("
+$installer->run(
+    "
 DROP TABLE IF EXISTS `{$this->getTable('adyen/event')}`;
 CREATE TABLE `{$this->getTable('adyen/event')}` (
 `event_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -42,6 +43,7 @@ CREATE TABLE `{$this->getTable('adyen/event')}` (
 PRIMARY KEY (`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ALTER TABLE `{$this->getTable('adyen/event')}` ADD INDEX(adyen_event_code, psp_reference);
-");
+"
+);
 
 $installer->endSetup();

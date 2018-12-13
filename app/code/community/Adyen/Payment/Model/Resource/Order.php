@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -29,7 +30,8 @@ class Adyen_Payment_Model_Resource_Order
     extends Mage_Core_Model_Resource_Db_Abstract
 {
 
-    protected function _construct() {
+    protected function _construct()
+    {
         $this->_init('sales/order', 'entity_id');
     }
 
@@ -38,12 +40,12 @@ class Adyen_Payment_Model_Resource_Order
      * @param type $incrementId
      * @return array
      */
-    public function orderExist($incrementId) {
+    public function orderExist($incrementId)
+    {
         $db = $this->_getReadAdapter();
         $sql = $db->select()
-                ->from($this->getMainTable(), array('entity_id', 'increment_id'))
-                ->where('increment_id = ?', $incrementId)
-        ;
+            ->from($this->getMainTable(), array('entity_id', 'increment_id'))
+            ->where('increment_id = ?', $incrementId);
         $stmt = $db->query($sql);
         return $stmt->fetch();
     }

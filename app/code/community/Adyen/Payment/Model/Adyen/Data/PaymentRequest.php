@@ -86,8 +86,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
         $recurringType = null,
         $recurringPaymentType = null,
         $enableMoto = null
-    )
-    {
+    ) {
         $order = $payment->getOrder();
         $incrementId = $order->getIncrementId();
         $orderCurrencyCode = $order->getOrderCurrencyCode();
@@ -116,32 +115,34 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
                 $this->recurring->contract = "RECURRING";
             }
-        } else if ($paymentMethod != "apple_pay" && $recurringType) {
-            if ($paymentMethod == "oneclick") {
-                // For ONECLICK look at the recurringPaymentType that the merchant has selected in Adyen ONECLICK settings
-                if ($payment->getAdditionalInformation('customer_interaction')) {
-                    $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
-                    $this->recurring->contract = "ONECLICK";
+        } else {
+            if ($paymentMethod != "apple_pay" && $recurringType) {
+                if ($paymentMethod == "oneclick") {
+                    // For ONECLICK look at the recurringPaymentType that the merchant has selected in Adyen ONECLICK settings
+                    if ($payment->getAdditionalInformation('customer_interaction')) {
+                        $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
+                        $this->recurring->contract = "ONECLICK";
+                    } else {
+                        $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
+                        $this->recurring->contract = "RECURRING";
+                    }
+                } elseif ($paymentMethod == "cc") {
+                    // if save card is disabled only shoot in as recurring if recurringType is set to ONECLICK,RECURRING
+                    if ($payment->getAdditionalInformation("store_cc") == "" && $recurringType == "ONECLICK,RECURRING") {
+                        $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
+                        $this->recurring->contract = "RECURRING";
+                    } elseif ($payment->getAdditionalInformation("store_cc") == "1") {
+                        $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
+                        $this->recurring->contract = $recurringType;
+                    } elseif ($recurringType == "RECURRING") {
+                        // recurring permission is not needed from shopper so just save it as recurring
+                        $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
+                        $this->recurring->contract = "RECURRING";
+                    }
                 } else {
                     $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
-                    $this->recurring->contract = "RECURRING";
-                }
-            } elseif ($paymentMethod == "cc") {
-                // if save card is disabled only shoot in as recurring if recurringType is set to ONECLICK,RECURRING
-                if ($payment->getAdditionalInformation("store_cc") == "" && $recurringType == "ONECLICK,RECURRING") {
-                    $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
-                    $this->recurring->contract = "RECURRING";
-                } elseif ($payment->getAdditionalInformation("store_cc") == "1") {
-                    $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
                     $this->recurring->contract = $recurringType;
-                } elseif ($recurringType == "RECURRING") {
-                    // recurring permission is not needed from shopper so just save it as recurring
-                    $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
-                    $this->recurring->contract = "RECURRING";
                 }
-            } else {
-                    $this->recurring = new Adyen_Payment_Model_Adyen_Data_Recurring();
-                    $this->recurring->contract = $recurringType;
             }
         }
 
@@ -176,9 +177,10 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     if ($middleName != "") {
                         $this->shopperName->infix = trim($middleName);
                     }
+
                     $this->shopperName->lastName = trim($billingAddress->getLastname());
 
-                    $this->billingAddress = new Adyen_Payment_Model_Adyen_Data_BillingAddress();
+                    $this->billingAddress = new Adyen_Payment_Model_Adyen_Data_Address();
 
                     if ($billingAddress->getStreet(1)) {
                         $this->billingAddress->street = $billingAddress->getStreet(1);
@@ -215,7 +217,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                 $deliveryAddress = $order->getShippingAddress();
                 if ($deliveryAddress) {
-                    $this->deliveryAddress = new Adyen_Payment_Model_Adyen_Data_DeliveryAddress();
+                    $this->deliveryAddress = new Adyen_Payment_Model_Adyen_Data_Address();
                     $this->deliveryAddress->street = $deliveryAddress->getStreet(1);
                     $this->deliveryAddress->houseNumberOrName = '';
                     $this->deliveryAddress->city = $deliveryAddress->getCity();
@@ -265,8 +267,10 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
 
                     $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
                     $kv->key = new SoapVar("payment.token", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                    $kv->value = new SoapVar(base64_encode($token), XSD_STRING, "string",
-                        "http://www.w3.org/2001/XMLSchema");
+                    $kv->value = new SoapVar(
+                        base64_encode($token), XSD_STRING, "string",
+                        "http://www.w3.org/2001/XMLSchema"
+                    );
                     $this->additionalData->entry = $kv;
                 } else {
                     $session = Mage::helper('adyen')->getSession();
@@ -280,14 +284,15 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     if ($encryptedNumber != "" && $encryptedNumber != "false") {
                         $this->additionalData->addEntry("encryptedCardNumber", $encryptedNumber);
                     }
+
                     if ($encryptedExpiryMonth != "" && $encryptedExpiryYear != "") {
                         $this->additionalData->addEntry("encryptedExpiryMonth", $encryptedExpiryMonth);
                         $this->additionalData->addEntry("encryptedExpiryYear", $encryptedExpiryYear);
                     }
+
                     if ($encryptedCvc != "" && $encryptedCvc != "false") {
                         $this->additionalData->addEntry("encryptedSecurityCode", $encryptedCvc);
                     }
-
                 }
 
                 // installments
@@ -305,8 +310,10 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 }
 
                 // add observer to have option to overrule and or add request data
-                Mage::dispatchEvent('adyen_payment_card_payment_request',
-                    array('order' => $order, 'paymentMethod' => $paymentMethod, 'paymentRequest' => $this));
+                Mage::dispatchEvent(
+                    'adyen_payment_card_payment_request',
+                    array('order' => $order, 'paymentMethod' => $paymentMethod, 'paymentRequest' => $this)
+                );
 
                 break;
             case "boleto":
@@ -328,6 +335,7 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                 $this->selectedBrand = "sepadirectdebit";
                 break;
         }
+
         return $this;
     }
 

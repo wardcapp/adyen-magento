@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -26,16 +26,16 @@
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
 ?>
-<?php if($this->hasExpressCheckout() || $this->hasCashExpressCheckout() ): ?>
-
-
-
+<?php if ($this->hasExpressCheckout() || $this->hasCashExpressCheckout()): ?>
     <div id="adyen-checkout-wrapper">
-        <form class="form-list" action="<?php echo $this->getUrl("adyen/checkoutPos", array('_secure'=>true)); ?>" method="post">
+        <form class="form-list" action="<?php echo $this->getUrl("adyen/checkoutPos", array('_secure' => true)); ?>"
+              method="post">
 
 
             <div class="adyenExpressCheckoutBlockLeft">
-                <input style="width:240px;" type="text" class="input-text" name="adyenPosEmail" id="adyenPosEmail" value="<?php echo $this->getEmailAddressShopper(); ?>" size="60"  placeholder="Email" autocapitalize="off" autocomplete="off"/>
+                <input style="width:240px;" type="text" class="input-text" name="adyenPosEmail" id="adyenPosEmail"
+                       value="<?php echo $this->getEmailAddressShopper(); ?>" size="60" placeholder="Email"
+                       autocapitalize="off" autocomplete="off"/>
 
 
                 <div id="autocomplete_choices" class="adyenAutocomplete" style="display: none;"></div>
@@ -48,14 +48,14 @@
                 </div>
 
                 <div id="adyenEmailLoader" class="autocomplete-indicator" style="display: none;">
-                    <img src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading...') ?>" class="v-middle"/>
+                    <img src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                         alt="<?php echo $this->__('Loading...') ?>" class="v-middle"/>
                 </div>
 
                 <div id="AdyenAccountInfo"></div>
             </div>
 
-            <?php if($this->hasExpressCheckout() && $this->inKioskMode() != "1"): ?>
-
+            <?php if ($this->hasExpressCheckout() && $this->inKioskMode() != "1"): ?>
                 <script type="text/javascript">
                     $('adyenPosEmail').observe('change', getCustomerFromEmail);
 
@@ -64,11 +64,11 @@
                         'autocomplete_choices',
                         '<?php echo $this->getUrl('adyen/checkoutPos/getCustomerEmail') ?>',
                         {
-                            paramName:"email",
-                            minChars:2,
-                            indicator:"adyenEmailLoader",
-                            evalJSON:'force',
-                            afterUpdateElement : getSelectionId
+                            paramName: "email",
+                            minChars: 2,
+                            indicator: "adyenEmailLoader",
+                            evalJSON: 'force',
+                            afterUpdateElement: getSelectionId
                         }
                     );
 
@@ -85,48 +85,52 @@
 
                     function getCustomerFromEmailAjaxCall(email, customerId) {
 
-                        var url = '<?php echo $this->getUrl('adyen/checkoutPos/validateCustomerByEmail', array('_secure'=>true));?>';
+                        var url = '<?php echo $this->getUrl(
+                            'adyen/checkoutPos/validateCustomerByEmail',
+                            array('_secure' => true)
+                        );?>';
 
                         ajaxReq = new Ajax.Request(url, {
                             parameters: {email: email, customerId: customerId, isAjax: 1, method: 'POST'},
-                            onSuccess: function(transport) {
+                            onSuccess: function (transport) {
 
-                                if(transport.status == 200) {
+                                if (transport.status == 200) {
                                     var json = transport.responseText.evalJSON();
-                                    if(json) {
+                                    if (json) {
 
                                         var text = "<div class=\"AdyenShopperDetails\"><h3><?php echo $this->__('Shopper Details') ?>:</h3>";
                                         text += "<?php echo $this->__('Firstname'); ?>: " + json.customerData.firstname;
-                                        text+= "<br />";
+                                        text += "<br />";
                                         text += "<?php echo $this->__('Lastname'); ?>: " + json.customerData.lastname;
                                         text += "</div>";
 
                                         <?php if($this->showExpressCheckoutRecurringCards()): ?>
-                                            var savedCards = false;
-                                            if(json.recurringCards) {
-                                                text += "<div class=\"AdyenSavedCards\"><h3><?php echo $this->__('Saved cards') ?>:</h3>";
-                                                for (var i=0;i<json.recurringCards.length;i++)
-                                                {
-                                                    if(json.recurringCards[i].card_number)
-                                                    {
-                                                        savedCards = true;
-                                                        var variant = json.recurringCards[i].variant;
-                                                        var imageUrl = '<?php echo $this->getSkinUrl("images/adyen/elv.png"); ?>';
-                                                        imageUrl = imageUrl.replace("elv", variant);
-                                                        var html = '<div class="creditcard-block">';
-                                                        html += '<a href="<?php echo $this->getUrl('adyen/checkoutPos', array('_secure'=>true));?>?recurringDetailReference=' + json.recurringCards[i].recurringDetailReference + '&customerId=' + json.customerData.entity_id + '">';
-                                                        html += '<img src="'+ imageUrl + '" alt="' + variant + '" label="' + variant + '" />';
-                                                        html += '</a>';
-                                                        html += ' **** ' + json.recurringCards[i].card_number;
-                                                        html += '</div>';
-                                                        text += html;
-                                                    }
+                                        var savedCards = false;
+                                        if (json.recurringCards) {
+                                            text += "<div class=\"AdyenSavedCards\"><h3><?php echo $this->__('Saved cards') ?>:</h3>";
+                                            for (var i = 0; i < json.recurringCards.length; i++) {
+                                                if (json.recurringCards[i].card_number) {
+                                                    savedCards = true;
+                                                    var variant = json.recurringCards[i].variant;
+                                                    var imageUrl = '<?php echo $this->getSkinUrl("images/adyen/elv.png"); ?>';
+                                                    imageUrl = imageUrl.replace("elv", variant);
+                                                    var html = '<div class="creditcard-block">';
+                                                    html += '<a href="<?php echo $this->getUrl(
+                                                        'adyen/checkoutPos',
+                                                        array('_secure' => true)
+                                                    );?>?recurringDetailReference=' + json.recurringCards[i].recurringDetailReference + '&customerId=' + json.customerData.entity_id + '">';
+                                                    html += '<img src="' + imageUrl + '" alt="' + variant + '" label="' + variant + '" />';
+                                                    html += '</a>';
+                                                    html += ' **** ' + json.recurringCards[i].card_number;
+                                                    html += '</div>';
+                                                    text += html;
                                                 }
-                                                if(savedCards == false) {
-                                                    text += "<div><?php echo $this->__('There are no saved cards for this account.');?></div>";
-                                                }
-                                                text += "</div>";
                                             }
+                                            if (savedCards == false) {
+                                                text += "<div><?php echo $this->__('There are no saved cards for this account.');?></div>";
+                                            }
+                                            text += "</div>";
+                                        }
                                         <?php endif; ?>
                                         $('AdyenAccountInfo').update(text);
 
@@ -135,7 +139,7 @@
                                     }
                                 }
                             },
-                            onFailure: function(){
+                            onFailure: function () {
                                 alert('<?php echo $this->jsQuoteEscape($this->__('Server Error. Please try again.')) ?>');
                             }
                         });
@@ -145,18 +149,23 @@
             <?php endif; ?>
 
 
-            <?php if($this->hasExpressCheckout()): ?>
-                <button id="CheckoutWithPos" style="" type="submit" title="<?php echo $this->__($this->getExpressCheckoutTitle()); ?>" class="button btn-proceed-checkout btn-checkout adyen-checkout-button">
+            <?php if ($this->hasExpressCheckout()): ?>
+                <button id="CheckoutWithPos" style="" type="submit"
+                        title="<?php echo $this->__($this->getExpressCheckoutTitle()); ?>"
+                        class="button btn-proceed-checkout btn-checkout adyen-checkout-button">
                     <span><span><?php echo $this->__($this->getExpressCheckoutTitle()); ?></span></span>
                 </button>
             <?php endif; ?>
 
         </form>
 
-        <?php if($this->hasCashExpressCheckout()): ?>
-            <form id="AdyenFormCheckoutWithCash" action="<?php echo $this->getUrl("adyen/checkoutCash", array('_secure'=>true)); ?>" method="post">
+        <?php if ($this->hasCashExpressCheckout()): ?>
+            <form id="AdyenFormCheckoutWithCash"
+                  action="<?php echo $this->getUrl("adyen/checkoutCash", array('_secure' => true)); ?>" method="post">
 
-                <button id="CheckoutWithCash" style="" type="submit" title="<?php echo $this->__($this->getCashExpressCheckoutTitle()); ?>" class="button btn-proceed-checkout btn-checkout adyen-checkout-button">
+                <button id="CheckoutWithCash" style="" type="submit"
+                        title="<?php echo $this->__($this->getCashExpressCheckoutTitle()); ?>"
+                        class="button btn-proceed-checkout btn-checkout adyen-checkout-button">
                     <span><span><?php echo $this->__($this->getCashExpressCheckoutTitle()); ?></span></span>
                 </button>
 
