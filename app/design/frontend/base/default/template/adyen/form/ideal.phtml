@@ -48,8 +48,9 @@
                        name="payment[adyen_issuer_type]" value="<?php echo $_issuerId ?>"
                        class="<?php if ($size == $count) {
                            echo 'validate-one-required-by-name';
-                       } ?>"
-                       <?php if (isset($_issuerData['selected'])): ?>checked<?php endif; ?>
+                      } ?>"
+                       <?php if (isset($_issuerData['selected'])): ?>checked<?php
+                       endif; ?>
 
                 />
                 <img src="<?php echo $this->getIssuerImageUrl($_issuerData); ?>"

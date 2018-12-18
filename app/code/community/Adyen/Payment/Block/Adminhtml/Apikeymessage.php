@@ -18,7 +18,6 @@ class Adyen_Payment_Block_Adminhtml_Apikeymessage extends Mage_Adminhtml_Block_T
     {
         //check if it is after first login
         if ($this->_authSession->isFirstPageAfterLogin() && empty($this->_adyenHelper->getConfigDataApiKey())) {
-
             try {
                 $title = "Adyen extension requires the API KEY!";
                 if ($this->_adyenHelper->getConfigDataWsUserName()) {
@@ -42,7 +41,6 @@ class Adyen_Payment_Block_Adminhtml_Apikeymessage extends Mage_Adminhtml_Block_T
                 $this->_inbox->parse(array_reverse($versionData));
 
                 return $description;
-
             } catch (Exception $e) {
                 return;
             }

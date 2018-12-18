@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstract {
+class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstract
+{
 
     /**
      * @var bool
@@ -62,7 +64,8 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
      *
      * @return string
      */
-    public function getPaymentMethodType() {
+    public function getPaymentMethodType()
+    {
         return $this->_paymentMethodType;
     }
 
@@ -71,7 +74,8 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
      *
      * @return Mage_Checkout_Model_Session
      */
-    public function getCheckout() {
+    public function getCheckout()
+    {
         return Mage::getSingleton('checkout/session');
     }
 
@@ -80,21 +84,24 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
      *
      * @return Mage_Sales_Model_Quote
      */
-    public function getQuote() {
+    public function getQuote()
+    {
         return $this->getCheckout()->getQuote();
     }
 
     /**
      * @return mixed
      */
-    public function getOrderPlaceRedirectUrl() {
+    public function getOrderPlaceRedirectUrl()
+    {
         return parent::getOrderPlaceRedirectUrl();
     }
 
     /**
      * @return string
      */
-    public function getFormName() {
+    public function getFormName()
+    {
         return "Adyen POS Cloud";
     }
 
@@ -103,7 +110,8 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
      *
      * @return string
      */
-    public function getRedirectBlockType() {
+    public function getRedirectBlockType()
+    {
         return $this->_redirectBlockType;
     }
 
@@ -111,7 +119,8 @@ class Adyen_Payment_Model_Adyen_PosCloud extends Adyen_Payment_Model_Adyen_Abstr
      * @param $paymentAction
      * @param $stateObject
      */
-    public function initialize($paymentAction, $stateObject) {
+    public function initialize($paymentAction, $stateObject)
+    {
         $state = Mage_Sales_Model_Order::STATE_NEW;
         $stateObject->setState($state);
         $stateObject->setStatus($this->_getConfigData('order_status'));

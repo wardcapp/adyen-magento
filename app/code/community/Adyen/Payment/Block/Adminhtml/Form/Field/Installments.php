@@ -14,11 +14,11 @@
  *
  * DISCLAIMER
  *
- * Adyen_Payment_Block_Adminhtml_Form_Field_Installments 	
- * is based on 
+ * Adyen_Payment_Block_Adminhtml_Form_Field_Installments
+ * is based on
  * Mage_CatalogInventory_Block_Adminhtml_Form_Field_Minsaleqty
  * from Mage
- * 
+ *
  * via OSL rightfully adapted
  *
  * @category    Adyen
@@ -31,7 +31,7 @@
  *
  * @category   Adyen
  * @package    Adyen_Payment
- * @author	   Adyen, Amsterdam
+ * @author       Adyen, Amsterdam
  */
 class Adyen_Payment_Block_Adminhtml_Form_Field_Installments extends Mage_Adminhtml_Block_System_Config_Form_Field_Array_Abstract
 {
@@ -42,22 +42,30 @@ class Adyen_Payment_Block_Adminhtml_Form_Field_Installments extends Mage_Adminht
      */
     protected function _prepareToRender()
     {
-    	$this->addColumn('installment_currency', array(
-    			'label' => Mage::helper('adyen')->__('Currency'),
-    			'style' => 'width:100px',
-    	));
-        $this->addColumn('installment_boundary', array(
-            'label' => Mage::helper('adyen')->__('Amount (incl.)'),
-            'style' => 'width:100px',
-        ));
-        $this->addColumn('installment_frequency', array(
-            'label' => Mage::helper('adyen')->__('Maximum Number of Installments'),
-            'style' => 'width:100px',
-        ));
-        $this->addColumn('installment_interest', array(
-            'label' => Mage::helper('adyen')->__('Interest Rate (%)'),
-            'style' => 'width:100px',
-        ));
+        $this->addColumn(
+            'installment_currency', array(
+                'label' => Mage::helper('adyen')->__('Currency'),
+                'style' => 'width:100px',
+            )
+        );
+        $this->addColumn(
+            'installment_boundary', array(
+                'label' => Mage::helper('adyen')->__('Amount (incl.)'),
+                'style' => 'width:100px',
+            )
+        );
+        $this->addColumn(
+            'installment_frequency', array(
+                'label' => Mage::helper('adyen')->__('Maximum Number of Installments'),
+                'style' => 'width:100px',
+            )
+        );
+        $this->addColumn(
+            'installment_interest', array(
+                'label' => Mage::helper('adyen')->__('Interest Rate (%)'),
+                'style' => 'width:100px',
+            )
+        );
         $this->_addAfter = false;
         $this->_addButtonLabel = Mage::helper('adyen')->__('Add Installment Boundary');
     }

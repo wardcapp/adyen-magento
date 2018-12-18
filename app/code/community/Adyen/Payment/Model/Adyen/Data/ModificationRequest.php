@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Data_ModificationRequest extends Adyen_Payment_Model_Adyen_Data_Abstract {
+class Adyen_Payment_Model_Adyen_Data_ModificationRequest extends Adyen_Payment_Model_Adyen_Data_Abstract
+{
 
     public $anyType2anyTypeMap;
     public $authorisationCode;
@@ -45,11 +47,12 @@ class Adyen_Payment_Model_Adyen_Data_ModificationRequest extends Adyen_Payment_M
         $this->authorisationCode = null;
         $this->merchantAccount = $merchantAccount;
         $this->reference = $incrementId;
-        if($amount) {
+        if ($amount) {
             $this->modificationAmount = new Adyen_Payment_Model_Adyen_Data_Amount();
             $this->modificationAmount->value = Mage::helper('adyen')->formatAmount($amount, $currency);
             $this->modificationAmount->currency = $currency;
         }
+
         $this->originalReference = $pspReference;
         $this->applicationInfo = new Adyen_Payment_Model_Adyen_Data_ApplicationInfo();
 

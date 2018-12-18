@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,9 +26,11 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Failure extends Mage_Core_Block_Template {
+class Adyen_Payment_Block_Failure extends Mage_Core_Block_Template
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->setTemplate('adyen/failure.phtml');
         parent::__construct();
     }
@@ -35,9 +38,10 @@ class Adyen_Payment_Block_Failure extends Mage_Core_Block_Template {
     /**
      *  Return Error message
      *
-     *  @return	  string
+     * @return      string
      */
-    public function getErrorMessage() {
+    public function getErrorMessage()
+    {
         $msg = Mage::getSingleton('checkout/session')->getAdyenErrorMessage();
         Mage::getSingleton('checkout/session')->unsAdyenErrorMessage();
         return $msg;
@@ -46,7 +50,8 @@ class Adyen_Payment_Block_Failure extends Mage_Core_Block_Template {
     /**
      * Get continue shopping url
      */
-    public function getContinueShoppingUrl() {
+    public function getContinueShoppingUrl()
+    {
         return Mage::getUrl('checkout/cart');
     }
 

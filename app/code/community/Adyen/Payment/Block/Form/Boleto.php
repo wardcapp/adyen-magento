@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Form_Boleto extends Mage_Payment_Block_Form {
+class Adyen_Payment_Block_Form_Boleto extends Mage_Payment_Block_Form
+{
 
     protected function _construct()
     {
@@ -45,13 +47,18 @@ class Adyen_Payment_Block_Form_Boleto extends Mage_Payment_Block_Form {
             return '';
         }
 
-        if (! $this->hasData('_method_label_html')) {
-            $labelBlock = Mage::app()->getLayout()->createBlock('core/template', null, array(
-                'template' => 'adyen/payment/payment_method_label.phtml',
-                'payment_method_icon' =>  $this->getSkinUrl('images/adyen/img_trans.gif'),
-                'payment_method_label' => Mage::helper('adyen')->getConfigData('title', $this->getMethod()->getCode()),
-                'payment_method_class' => $this->getMethod()->getCode()
-            ));
+        if (!$this->hasData('_method_label_html')) {
+            $labelBlock = Mage::app()->getLayout()->createBlock(
+                'core/template', null, array(
+                    'template' => 'adyen/payment/payment_method_label.phtml',
+                    'payment_method_icon' => $this->getSkinUrl('images/adyen/img_trans.gif'),
+                    'payment_method_label' => Mage::helper('adyen')->getConfigData(
+                        'title',
+                        $this->getMethod()->getCode()
+                    ),
+                    'payment_method_class' => $this->getMethod()->getCode()
+                )
+            );
             $labelBlock->setParentBlock($this);
 
             $this->setData('_method_label_html', $labelBlock->toHtml());
@@ -65,12 +72,14 @@ class Adyen_Payment_Block_Form_Boleto extends Mage_Payment_Block_Form {
      *
      * @return array
      */
-    public function getBoletoAvailableTypes() {
+    public function getBoletoAvailableTypes()
+    {
         return $this->getMethod()->getAvailableBoletoTypes();
     }
 
 
-    public function getFirstname() {
+    public function getFirstname()
+    {
         $firstname = "";
 
         // check if user is logged in
@@ -78,14 +87,15 @@ class Adyen_Payment_Block_Form_Boleto extends Mage_Payment_Block_Form {
             /* Get the customer data */
             $customer = Mage::getSingleton('customer/session')->getCustomer();
             $firstname = $customer->getFirstname();
-
         } else {
             $firstname = Mage::getSingleton('checkout/session')->getQuote()->getBillingAddress()->getFirstname();
         }
+
         return $firstname;
     }
 
-    public function getLastname() {
+    public function getLastname()
+    {
         $lastname = "";
 
         // check if user is logged in
@@ -93,18 +103,20 @@ class Adyen_Payment_Block_Form_Boleto extends Mage_Payment_Block_Form {
             /* Get the customer data */
             $customer = Mage::getSingleton('customer/session')->getCustomer();
             $lastname = $customer->getLastname();
-
         } else {
             $lastname = Mage::getSingleton('checkout/session')->getQuote()->getBillingAddress()->getLastname();
         }
+
         return $lastname;
     }
 
-    public function getUseTaxvat() {
+    public function getUseTaxvat()
+    {
         return $this->getMethod()->getUseTaxvat();
     }
 
-    public function getTaxvat() {
+    public function getTaxvat()
+    {
         $taxvat = "";
 
         // check if user is logged in
@@ -112,11 +124,11 @@ class Adyen_Payment_Block_Form_Boleto extends Mage_Payment_Block_Form {
             /* Get the customer data */
             $customer = Mage::getSingleton('customer/session')->getCustomer();
             $taxvat = $customer->getTaxvat();
-
         } else {
             //getCustomerTaxvat
             $taxvat = Mage::getSingleton('checkout/session')->getQuote()->getCustomerTaxvat();
         }
+
         return $taxvat;
     }
 

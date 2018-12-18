@@ -52,6 +52,7 @@
             }
         });
     });
+
     function status() {
         new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/checkStatus', array('_secure' => true)); ?>", {
             parameters: {isAjax: 1, method: 'POST'},
@@ -75,13 +76,16 @@
             }
         });
     };
+
     function placeOrder() {
         new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/placeOrder', array('_secure' => true)); ?>", {
             parameters: {isAjax: 1, method: 'POST'},
             onSuccess: function (response) {
                 if (response.responseText.indexOf("SUCCESS") > -1) {
-                    window.location = "<?php echo $this->getUrl('checkout/onepage/success',
-                        array('_secure' => true)); ?>";
+                    window.location = "<?php echo $this->getUrl(
+                        'checkout/onepage/success',
+                        array('_secure' => true)
+                    ); ?>";
                 }
             },
             onFailure: function () {

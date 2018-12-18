@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
+class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract
+{
 
     /**
      * Collected debug information
@@ -50,28 +52,28 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
         $result = $params['result'];
 
         // check if result comes from POS device comes from POS and validate Checksum
-        if($actionName == "successPos" && $result != "" && $this->_validateChecksum($params)) {
-
+        if ($actionName == "successPos" && $result != "" && $this->_validateChecksum($params)) {
             //get order && payment objects
             $order = Mage::getModel('sales/order');
             $incrementId = $params['originalCustomMerchantReference'];
 
-            if($incrementId) {
+            if ($incrementId) {
                 $order = Mage::getModel('sales/order')->loadByIncrementId($incrementId);
                 if ($order->getId()) {
-
                     // set StoreId for retrieving debug log setting
                     $storeId = $order->getStoreId();
 
-                    if($result == 'APPROVED') {
-
+                    if ($result == 'APPROVED') {
                         $this->_debugData['processPosResponse'] = 'Result is APPROVED';
 
                         // set adyen event status on true
                         $order->setAdyenEventCode(Adyen_Payment_Model_Event::ADYEN_EVENT_POSAPPROVED);
 
                         $comment = Mage::helper('adyen')
-                            ->__('%s <br /> Result: %s <br /> paymentMethod: %s', 'Adyen App Result URL Notification:', $result, 'POS');
+                            ->__(
+                                '%s <br /> Result: %s <br /> paymentMethod: %s', 'Adyen App Result URL Notification:',
+                                $result, 'POS'
+                            );
 
                         $order->addStatusHistoryComment($comment, false);
 
@@ -84,21 +86,25 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
                             Mage::logException($e);
                         }
                     } else {
-
                         $this->_debugData['processPosResponse'] = 'Result is: ' . $result;
 
                         $comment = Mage::helper('adyen')
-                            ->__('%s <br /> Result: %s <br /> paymentMethod: %s', 'Adyen App Result URL Notification:', $result, 'POS');
+                            ->__(
+                                '%s <br /> Result: %s <br /> paymentMethod: %s', 'Adyen App Result URL Notification:',
+                                $result, 'POS'
+                            );
 
                         $order->addStatusHistoryComment($comment, Mage_Sales_Model_Order::STATE_CANCELED);
 
                         $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_CANCEL, true);
 
                         if (!$order->canCancel()) {
-                            $order->addStatusHistoryComment($helper->__('Order can not be canceled'), Mage_Sales_Model_Order::STATE_CANCELED);
+                            $order->addStatusHistoryComment(
+                                $helper->__('Order can not be canceled'),
+                                Mage_Sales_Model_Order::STATE_CANCELED
+                            );
                             $order->save();
                             $this->_debugData['error'] = 'can not be canceled';
-
                         } else {
                             $order->cancel()->save();
                             $this->_debugData['complete'] = 'Order is cancelled';
@@ -129,7 +135,7 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
 
 
         // for android sessionis is with low i
-        if($sessionId == "") {
+        if ($sessionId == "") {
             $sessionId = $params['sessionid'];
         }
 
@@ -137,8 +143,7 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
         $amount_checksum = 0;
 
         $amountLength = strlen($amount);
-        for($i=0;$i<$amountLength;$i++)
-        {
+        for ($i = 0; $i < $amountLength; $i++) {
             // ASCII value use ord
             $checksumCalc = ord($amount[$i]) - 48;
             $amount_checksum += $checksumCalc;
@@ -146,24 +151,21 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
 
         $currency_checksum = 0;
         $currencyLength = strlen($currency);
-        for($i=0;$i<$currencyLength;$i++)
-        {
+        for ($i = 0; $i < $currencyLength; $i++) {
             $checksumCalc = ord($currency[$i]) - 64;
             $currency_checksum += $checksumCalc;
         }
 
         $result_checksum = 0;
         $resultLength = strlen($result);
-        for($i=0;$i<$resultLength;$i++)
-        {
+        for ($i = 0; $i < $resultLength; $i++) {
             $checksumCalc = ord($result[$i]) - 64;
             $result_checksum += $checksumCalc;
         }
 
         $sessionId_checksum = 0;
         $sessionIdLength = strlen($sessionId);
-        for($i=0;$i<$sessionIdLength;$i++)
-        {
+        for ($i = 0; $i < $sessionIdLength; $i++) {
             $checksumCalc = $this->_getAscii2Int($sessionId[$i]);
             $sessionId_checksum += $checksumCalc;
         }
@@ -171,10 +173,11 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
         $total_result_checksum = (($amount_checksum + $currency_checksum + $result_checksum) * $sessionId_checksum) % 100;
 
         // check if request is valid
-        if($total_result_checksum == $checksum) {
+        if ($total_result_checksum == $checksum) {
             $this->_debugData['_validateChecksum'] = 'Checksum is valid';
             return true;
         }
+
         $this->_debugData['_validateChecksum'] = 'Checksum is invalid!';
         return false;
     }
@@ -186,11 +189,12 @@ class Adyen_Payment_Model_ProcessPosResult extends Mage_Core_Model_Abstract {
 
     protected function _getAscii2Int($ascii)
     {
-        if (is_numeric($ascii)){
+        if (is_numeric($ascii)) {
             $int = ord($ascii) - 48;
         } else {
             $int = ord($ascii) - 64;
         }
+
         return $int;
     }
 

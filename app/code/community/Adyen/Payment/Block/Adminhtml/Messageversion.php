@@ -18,7 +18,6 @@ class Adyen_Payment_Block_Adminhtml_Messageversion extends Mage_Adminhtml_Block_
     {
         //check if it is after first login
         if ($this->_authSession->isFirstPageAfterLogin()) {
-
             try {
                 $githubContent = $this->getDecodedContentFromGithub();
                 $title = "Adyen extension version " . $githubContent['tag_name'] . " available!";
@@ -50,6 +49,7 @@ class Adyen_Payment_Block_Adminhtml_Messageversion extends Mage_Adminhtml_Block_
                 return;
             }
         }
+
         return;
 
     }

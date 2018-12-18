@@ -59,6 +59,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                 return $rc;
             }
         }
+
         return false;
     }
 
@@ -77,11 +78,12 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         foreach ($this->_recurringTypes as $recurringType) {
             try {
                 // merge ONECLICK and RECURRING into one record with recurringType ONECLICK,RECURRING
-                $listRecurringContractByType = $this->listRecurringContractByType($shopperReference, $store,
-                    $recurringType);
+                $listRecurringContractByType = $this->listRecurringContractByType(
+                    $shopperReference, $store,
+                    $recurringType
+                );
 
                 foreach ($listRecurringContractByType as $recurringContract) {
-
                     if (isset($recurringContract['recurringDetailReference'])) {
                         $recurringDetailReference = $recurringContract['recurringDetailReference'];
                         // check if recurring reference is already in array
@@ -94,10 +96,15 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                     }
                 }
             } catch (Adyen_Payment_Exception $e) {
-                Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__("Error retrieving the Billing Agreement for shopperReference %s with recurringType #%s Error: %s",
-                    $shopperReference, $recurringType, $e->getMessage()));
+                Adyen_Payment_Exception::throwException(
+                    Mage::helper('adyen')->__(
+                        "Error retrieving the Billing Agreement for shopperReference %s with recurringType #%s Error: %s",
+                        $shopperReference, $recurringType, $e->getMessage()
+                    )
+                );
             }
         }
+
         return $recurringContracts;
     }
 
@@ -114,8 +121,10 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         // rest call to get list of recurring details
         $request = array(
             "action" => "Recurring.listRecurringDetails",
-            "recurringDetailsRequest.merchantAccount" => $this->_helper()->getConfigData('merchantAccount', null,
-                $store),
+            "recurringDetailsRequest.merchantAccount" => $this->_helper()->getConfigData(
+                'merchantAccount', null,
+                $store
+            ),
             "recurringDetailsRequest.shopperReference" => $shopperReference,
             "recurringDetailsRequest.recurring.contract" => $recurringType,
         );
@@ -241,13 +250,16 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
                 $resultJson = $this->doRequestOriginKey($request, $store);
                 $result = json_decode($resultJson, true);
                 if (!empty($originKey = $result['originKeys'][$domain])) {
-                    Mage::app()->getCache()->save($originKey, $cacheId,
-                        array(Mage_Core_Model_Config::CACHE_TAG), 60 * 60 * 24);
+                    Mage::app()->getCache()->save(
+                        $originKey, $cacheId,
+                        array(Mage_Core_Model_Config::CACHE_TAG), 60 * 60 * 24
+                    );
                 }
             } catch (Exception $e) {
                 return '';
             }
         }
+
         return $originKey;
     }
 
@@ -298,8 +310,12 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         }
 
         if ($httpStatus != 200) {
-            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__('HTTP Status code %s received, data %s',
-                $httpStatus, $result));
+            Adyen_Payment_Exception::throwException(
+                Mage::helper('adyen')->__(
+                    'HTTP Status code %s received, data %s',
+                    $httpStatus, $result
+                )
+            );
         }
 
         return $result;
@@ -359,6 +375,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         if (!empty($timeout)) {
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         }
+
         Mage::log($request, null, 'adyen_api.log');
 
         curl_setopt($ch, CURLOPT_URL, $requestUrl);
@@ -374,13 +391,23 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         if ($result === false) {
             Adyen_Payment_Exception::throwCurlException($error, $errorCode);
         }
+
         if ($httpStatus == 401 || $httpStatus == 403) {
-            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__('Received Status code %s, please make sure your Checkout API key is correct.',
-                $httpStatus));
+            Adyen_Payment_Exception::throwException(
+                Mage::helper('adyen')->__(
+                    'Received Status code %s, please make sure your Checkout API key is correct.',
+                    $httpStatus
+                )
+            );
         } elseif ($httpStatus != 200) {
-            Adyen_Payment_Exception::throwException(Mage::helper('adyen')->__('HTTP Status code %s received, data %s',
-                $httpStatus, $result));
+            Adyen_Payment_Exception::throwException(
+                Mage::helper('adyen')->__(
+                    'HTTP Status code %s received, data %s',
+                    $httpStatus, $result
+                )
+            );
         }
+
         return $result;
     }
 
@@ -397,6 +424,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         if ($this->_helper()->getConfigDataDemoMode($storeId)) {
             $requestUrl = self::ENDPOINT_TERMINAL_CLOUD_TEST;
         }
+
         $apiKey = $this->_helper()->getPosApiKey($storeId);
         $timeout = $this->_helper()->getConfigData('timeout', 'adyen_pos_cloud', $storeId);
         $response = $this->doRequestJson($request, $requestUrl, $apiKey, $storeId, $timeout);

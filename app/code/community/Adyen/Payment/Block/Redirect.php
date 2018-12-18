@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
+class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract
+{
 
     /**
      * Collected debug information
@@ -40,11 +42,13 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
      */
     const DEBUG_LEVEL = 7;
 
-    protected function _getCheckout() {
+    protected function _getCheckout()
+    {
         return Mage::getSingleton('checkout/session');
     }
 
-    protected function _getOrder() {
+    protected function _getOrder()
+    {
         if ($this->getOrder()) {
             return $this->getOrder();
         } else {
@@ -54,60 +58,60 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
         }
     }
 
-    protected function _toHtml() {
+    protected function _toHtml()
+    {
 
         $order = $this->_getOrder();
         $paymentObject = $order->getPayment();
         $payment = $order->getPayment()->getMethodInstance();
 
-        $html = '<html><head><link rel="stylesheet" type="text/css" href="'.Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN).'/frontend/base/default/css/adyenstyle.css"><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>';
+        $html = '<html><head><link rel="stylesheet" type="text/css" href="' . Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . '/frontend/base/default/css/adyenstyle.css"><script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>';
 
         // for cash add epson libary to open the cash drawer
         $cashDrawer = $this->_getConfigData("cash_drawer", "adyen_pos", null);
-        if($payment->getCode() == "adyen_hpp_c_cash" && $cashDrawer) {
+        if ($payment->getCode() == "adyen_hpp_c_cash" && $cashDrawer) {
             $jsPath = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS);
-            $html .= '<script src="'.$jsPath.'adyen/payment/epos-device-2.6.0.js"></script>';
+            $html .= '<script src="' . $jsPath . 'adyen/payment/epos-device-2.6.0.js"></script>';
         }
+
         $html .= '</head><body class="redirect-body-adyen">';
 
 
         // if pos payment redirect to app
-        if($payment->getCode() == "adyen_pos") {
-
+        if ($payment->getCode() == "adyen_pos") {
             $adyFields = $payment->getFormFields();
             // use the secure url (if not secure this will be filled in with http://
-            $url = urlencode(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK, true)."adyen/process/successPos");
+            $url = urlencode(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK, true) . "adyen/process/successPos");
 
             // detect ios or android
             $userAgent = $_SERVER['HTTP_USER_AGENT'];
-            $iPod    = stripos($userAgent,"iPod");
-            $iPhone  = stripos($userAgent,"iPhone");
-            $iPad    = stripos($userAgent,"iPad");
-            $Android = stripos($userAgent,"Android");
-            $webOS   = stripos($userAgent,"webOS");
+            $iPod = stripos($userAgent, "iPod");
+            $iPhone = stripos($userAgent, "iPhone");
+            $iPad = stripos($userAgent, "iPad");
+            $Android = stripos($userAgent, "Android");
+            $webOS = stripos($userAgent, "webOS");
 
             // extra parameters so that you alway's return these paramters from the application
-            $extra_paramaters = urlencode("/?originalCustomCurrency=".$adyFields['currencyCode']."&originalCustomAmount=".$adyFields['paymentAmount']. "&originalCustomMerchantReference=".$adyFields['merchantReference'] . "&originalCustomSessionId=".session_id());
+            $extra_paramaters = urlencode("/?originalCustomCurrency=" . $adyFields['currencyCode'] . "&originalCustomAmount=" . $adyFields['paymentAmount'] . "&originalCustomMerchantReference=" . $adyFields['merchantReference'] . "&originalCustomSessionId=" . session_id());
 
             // add recurring before the callback url
-            if(empty($adyFields['recurringContract'])) {
+            if (empty($adyFields['recurringContract'])) {
                 $recurring_parameters = "";
             } else {
-                $recurring_parameters = "&recurringContract=".urlencode($adyFields['recurringContract'])."&shopperReference=".urlencode($adyFields['shopperReference']). "&shopperEmail=".urlencode($adyFields['shopperEmail']);
+                $recurring_parameters = "&recurringContract=" . urlencode($adyFields['recurringContract']) . "&shopperReference=" . urlencode($adyFields['shopperReference']) . "&shopperEmail=" . urlencode($adyFields['shopperEmail']);
             }
-
 
 
             $addReceiptOrderLines = $this->_getConfigData("add_receipt_order_lines", "adyen_pos", null);
 
             $receiptOrderLines = "";
-            if($addReceiptOrderLines) {
+            if ($addReceiptOrderLines) {
                 $orderLines = base64_encode($this->getReceiptOrderLines($this->_getOrder()));
                 $receiptOrderLines = "&receiptOrderLines=" . urlencode($orderLines);
             }
 
             // important url must be the latest parameter before extra parameters! otherwise extra parameters won't return in return url
-            $launchlink = "adyen://payment?sessionId=".session_id()."&amount=".$adyFields['paymentAmount']."&currency=".$adyFields['currencyCode']."&merchantReference=".$adyFields['merchantReference']. $recurring_parameters . $receiptOrderLines .  "&callback=".$url . $extra_paramaters;
+            $launchlink = "adyen://payment?sessionId=" . session_id() . "&amount=" . $adyFields['paymentAmount'] . "&currency=" . $adyFields['currencyCode'] . "&merchantReference=" . $adyFields['merchantReference'] . $recurring_parameters . $receiptOrderLines . "&callback=" . $url . $extra_paramaters;
 
             // log the launchlink
             $this->_debugData['LaunchLink'] = $launchlink;
@@ -120,16 +124,16 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
     					<div class=\"grey-header\">
     						<h1>{$this->__('POS Payment')}</h1>
     					</div>
-    					<div class=\"amount-box\">".
+    					<div class=\"amount-box\">" .
                 $adyFields['paymentAmountGrandTotal'] .
-                "<a id=\"launchlink\" href=\"".$launchlink ."\" >{$this->__('Payment')}</a> ".
+                "<a id=\"launchlink\" href=\"" . $launchlink . "\" >{$this->__('Payment')}</a> " .
                 "<span id=\"adyen-redirect-text\">{$this->__('If you stuck on this page please press the payment button')}</span></div>";
 
             $html .= '<script type="text/javascript">
     				//<![CDATA[
     				';
 
-            if($iPod || $iPhone || $iPad) {
+            if ($iPod || $iPhone || $iPad) {
                 $html .= 'document.getElementById(\'launchlink\').click();';
             } else {
                 // android
@@ -142,29 +146,27 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
                         </script>
                     </div>';
         } else {
-
             // do not use Magento form because this generate a form_key input field
             $html .= '<form name="adyenForm" id="' . $payment->getCode() . '" action="' . $payment->getFormUrl() . '" method="post">';
 
             foreach ($payment->getFormFields() as $field => $value) {
-                $html .= '<input type="hidden" name="' .htmlspecialchars($field,   ENT_COMPAT | ENT_HTML401 ,'UTF-8').
-                    '" value="' .htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 ,'UTF-8') . '" />';
+                $html .= '<input type="hidden" name="' . htmlspecialchars($field, ENT_COMPAT | ENT_HTML401, 'UTF-8') .
+                    '" value="' . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401, 'UTF-8') . '" />';
             }
 
             $html .= '</form>';
 
-            if($payment->getCode() == "adyen_hpp_c_cash" && $cashDrawer) {
-
+            if ($payment->getCode() == "adyen_hpp_c_cash" && $cashDrawer) {
                 $cashDrawerIp = $this->_getConfigData("cash_drawer_printer_ip", "adyen_pos", null);
                 $cashDrawerPort = $this->_getConfigData("cash_drawer_printer_port", "adyen_pos", null);
                 $cashDrawerDeviceId = $this->_getConfigData("cash_drawer_printer_device_id", "adyen_pos", null);
 
-                if($cashDrawerIp != '' && $cashDrawerPort != '' && $cashDrawerDeviceId != '') {
-                    $html.= '
+                if ($cashDrawerIp != '' && $cashDrawerPort != '' && $cashDrawerDeviceId != '') {
+                    $html .= '
                             <script type="text/javascript">
-                                var ipAddress = "'.$cashDrawerIp.'";
-                                var port = "'.$cashDrawerPort.'";
-                                var deviceID = "'.$cashDrawerDeviceId.'";
+                                var ipAddress = "' . $cashDrawerIp . '";
+                                var port = "' . $cashDrawerPort . '";
+                                var deviceID = "' . $cashDrawerDeviceId . '";
                                 var ePosDev = new epson.ePOSDevice();
                                 ePosDev.connect(ipAddress, port, Callback_connect);
 
@@ -183,18 +185,22 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
                                     var time = print.PULSE_100
                                     print.addPulse();
                                     print.send();
-                                    document.getElementById("'.$payment->getCode().'").submit();
+                                    document.getElementById("' . $payment->getCode() . '").submit();
                                 }
                             </script>
                     ';
                 } else {
-                    Mage::log("You did not fill in all the fields (ip,port,device id) to use Cash Drawer support:", Zend_Log::DEBUG, "adyen_notification.log", true);
+                    Mage::log(
+                        "You did not fill in all the fields (ip,port,device id) to use Cash Drawer support:",
+                        Zend_Log::DEBUG, "adyen_notification.log", true
+                    );
                 }
             } else {
-                $html.= '<script type="text/javascript">document.getElementById("'.$payment->getCode().'").submit();</script>';
+                $html .= '<script type="text/javascript">document.getElementById("' . $payment->getCode() . '").submit();</script>';
             }
         }
-        $html.= '</body></html>';
+
+        $html .= '</body></html>';
 
         // log the actual HTML
         Mage::log($html, self::DEBUG_LEVEL, 'adyen_http-request-form.log');
@@ -216,7 +222,8 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
         }
     }
 
-    private function getReceiptOrderLines($order) {
+    private function getReceiptOrderLines($order)
+    {
 
         $myReceiptOrderLines = "";
 
@@ -226,83 +233,87 @@ class Adyen_Payment_Block_Redirect extends Mage_Core_Block_Abstract {
 
         $formattedAmountValue = Mage::getModel('directory/currency')->format(
             $order->getGrandTotal(),
-            array('display'=>Zend_Currency::NO_SYMBOL),
+            array('display' => Zend_Currency::NO_SYMBOL),
             false
         );
 
         $taxAmount = Mage::helper('checkout')->getQuote()->getShippingAddress()->getData('tax_amount');
         $formattedTaxAmount = Mage::getModel('directory/currency')->format(
             $taxAmount,
-            array('display'=>Zend_Currency::NO_SYMBOL),
+            array('display' => Zend_Currency::NO_SYMBOL),
             false
         );
 
         $paymentAmount = "1000";
 
-        $myReceiptOrderLines .= "---||C\n".
-            "====== YOUR ORDER DETAILS ======||CB\n".
-            "---||C\n".
+        $myReceiptOrderLines .= "---||C\n" .
+            "====== YOUR ORDER DETAILS ======||CB\n" .
+            "---||C\n" .
             " No. Description |Piece  Subtotal|\n";
 
         foreach ($order->getItemsCollection() as $item) {
             //skip dummies
-            if ($item->isDummy()) continue;
+            if ($item->isDummy()) {
+                continue;
+            }
+
             $singlePriceFormat = Mage::getModel('directory/currency')->format(
                 $item->getPriceInclTax(),
-                array('display'=>Zend_Currency::NO_SYMBOL),
+                array('display' => Zend_Currency::NO_SYMBOL),
                 false
             );
 
-            $itemAmount = $item->getPriceInclTax() * (int) $item->getQtyOrdered();
+            $itemAmount = $item->getPriceInclTax() * (int)$item->getQtyOrdered();
             $itemAmountFormat = Mage::getModel('directory/currency')->format(
                 $itemAmount,
-                array('display'=>Zend_Currency::NO_SYMBOL),
+                array('display' => Zend_Currency::NO_SYMBOL),
                 false
             );
-            $myReceiptOrderLines .= "  " . (int) $item->getQtyOrdered() . "  " . trim(substr($item->getName(),0, 25)) . "| " . $currency . " " . $singlePriceFormat . "  " . $currency . " " . $itemAmountFormat . "|\n";
+            $myReceiptOrderLines .= "  " . (int)$item->getQtyOrdered() . "  " . trim(
+                substr(
+                    $item->getName(), 0,
+                    25
+                )
+            ) . "| " . $currency . " " . $singlePriceFormat . "  " . $currency . " " . $itemAmountFormat . "|\n";
         }
 
         //discount cost
-        if($order->getDiscountAmount() > 0 || $order->getDiscountAmount() < 0)
-        {
+        if ($order->getDiscountAmount() > 0 || $order->getDiscountAmount() < 0) {
             $discountAmountFormat = Mage::getModel('directory/currency')->format(
                 $order->getDiscountAmount(),
-                array('display'=>Zend_Currency::NO_SYMBOL),
+                array('display' => Zend_Currency::NO_SYMBOL),
                 false
             );
-            $myReceiptOrderLines .= "  " . 1 . " " . $this->__('Total Discount') . "| " . $currency . " " . $discountAmountFormat ."|\n";
+            $myReceiptOrderLines .= "  " . 1 . " " . $this->__('Total Discount') . "| " . $currency . " " . $discountAmountFormat . "|\n";
         }
 
         //shipping cost
-        if($order->getShippingAmount() > 0 || $order->getShippingTaxAmount() > 0)
-        {
+        if ($order->getShippingAmount() > 0 || $order->getShippingTaxAmount() > 0) {
             $shippingAmountFormat = Mage::getModel('directory/currency')->format(
                 $order->getShippingAmount(),
-                array('display'=>Zend_Currency::NO_SYMBOL),
+                array('display' => Zend_Currency::NO_SYMBOL),
                 false
             );
-            $myReceiptOrderLines .= "  " . 1 . " " . $order->getShippingDescription() . "| " . $currency . " " . $shippingAmountFormat ."|\n";
-
+            $myReceiptOrderLines .= "  " . 1 . " " . $order->getShippingDescription() . "| " . $currency . " " . $shippingAmountFormat . "|\n";
         }
 
-        if($order->getPaymentFeeAmount() > 0) {
-            $paymentFeeAmount =  Mage::getModel('directory/currency')->format(
+        if ($order->getPaymentFeeAmount() > 0) {
+            $paymentFeeAmount = Mage::getModel('directory/currency')->format(
                 $order->getPaymentFeeAmount(),
-                array('display'=>Zend_Currency::NO_SYMBOL),
+                array('display' => Zend_Currency::NO_SYMBOL),
                 false
             );
-            $myReceiptOrderLines .= "  " . 1 . " " . $this->__('Payment Fee') . "| " . $currency . " " . $paymentFeeAmount ."|\n";
-
+            $myReceiptOrderLines .= "  " . 1 . " " . $this->__('Payment Fee') . "| " . $currency . " " . $paymentFeeAmount . "|\n";
         }
 
-        $myReceiptOrderLines .=    "|--------|\n".
-            "|Order Total:  ".$currency." ".$formattedAmountValue."|B\n".
-            "|Tax:  ".$currency." ".$formattedTaxAmount."|B\n".
+        $myReceiptOrderLines .= "|--------|\n" .
+            "|Order Total:  " . $currency . " " . $formattedAmountValue . "|B\n" .
+            "|Tax:  " . $currency . " " . $formattedTaxAmount . "|B\n" .
             "||C\n";
 
         //Cool new header for card details section! Default location is After Header so simply add to Order Details as separator
-        $myReceiptOrderLines .= "---||C\n".
-            "====== YOUR PAYMENT DETAILS ======||CB\n".
+        $myReceiptOrderLines .= "---||C\n" .
+            "====== YOUR PAYMENT DETAILS ======||CB\n" .
             "---||C\n";
 
 

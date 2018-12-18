@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Source_Zeroauthdatefield {
+class Adyen_Payment_Model_Source_Zeroauthdatefield
+{
 
     /**
      * @return array
@@ -39,7 +41,8 @@ class Adyen_Payment_Model_Source_Zeroauthdatefield {
 
         $dbname = (string)Mage::getConfig()->getNode('global/resources/default_setup/connection/dbname');
 
-        $results = $readConnection->fetchAll("
+        $results = $readConnection->fetchAll(
+            "
 SELECT
   `column_name`
 FROM
@@ -50,7 +53,8 @@ WHERE
    AND `data_type` IN ('date','datetime','timestamp')
 ORDER BY
   `table_name`, `ordinal_position`
-        ");
+        "
+        );
 
         $rows = array();
         foreach ($results as $row) {

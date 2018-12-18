@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -54,8 +55,7 @@ class Adyen_Fee_Model_Total_PaymentFee_Creditmemo extends Mage_Sales_Model_Order
                     $baseRefundAmount = $store->convertPrice($refundAmount, false);
 
                     // if refundAmount is set to empty set amount to zero
-                    if($refundAmount == 0 || $refundAmount == "") {
-
+                    if ($refundAmount == 0 || $refundAmount == "") {
                         $creditmemo->setPaymentFeeAmount(0);
                         $creditmemo->setPaymentFeeTax(0);
                         $creditmemo->setBasePaymentFeeAmount(0);
@@ -70,8 +70,7 @@ class Adyen_Fee_Model_Total_PaymentFee_Creditmemo extends Mage_Sales_Model_Order
                     /*
                      * if payment fee is incl tax remove the tax from the amount
                      */
-                    if($isPaymentFeeInclTax && $refundAmount > 0) {
-
+                    if ($isPaymentFeeInclTax && $refundAmount > 0) {
                         $refundAmountInclTax = $refundAmount;
                         $baseRefundAmountInclTax = $baseRefundAmount;
 
@@ -108,11 +107,9 @@ class Adyen_Fee_Model_Total_PaymentFee_Creditmemo extends Mage_Sales_Model_Order
                         $creditmemo->setPaymentFeeAmount($refundAmount);
                         $creditmemo->setBasePaymentFeeAmount($baseRefundAmount);
 
-                        $creditmemo->setGrandTotal($creditmemo->getGrandTotal()+$creditmemo->getPaymentFeeAmount() + $taxAmount);
-                        $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal()+$creditmemo->getBasePaymentFeeAmount() + $baseTaxAmount);
-
+                        $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $creditmemo->getPaymentFeeAmount() + $taxAmount);
+                        $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $creditmemo->getBasePaymentFeeAmount() + $baseTaxAmount);
                     } else {
-
                         // set amount
                         $creditmemo->setPaymentFeeAmount($refundAmount);
                         $baseRefundAmount = $store->convertPrice($refundAmount, false);
@@ -134,20 +131,28 @@ class Adyen_Fee_Model_Total_PaymentFee_Creditmemo extends Mage_Sales_Model_Order
                         $baseTaxAmount = $refundAmount * $baseRate;
                         $taxAmount = $refundAmount * $rate;
 
-                        $creditmemo->setGrandTotal($creditmemo->getGrandTotal()+$creditmemo->getPaymentFeeAmount()+$taxAmount);
-                        $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal()+$creditmemo->getBasePaymentFeeAmount()+$baseTaxAmount);
-
+                        $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $creditmemo->getPaymentFeeAmount() + $taxAmount);
+                        $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $creditmemo->getBasePaymentFeeAmount() + $baseTaxAmount);
                     }
 
                     // add fee to refunded variable so it can be substracten from open amount
                     if ($basePaymentFeeAmountRefunded > 0) {
-                        $order->getPayment()->setAdditionalInformation("base_payment_fee_amount_refunded", $basePaymentFeeAmountRefunded + $baseRefundAmount);
+                        $order->getPayment()->setAdditionalInformation(
+                            "base_payment_fee_amount_refunded",
+                            $basePaymentFeeAmountRefunded + $baseRefundAmount
+                        );
                     } else {
-                        $order->getPayment()->setAdditionalInformation("base_payment_fee_amount_refunded", $baseRefundAmount);
+                        $order->getPayment()->setAdditionalInformation(
+                            "base_payment_fee_amount_refunded",
+                            $baseRefundAmount
+                        );
                     }
 
-                    if($paymentFeeAmountRefunded > 0) {
-                        $order->getPayment()->setAdditionalInformation("payment_fee_amount_refunded", $paymentFeeAmountRefunded + $refundAmount);
+                    if ($paymentFeeAmountRefunded > 0) {
+                        $order->getPayment()->setAdditionalInformation(
+                            "payment_fee_amount_refunded",
+                            $paymentFeeAmountRefunded + $refundAmount
+                        );
                     } else {
                         $order->getPayment()->setAdditionalInformation("payment_fee_amount_refunded", $refundAmount);
                     }
@@ -159,10 +164,9 @@ class Adyen_Fee_Model_Total_PaymentFee_Creditmemo extends Mage_Sales_Model_Order
         }
 
         // Substract the already refunded amount off the GrandTotal and paymentFee amount.
-        if($basePaymentFeeAmountRefunded > 0) {
-            
-            $allowedRefundedAmount = $creditmemo->getPaymentFeeAmount()-$paymentFeeAmountRefunded;
-            $allowedBasePaymentFeeAmount = $creditmemo->getBasePaymentFeeAmount()-$basePaymentFeeAmountRefunded;
+        if ($basePaymentFeeAmountRefunded > 0) {
+            $allowedRefundedAmount = $creditmemo->getPaymentFeeAmount() - $paymentFeeAmountRefunded;
+            $allowedBasePaymentFeeAmount = $creditmemo->getBasePaymentFeeAmount() - $basePaymentFeeAmountRefunded;
 
             $creditmemo->setPaymentFeeAmount($allowedRefundedAmount);
             $creditmemo->setBasePaymentFeeAmount($allowedBasePaymentFeeAmount);
@@ -170,8 +174,6 @@ class Adyen_Fee_Model_Total_PaymentFee_Creditmemo extends Mage_Sales_Model_Order
 
             $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $allowedRefundedAmount + $creditmemo->getPaymentFeeTax());
             $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $allowedBasePaymentFeeAmount + $creditmemo->getBasePaymentFeeTax());
-
-
         } else {
             $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $creditmemo->getPaymentFeeAmount() + $creditmemo->getPaymentFeeTax());
             $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $creditmemo->getBasePaymentFeeAmount() + $creditmemo->getBasePaymentFeeTax());
