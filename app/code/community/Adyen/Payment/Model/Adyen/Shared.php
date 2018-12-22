@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Shared extends Adyen_Payment_Model_Adyen_Hpp {
+class Adyen_Payment_Model_Adyen_Shared extends Adyen_Payment_Model_Adyen_Hpp
+{
 
     /**
      * @todo backward compatibility
@@ -33,7 +35,8 @@ class Adyen_Payment_Model_Adyen_Shared extends Adyen_Payment_Model_Adyen_Hpp {
      */
     protected $_code = 'adyen_shared';
 
-    public function getConfigPaymentActive() {
+    public function getConfigPaymentActive()
+    {
         return false;
     }
 

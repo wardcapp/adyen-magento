@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hpp {
+class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hpp
+{
 
     const METHODCODE = 'adyen_openinvoice';
     protected $_canUseInternal = false;
@@ -38,41 +40,54 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
     public function isApplicableToQuote($quote, $checksBitMask)
     {
 
-        if($this->_getConfigData('failed_attempt_disable', 'adyen_openinvoice')) {
+        if ($this->_getConfigData('failed_attempt_disable', 'adyen_openinvoice')) {
             $openInvoiceInactiveForThisQuoteId = Mage::getSingleton('checkout/session')->getOpenInvoiceInactiveForThisQuoteId();
-            if($openInvoiceInactiveForThisQuoteId != "") {
+            if ($openInvoiceInactiveForThisQuoteId != "") {
                 // check if quoteId is the same
-                if($quote->getId() == $openInvoiceInactiveForThisQuoteId) {
+                if ($quote->getId() == $openInvoiceInactiveForThisQuoteId) {
                     return false;
                 }
             }
         }
 
         // different don't show
-        if($this->_getConfigData('different_address_disable', 'adyen_openinvoice')) {
-
+        if ($this->_getConfigData('different_address_disable', 'adyen_openinvoice')) {
             // get billing and shipping information
             $billing = $quote->getBillingAddress()->getData();
             $shipping = $quote->getShippingAddress()->getData();
 
             // check if the following items are different: street, city, postcode, region, countryid
-            if(isset($billing['street']) && isset($billing['city']) && $billing['postcode'] && isset($billing['region']) && isset($billing['country_id'])) {
-                $billingAddress = array($billing['street'], $billing['city'], $billing['postcode'], $billing['region'],$billing['country_id']);
+            if (isset($billing['street']) && isset($billing['city']) && $billing['postcode'] && isset($billing['region']) && isset($billing['country_id'])) {
+                $billingAddress = array(
+                    $billing['street'],
+                    $billing['city'],
+                    $billing['postcode'],
+                    $billing['region'],
+                    $billing['country_id']
+                );
             } else {
                 $billingAddress = array();
             }
-            if(isset($shipping['street']) && isset($shipping['city']) && $shipping['postcode'] && isset($shipping['region']) && isset($shipping['country_id'])) {
-                $shippingAddress = array($shipping['street'], $shipping['city'], $shipping['postcode'], $shipping['region'],$shipping['country_id']);
+
+            if (isset($shipping['street']) && isset($shipping['city']) && $shipping['postcode'] && isset($shipping['region']) && isset($shipping['country_id'])) {
+                $shippingAddress = array(
+                    $shipping['street'],
+                    $shipping['city'],
+                    $shipping['postcode'],
+                    $shipping['region'],
+                    $shipping['country_id']
+                );
             } else {
                 $shippingAddress = array();
             }
 
             // if the result are not the same don't show the payment method open invoice
-            $diff = array_diff($billingAddress,$shippingAddress);
-            if(is_array($diff) && !empty($diff)) {
+            $diff = array_diff($billingAddress, $shippingAddress);
+            if (is_array($diff) && !empty($diff)) {
                 return false;
             }
         }
+
         return parent::isApplicableToQuote($quote, $checksBitMask);
     }
 
@@ -90,46 +105,45 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
         $dobShow = $this->dobShow();
         $telephoneShow = $this->telephoneShow();
 
-        if($genderShow || $dobShow || $telephoneShow) {
-
+        if ($genderShow || $dobShow || $telephoneShow) {
             // set gender and dob to the quote
             $quote = $this->getQuote();
 
             // dob must be in yyyy-MM-dd
             $dob = $data->getYear() . "-" . $data->getMonth() . "-" . $data->getDay();
 
-            if($dobShow)
+            if ($dobShow) {
                 $quote->setCustomerDob($dob);
+            }
 
-            if($genderShow) {
+            if ($genderShow) {
                 $quote->setCustomerGender($data->getGender());
                 // Fix for OneStepCheckout (won't convert quote customerGender to order object)
                 $info->setAdditionalInformation('customerGender', $data->getGender());
             }
 
-            if($telephoneShow) {
+            if ($telephoneShow) {
                 $telephone = $data->getTelephone();
                 $quote->getBillingAddress()->setTelephone($data->getTelephone());
             }
 
             /* Check if the customer is logged in or not */
             if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-
                 /* Get the customer data */
                 $customer = Mage::getSingleton('customer/session')->getCustomer();
 
                 // set the email and/or gender
-                if($dobShow) {
+                if ($dobShow) {
                     $customer->setDob($dob);
                 }
 
-                if($genderShow) {
+                if ($genderShow) {
                     $customer->setGender($data->getGender());
                 }
 
-                if($telephoneShow) {
+                if ($telephoneShow) {
                     $billingAddress = $customer->getPrimaryBillingAddress();
-                    if($billingAddress) {
+                    if ($billingAddress) {
                         $billingAddress->setTelephone($data->getTelephone());
                     }
                 }
@@ -172,9 +186,10 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
                 }
                 break;
         }
+
         return $url;
     }
-    
+
     protected function _loadProductById($id)
     {
         return Mage::getModel('catalog/product')->load($id);
@@ -183,11 +198,12 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
     protected function getGenderText($genderId)
     {
         $result = "";
-        if($genderId == '1') {
+        if ($genderId == '1') {
             $result = 'MALE';
-        } elseif($genderId == '2') {
+        } elseif ($genderId == '2') {
             $result = 'FEMALE';
         }
+
         return $result;
     }
 
@@ -197,10 +213,12 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
      * @param type $format
      * @return type date
      */
-    public function getDate($date = null, $format = 'Y-m-d H:i:s') {
+    public function getDate($date = null, $format = 'Y-m-d H:i:s')
+    {
         if (strlen($date) < 0) {
             $date = date('d-m-Y H:i:s');
         }
+
         $timeStamp = new DateTime($date);
         return $timeStamp->format($format);
     }
@@ -223,9 +241,13 @@ class Adyen_Payment_Model_Adyen_Openinvoice extends Adyen_Payment_Model_Adyen_Hp
 
     public function isRatePay()
     {
-        if ($this->_getConfigData('openinvoicetypes', Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE) == Adyen_Payment_Helper_Data::RATEPAY) {
+        if ($this->_getConfigData(
+            'openinvoicetypes',
+            Adyen_Payment_Model_Adyen_Openinvoice::METHODCODE
+        ) == Adyen_Payment_Helper_Data::RATEPAY) {
             return true;
         }
+
         return false;
     }
 

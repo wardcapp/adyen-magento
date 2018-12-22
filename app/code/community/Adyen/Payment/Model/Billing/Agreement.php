@@ -12,10 +12,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	    Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package        Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -26,18 +26,18 @@
  */
 
 
-
 /**
  * Class Adyen_Payment_Model_Billing_Agreement
  */
 class Adyen_Payment_Model_Billing_Agreement
-    extends Mage_Sales_Model_Billing_Agreement {
+    extends Mage_Sales_Model_Billing_Agreement
+{
 
     public function parseRecurringContractData($data)
     {
         /** @var Adyen_Payment_Model_Adyen_Oneclick $methodInstance */
         $methodInstance = Mage::helper('payment')->getMethodInstance('adyen_oneclick');
-        if (! $methodInstance) {
+        if (!$methodInstance) {
             Adyen_Payment_Exception::throwException('Can not update billing agreement, incorrect payment method specified in recurring contract data');
         }
 
@@ -81,7 +81,7 @@ class Adyen_Payment_Model_Billing_Agreement
      */
     public function getCustomer()
     {
-        if (! $this->hasData('customer')) {
+        if (!$this->hasData('customer')) {
             $customer = Mage::getModel('customer/customer')->load($this->getCustomerId());
             $this->setData('customer', $customer);
         }
@@ -95,10 +95,10 @@ class Adyen_Payment_Model_Billing_Agreement
      */
     public function getCustomerReference()
     {
-        if (! $this->hasData('customer_reference')) {
+        if (!$this->hasData('customer_reference')) {
             $customerReference = $this->getCustomer()->getData('adyen_customer_ref')
                 ?: $this->getCustomer()->getData('increment_id')
-                ?:  $this->getCustomerId();
+                    ?: $this->getCustomerId();
             $this->setData('customer_reference', $customerReference);
         }
 
@@ -124,19 +124,21 @@ class Adyen_Payment_Model_Billing_Agreement
             if ($this->getMethodCode() == 'adyen_oneclick') {
                 $referenceId = $this->getReferenceId();
                 $methodInstanceName = $methodCode . "_" . $referenceId;
-            }
-            else {
+            } else {
                 $methodInstanceName = $methodCode;
             }
+
             $this->_paymentMethodInstance = Mage::helper('payment')->getMethodInstance($methodInstanceName);
 
-            if (! $this->_paymentMethodInstance) {
+            if (!$this->_paymentMethodInstance) {
                 $this->_paymentMethodInstance = Mage::helper('payment')->getMethodInstance($this->getMethodCode());
             }
         }
+
         if ($this->_paymentMethodInstance) {
             $this->_paymentMethodInstance->setStore($this->getStoreId());
         }
+
         return $this->_paymentMethodInstance;
     }
 

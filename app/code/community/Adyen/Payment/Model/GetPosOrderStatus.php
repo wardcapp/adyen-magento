@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_GetPosOrderStatus extends Mage_Core_Model_Abstract {
+class Adyen_Payment_Model_GetPosOrderStatus extends Mage_Core_Model_Abstract
+{
 
     /**
      * Collected debug information
@@ -38,15 +40,14 @@ class Adyen_Payment_Model_GetPosOrderStatus extends Mage_Core_Model_Abstract {
     {
         $storeId = null;
 
-        if($count == 0) {
+        if ($count == 0) {
             $this->_debugData['getOrderStatus begin'] = 'Check the order status';
         } else {
-            $this->_debugData['getOrderStatus count: '.$count] = 'Check the order status';
+            $this->_debugData['getOrderStatus count: ' . $count] = 'Check the order status';
         }
 
-        if($merchantReference != "") {
-
-            $this->_debugData['getOrderStatus count: '.$count . ' reference'] = 'MerchantReference is ' . $merchantReference;
+        if ($merchantReference != "") {
+            $this->_debugData['getOrderStatus count: ' . $count . ' reference'] = 'MerchantReference is ' . $merchantReference;
 
             // get the order
             $order = Mage::getModel('sales/order')->loadByIncrementId($merchantReference);
@@ -55,7 +56,7 @@ class Adyen_Payment_Model_GetPosOrderStatus extends Mage_Core_Model_Abstract {
 
             $result = $this->_checkOrderStatus($order, 0);
 
-            if($result) {
+            if ($result) {
                 $this->_debugData['getOrderStatus end'] = 'getOrderStatus result is true';
                 $this->_debug($storeId);
                 return true;
@@ -73,44 +74,49 @@ class Adyen_Payment_Model_GetPosOrderStatus extends Mage_Core_Model_Abstract {
     {
 
         // if order is not cancelled then order is success
-        if($order->getStatus() == Mage_Sales_Model_Order::STATE_CANCELED || $order->getStatus() == Mage_Sales_Model_Order::STATE_HOLDED) {
-            $this->_debugData['getOrderStatus count: '.$count . ' cancelled'] = 'order has the status cancel or holded';
+        if ($order->getStatus() == Mage_Sales_Model_Order::STATE_CANCELED || $order->getStatus() == Mage_Sales_Model_Order::STATE_HOLDED) {
+            $this->_debugData['getOrderStatus count: ' . $count . ' cancelled'] = 'order has the status cancel or holded';
             return false;
-        } else if($order->getStatus() == Mage_Sales_Model_Order::STATE_PROCESSING || $order->getAdyenEventCode() == Adyen_Payment_Model_Event::ADYEN_EVENT_POSAPPROVED || substr($order->getAdyenEventCode(), 0, 13)  == Adyen_Payment_Model_Event::ADYEN_EVENT_AUTHORISATION)
-        {
-            $this->_debugData['getOrderStatus count: '.$count . ' success'] = 'order has the status: '.$order->getStatus();
-            return true;
-        } else if($order->getStatus() == 'pending' &&  $order->getAdyenEventCode() == "")
-        {
-            $this->_debugData['getOrderStatus count: '.$count . ' pending'] = 'order has the status: '.$order->getStatus() . ' lets wait a second';
-
-            sleep(2);
-            ++$count;
-
-            if($count > 5) {
-                $this->_debugData['getOrderStatus count: '.$count . ' end'] = 'order has the status: '.$order->getStatus() . ' this is the third try so cancel the order';
-                return false;
-            }
-
-            $this->_debugData['getOrderStatus count: '.$count . 'retry'] = 'Let\'s try again';
-            // load the order again and check if status has changed
-            $order = Mage::getModel('sales/order')->loadByIncrementId($order->getIncrementId());
-            return $this->_checkOrderStatus($order, $count);
         } else {
+            if ($order->getStatus() == Mage_Sales_Model_Order::STATE_PROCESSING || $order->getAdyenEventCode() == Adyen_Payment_Model_Event::ADYEN_EVENT_POSAPPROVED || substr(
+                $order->getAdyenEventCode(),
+                0, 13
+            ) == Adyen_Payment_Model_Event::ADYEN_EVENT_AUTHORISATION) {
+                $this->_debugData['getOrderStatus count: ' . $count . ' success'] = 'order has the status: ' . $order->getStatus();
+                return true;
+            } else {
+                if ($order->getStatus() == 'pending' && $order->getAdyenEventCode() == "") {
+                    $this->_debugData['getOrderStatus count: ' . $count . ' pending'] = 'order has the status: ' . $order->getStatus() . ' lets wait a second';
 
-            $this->_debugData['getOrderStatus count: '.$count . ' pending'] = 'order has the status: '.$order->getStatus() . ' lets wait a second';
+                    sleep(2);
+                    ++$count;
 
-            sleep(2);
-            ++$count;
+                    if ($count > 5) {
+                        $this->_debugData['getOrderStatus count: ' . $count . ' end'] = 'order has the status: ' . $order->getStatus() . ' this is the third try so cancel the order';
+                        return false;
+                    }
 
-            if($count > 5) {
-                $this->_debugData['getOrderStatus count: '.$count . ' end'] = 'order has the status: '.$order->getStatus() . ' this is the third try so cancel the order';
-                return false;
+                    $this->_debugData['getOrderStatus count: ' . $count . 'retry'] = 'Let\'s try again';
+                    // load the order again and check if status has changed
+                    $order = Mage::getModel('sales/order')->loadByIncrementId($order->getIncrementId());
+                    return $this->_checkOrderStatus($order, $count);
+                } else {
+                    $this->_debugData['getOrderStatus count: ' . $count . ' pending'] = 'order has the status: ' . $order->getStatus() . ' lets wait a second';
+
+                    sleep(2);
+                    ++$count;
+
+                    if ($count > 5) {
+                        $this->_debugData['getOrderStatus count: ' . $count . ' end'] = 'order has the status: ' . $order->getStatus() . ' this is the third try so cancel the order';
+                        return false;
+                    }
+
+                    $this->_debugData['getOrderStatus count: ' . $count . 'retry'] = 'Let\'s try again';
+                    // load the order again and check if status has changed
+                    $order = Mage::getModel('sales/order')->loadByIncrementId($order->getIncrementId());
+                    return $this->_checkOrderStatus($order, $count);
+                }
             }
-            $this->_debugData['getOrderStatus count: '.$count . 'retry'] = 'Let\'s try again';
-            // load the order again and check if status has changed
-            $order = Mage::getModel('sales/order')->loadByIncrementId($order->getIncrementId());
-            return $this->_checkOrderStatus($order,$count);
         }
     }
 
@@ -131,7 +137,7 @@ class Adyen_Payment_Model_GetPosOrderStatus extends Mage_Core_Model_Abstract {
     /**
      * @param $code
      * @param null $paymentMethodCode
-     * @param null $storeId
+     * @param int|null $storeId
      * @return mixed
      */
     protected function _getConfigData($code, $paymentMethodCode = null, $storeId = null)

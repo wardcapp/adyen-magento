@@ -13,10 +13,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -50,7 +50,7 @@ class Adyen_Payment_Helper_Installments
      */
     protected function _serializeValue($value)
     {
-    	return serialize($value);
+        return serialize($value);
     }
 
     /**
@@ -79,17 +79,29 @@ class Adyen_Payment_Helper_Installments
         if (!is_array($value)) {
             return false;
         }
+
         unset($value['__empty']);
         foreach ($value as $_id => $row) {
-            if (!is_array($row) || !array_key_exists('installment_currency',$row) || !array_key_exists('installment_boundary', $row) || !array_key_exists('installment_frequency', $row ) || !array_key_exists('installment_interest', $row )) {
+            if (!is_array($row) || !array_key_exists(
+                'installment_currency',
+                $row
+            ) || !array_key_exists(
+                'installment_boundary',
+                $row
+            ) || !array_key_exists(
+                'installment_frequency',
+                $row
+            ) || !array_key_exists('installment_interest', $row)) {
                 return false;
             }
         }
+
         return true;
     }
 
-    public function getInstallments($store = null, $ccType = "installments") {
-        $value = Mage::getStoreConfig("payment/adyen_cc/".$ccType, $store);
+    public function getInstallments($store = null, $ccType = "installments")
+    {
+        $value = Mage::getStoreConfig("payment/adyen_cc/" . $ccType, $store);
         $value = $this->_unserializeValue($value);
         return $value;
     }
@@ -103,8 +115,7 @@ class Adyen_Payment_Helper_Installments
     protected function _encodeArrayFieldValue(array $value)
     {
         $result = array();
-        foreach ($value as $triplet){
-
+        foreach ($value as $triplet) {
             $currency = (isset($triplet[0])) ? $triplet[0] : "";
             $boundary = (isset($triplet[1])) ? $triplet[1] : "";
             $frequency = (isset($triplet[2])) ? $triplet[2] : "";
@@ -112,12 +123,13 @@ class Adyen_Payment_Helper_Installments
 
             $_id = Mage::helper('core')->uniqHash('_');
             $result[$_id] = array(
-            	'installment_currency' => $currency,
+                'installment_currency' => $currency,
                 'installment_boundary' => $boundary,
                 'installment_frequency' => $frequency,
                 'installment_interest' => $interest
             );
         }
+
         return $result;
     }
 
@@ -132,15 +144,26 @@ class Adyen_Payment_Helper_Installments
         $result = array();
         unset($value['__empty']);
         foreach ($value as $_id => $row) {
-            if (!is_array($row) || !array_key_exists('installment_currency',$row) || !array_key_exists('installment_boundary', $row) || !array_key_exists('installment_frequency', $row) || !array_key_exists('installment_interest', $row)) {
+            if (!is_array($row) || !array_key_exists(
+                'installment_currency',
+                $row
+            ) || !array_key_exists(
+                'installment_boundary',
+                $row
+            ) || !array_key_exists(
+                'installment_frequency',
+                $row
+            ) || !array_key_exists('installment_interest', $row)) {
                 continue;
             }
+
             $currency = $row['installment_currency'];
             $boundary = $row['installment_boundary'];
             $frequency = $row['installment_frequency'];
             $interest = $row['installment_interest'];
-            $result[] = array($currency,$boundary,$frequency,$interest);
+            $result[] = array($currency, $boundary, $frequency, $interest);
         }
+
         return $result;
     }
 
@@ -151,97 +174,101 @@ class Adyen_Payment_Helper_Installments
      * @param mixed $store
      * @return float|null
      */
-    public function getConfigValue($curr,$amount, $store = null, $ccType = "installments")
+    public function getConfigValue($curr, $amount, $store = null, $ccType = "installments")
     {
         $value = $this->getInstallments($store, $ccType);
 
         if ($this->_isEncodedArrayFieldValue($value)) {
             $value = $this->_decodeArrayFieldValue($value);
         }
+
         $cur_minimal_boundary = -1;
         $resulting_freq = 1;
         foreach ($value as $row) {
-        	list($currency,$boundary,$frequency) = $row;
-            if ($curr == $currency){
-            	if($amount <= $boundary && ($boundary <= $cur_minimal_boundary || $cur_minimal_boundary == -1) ) {
+            list($currency, $boundary, $frequency) = $row;
+            if ($curr == $currency) {
+                if ($amount <= $boundary && ($boundary <= $cur_minimal_boundary || $cur_minimal_boundary == -1)) {
                     $cur_minimal_boundary = $boundary;
-	            	$resulting_freq = $frequency;
-	            }
-	            if($boundary == "" && $cur_minimal_boundary == -1){
-	            	$resulting_freq = $frequency;
-	            }
+                    $resulting_freq = $frequency;
+                }
+
+                if ($boundary == "" && $cur_minimal_boundary == -1) {
+                    $resulting_freq = $frequency;
+                }
             }
-           
         }
+
         return $resulting_freq;
     }
-    
-    public function isInstallmentsEnabled($store = null){
-    	$value = Mage::getStoreConfig("payment/adyen_cc/enable_installments", $store);
-    	return $value;
+
+    public function isInstallmentsEnabled($store = null)
+    {
+        $value = Mage::getStoreConfig("payment/adyen_cc/enable_installments", $store);
+        return $value;
     }
 
 
-
-    public function getInstallmentForCreditCardType($ccType) {
+    public function getInstallmentForCreditCardType($ccType)
+    {
 
         // retrieving quote
-        $quote = (Mage::getModel('checkout/type_onepage') !== false)? Mage::getModel('checkout/type_onepage')->getQuote(): Mage::getModel('checkout/session')->getQuote();
+        if (Mage::getDesign()->getArea() == 'adminhtml' || Mage::app()->getStore()->isAdmin()) {
+            $quote = Mage::getSingleton('adminhtml/session_quote')->getQuote();
+        } else {
+            $quote = (Mage::getModel('checkout/type_onepage') !== false) ? Mage::getModel('checkout/type_onepage')->getQuote() : Mage::getModel('checkout/session')->getQuote();
+        }
 
         $currency = $quote->getQuoteCurrencyCode();
 
-        if($quote->isVirtual()) {
+        if ($quote->isVirtual()) {
             $address = $quote->getBillingAddress();
         } else {
             $address = $quote->getShippingAddress();
         }
 
         // distract the already included added fee for installment you selected before
-        if($address->getBasePaymentInstallmentFeeAmount() > 0) {
-            $amount = (double) ($quote->getGrandTotal() - $address->getBasePaymentInstallmentFeeAmount());
+        if ($address->getBasePaymentInstallmentFeeAmount() > 0) {
+            $amount = (double)($quote->getGrandTotal() - $address->getBasePaymentInstallmentFeeAmount());
         } else {
-            $amount = (double) $quote->getGrandTotal();
+            $amount = (double)$quote->getGrandTotal();
         }
 
         // installment key where installents are saved in settings
-        $ccTypeInstallments = "installments_".$ccType;
+        $ccTypeInstallments = "installments_" . $ccType;
 
         // check if this type has installments configured
         $all_installments = $this->getInstallments(null, $ccTypeInstallments);
 
-        if(empty($all_installments)) {
+        if (empty($all_installments)) {
             // no installments congigure fall back on default
             $ccTypeInstallments = null;
         } else {
-            $max_installments = $this->getConfigValue($currency,$amount, null, $ccTypeInstallments);
+            $max_installments = $this->getConfigValue($currency, $amount, null, $ccTypeInstallments);
         }
 
         // Fallback to the default installments if creditcard type has no one configured
-        if($ccTypeInstallments == null) {
-            $max_installments = $this->getConfigValue($currency,$amount, null);
+        if ($ccTypeInstallments == null) {
+            $max_installments = $this->getConfigValue($currency, $amount, null);
             $all_installments = $this->getInstallments();
         }
 
         // result array here
-        for($i=1;$i<=$max_installments;$i++){
-
+        for ($i = 1; $i <= $max_installments; $i++) {
             // check if installment has extra interest
-            $key = $i-1;
+            $key = $i - 1;
             $installment = $all_installments[$key];
-            if(isset($installment[3]) && $installment[3] > 0) {
+            if (isset($installment[3]) && $installment[3] > 0) {
                 $total_amount_with_interest = $amount + ($amount * ($installment[3] / 100));
             } else {
                 $total_amount_with_interest = $amount;
             }
 
-            $partial_amount = ((double)$total_amount_with_interest)/$i;
-            $result[(string)$i] = $i."x ".$currency." ".number_format($partial_amount,2);
+            $partial_amount = ((double)$total_amount_with_interest) / $i;
+            $result[(string)$i] = $i . "x " . $currency . " " . number_format($partial_amount, 2);
         }
+
         return $result;
     }
-
-
-
 
 
     /**
@@ -256,6 +283,7 @@ class Adyen_Payment_Helper_Installments
         if (!$this->_isEncodedArrayFieldValue($value)) {
             $value = $this->_encodeArrayFieldValue($value);
         }
+
         return $value;
     }
 
@@ -270,6 +298,7 @@ class Adyen_Payment_Helper_Installments
         if ($this->_isEncodedArrayFieldValue($value)) {
             $value = $this->_decodeArrayFieldValue($value);
         }
+
         $value = $this->_serializeValue($value);
         return $value;
     }

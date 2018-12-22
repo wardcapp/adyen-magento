@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,8 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-
-class Adyen_Payment_UpdateCartController extends Mage_Core_Controller_Front_Action {
+class Adyen_Payment_UpdateCartController extends Mage_Core_Controller_Front_Action
+{
 
     public function indexAction()
     {
@@ -36,31 +37,29 @@ class Adyen_Payment_UpdateCartController extends Mage_Core_Controller_Front_Acti
         $customCode = (isset($params['customcode'])) ? $params['customcode'] : "";
 
         // check if barcdoe is from scanner or filled in manually
-        if($code != "") {
+        if ($code != "") {
             $sku = $code;
-        } elseif($customCode != "") {
+        } elseif ($customCode != "") {
             $sku = $customCode;
         } else {
             // no barcode
             $sku = "";
         }
 
-        if($sku != "") {
+        if ($sku != "") {
             $productId = Mage::getModel('catalog/product')
                 ->getIdBySku(trim($sku));
 
-            if($productId > 0)
-            {
+            if ($productId > 0) {
                 // Initiate product model
                 $product = Mage::getModel('catalog/product');
 
                 // Load specific product whose tier price want to update
-                $product ->load($productId);
+                $product->load($productId);
 
-                if($product)
-                {
+                if ($product) {
                     $cart = Mage::getSingleton('checkout/cart');
-                    $cart->addProduct($product, array('qty'=>'1'));
+                    $cart->addProduct($product, array('qty' => '1'));
                     $cart->save();
                 }
             }

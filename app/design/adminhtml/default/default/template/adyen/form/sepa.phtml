@@ -12,10 +12,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -24,40 +24,44 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-$_code=$this->getMethodCode();
+$_code = $this->getMethodCode();
 /** @var $this Adyen_Payment_Block_Form_Sepa */
 ?>
 
 <ul id="payment_form_<?php echo $_code ?>" style="display:none">
     <li>
         <div class="input-box">
-            <label for="<?php echo $_code ?>_account_number"><?php echo $this->__('Bank account holder name') ?> <span class="required">*</span></label><br />
+            <label for="<?php echo $_code ?>_account_number"><?php echo $this->__('Bank account holder name') ?> <span
+                        class="required">*</span></label><br/>
             <input
-                type="text" id="<?php echo $_code ?>_account_name" name="payment[account_name]"
-                title="<?php echo $this->__('Bank account holder name') ?>"
-                class="validate-ipayment-sepa-account-name required-entry input-text"
-                value="<?=$this->getBankHolderValue();?>" autocomplete="off"
-                />
+                    type="text" id="<?php echo $_code ?>_account_name" name="payment[account_name]"
+                    title="<?php echo $this->__('Bank account holder name') ?>"
+                    class="validate-ipayment-sepa-account-name required-entry input-text"
+                    value="<?php echo $this->getBankHolderValue(); ?>" autocomplete="off"
+            />
         </div>
     </li>
     <li>
         <div class="input-box">
-            <label for="<?php echo $_code ?>_iban"><?php echo $this->__('IBAN') ?> <span class="required">*</span></label><br />
+            <label for="<?php echo $_code ?>_iban"><?php echo $this->__('IBAN') ?> <span
+                        class="required">*</span></label><br/>
             <input
-                type="text" id="<?php echo $_code ?>_iban" name="payment[iban]"
-                title="<?php echo $this->__('IBAN') ?>"
-                class="validate-ipayment-sepa-iban validate-iban-number required-entry input-text"
-                value="<?=$this->getIbanValue();?>" autocomplete="off"
-                />
+                    type="text" id="<?php echo $_code ?>_iban" name="payment[iban]"
+                    title="<?php echo $this->__('IBAN') ?>"
+                    class="validate-ipayment-sepa-iban validate-iban-number required-entry input-text"
+                    value="<?php echo $this->getIbanValue(); ?>" autocomplete="off"
+            />
         </div>
     </li>
 
     <li>
         <div class="input-box">
-            <label for="<?php echo $_code ?>_country"><?php echo $this->__('Country') ?> <span class="required">*</span></label><br />
-            <select id="<?php echo $_code ?>_country" name="payment[country]" name="payment[country]" title="<?php echo $this->__('Country') ?>" class="validate-ipayment-sepa-country required-entry input-√√√">
+            <label for="<?php echo $_code ?>_country"><?php echo $this->__('Country') ?> <span class="required">*</span></label><br/>
+            <select id="<?php echo $_code ?>_country" name="payment[country]" name="payment[country]"
+                    title="<?php echo $this->__('Country') ?>"
+                    class="validate-ipayment-sepa-country required-entry input-√√√">
                 <option value="">--</option>
-                <?php foreach($this->getCountries() as $_country): ?>
+                <?php foreach ($this->getCountries() as $_country): ?>
                     <option value="<?php echo $_country['value'] ?>"<?php echo ($_country['value'] == $this->getCountryValue()) ? " selected" : ""; ?>><?php echo $_country['label'] ?></option>
                 <?php endforeach; ?>
             </select>
@@ -67,7 +71,8 @@ $_code=$this->getMethodCode();
     <li>
         <div class="input-box">
             <label for="<?php echo $_code ?>_accept_sepa">
-                <input class="required-entry" type="checkbox" value="1" name="payment[accept_sepa]" id="<?php echo $_code ?>_accept_sepa" />
+                <input class="required-entry" type="checkbox" value="1" name="payment[accept_sepa]"
+                       id="<?php echo $_code ?>_accept_sepa"/>
                 <?php echo $this->__('I agree that the above amount will be debited from my bank account.') ?>
             </label>
         </div>
@@ -75,15 +80,15 @@ $_code=$this->getMethodCode();
 </ul>
 
 <script type="text/javascript">
-    var $fields = $('payment_form_<?=$_code;?>').select('input[type=text]', 'select', 'textarea');
+    var $fields = $('payment_form_<?php echo $_code;?>').select('input[type=text]', 'select', 'textarea');
 
-    $fields.each(function(field) {
-        var quoteId = '<?=$this->getQuoteId()?>';
+    $fields.each(function (field) {
+        var quoteId = '<?php echo $this->getQuoteId()?>';
         var quoteItemIds = quoteId + field.id;
 
         field.value = localStorage.getItem(quoteItemIds);
 
-        field.observe('change', function() {
+        field.observe('change', function () {
             localStorage.setItem(quoteItemIds, field.value);
         });
     });
@@ -91,7 +96,8 @@ $_code=$this->getMethodCode();
 
 <div>
 <span id="ipayment-sepa-please-wait" style="display:none;" class="opc-please-wait">
-    <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" class="v-middle" alt=""/> &nbsp; <?php echo $this->__('Submitting payment information...') ?> &nbsp;
+    <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" class="v-middle"
+         alt=""/> &nbsp; <?php echo $this->__('Submitting payment information...') ?> &nbsp;
 </span>
 </div>
 

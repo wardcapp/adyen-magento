@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -51,11 +52,9 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_PaymentFee extends Mage_Sales_Mo
 
 
         if ($address->getAllItems() && $val) {
-
             $basePaymentFee = $adyenFeeHelper->getPaymentFeeExclVat($address);
 
-            if($basePaymentFee) {
-
+            if ($basePaymentFee) {
                 $address->setPaymentFeeAmount($address->getQuote()->getStore()->convertPrice($basePaymentFee));
                 $address->setBasePaymentFeeAmount($basePaymentFee);
 
@@ -63,6 +62,7 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_PaymentFee extends Mage_Sales_Mo
                 $address->setBaseGrandTotal($address->getBaseGrandTotal() + $address->getBasePaymentFeeAmount());
             }
         }
+
         return $this;
     }
 
@@ -71,14 +71,17 @@ class Adyen_Fee_Model_Sales_Quote_Address_Total_PaymentFee extends Mage_Sales_Mo
         $amt = $address->getPaymentFeeAmount();
 
         if ($amt != 0) {
-            $address->addTotal(array(
-                    'code'=>$this->getCode(),
-                    'title'=> Mage::helper('adyen_fee')->__('Payment Fee'),
-                    'value'=> $amt
-            ));
+            $address->addTotal(
+                array(
+                    'code' => $this->getCode(),
+                    'title' => Mage::helper('adyen_fee')->__('Payment Fee'),
+                    'value' => $amt
+                )
+            );
         } else {
             Mage::helper('adyen_fee')->removeTotal($address, $this->getCode());
         }
+
         return $this;
     }
 }

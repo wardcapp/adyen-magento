@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,9 +26,11 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Source_CcType {
+class Adyen_Payment_Model_Source_CcType
+{
 
-    public function toOptionArray() {
+    public function toOptionArray()
+    {
         $options = array();
         foreach (Mage::helper('adyen')->getCcTypes() as $code => $data) {
             $options[] = array(
@@ -35,6 +38,7 @@ class Adyen_Payment_Model_Source_CcType {
                 'label' => $data['name']
             );
         }
+
         return $options;
     }
 
@@ -43,9 +47,11 @@ class Adyen_Payment_Model_Source_CcType {
         $types = Mage::helper('adyen')->getCcTypes();
 
         //Return the following key-values: "Magento CC code" -> "CC name"
-        return array_reduce($types, function($carry, $item) {
+        return array_reduce(
+            $types, function ($carry, $item) {
             $carry[$item['code']] = $item['name'];
             return $carry;
-        });
+            }
+        );
     }
 }

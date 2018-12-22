@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -42,6 +43,7 @@ class Adyen_Payment_Block_Adminhtml_System_Config_TestWebserverConfiguration ext
         if (!$this->getTemplate()) {
             $this->setTemplate($this->_wizardTemplate);
         }
+
         return $this;
     }
 
@@ -67,9 +69,11 @@ class Adyen_Payment_Block_Adminhtml_System_Config_TestWebserverConfiguration ext
     {
         $originalData = $element->getOriginalData();
         $elementHtmlId = $element->getHtmlId();
-        $this->addData(array_merge(
-            $this->_getButtonData($elementHtmlId, $originalData)
-        ));
+        $this->addData(
+            array_merge(
+                $this->_getButtonData($elementHtmlId, $originalData)
+            )
+        );
         return $this->_toHtml();
     }
 
@@ -91,7 +95,6 @@ class Adyen_Payment_Block_Adminhtml_System_Config_TestWebserverConfiguration ext
             'store' => Mage::app()->getRequest()->getParam('store')
         );
     }
-
 
 
 }

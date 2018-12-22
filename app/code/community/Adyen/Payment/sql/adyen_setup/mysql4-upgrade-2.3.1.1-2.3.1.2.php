@@ -12,10 +12,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -30,20 +30,22 @@ $installer->startSetup();
 /** @var Magento_Db_Adapter_Pdo_Mysql $connection */
 $connection = $installer->getConnection();
 
-$entityTypeId     = $installer->getEntityTypeId('customer');
-$attributeCode    = 'adyen_customer_ref';
-$attributeSetId   = $installer->getDefaultAttributeSetId($entityTypeId);
+$entityTypeId = $installer->getEntityTypeId('customer');
+$attributeCode = 'adyen_customer_ref';
+$attributeSetId = $installer->getDefaultAttributeSetId($entityTypeId);
 $attributeGroupId = $installer->getDefaultAttributeGroupId($entityTypeId, $attributeSetId);
 
-$installer->addAttribute('customer', $attributeCode, array(
-    'input'         => 'text',
-    'type'          => 'text',
-    'label'         => 'Adyen Customer Reference',
-    'note'          => 'Optional customer reference ID, only fill when customer reference is not the customer ID (when importing data from older systems for example).',
-    'visible'       => 1,
-    'required'      => 0,
-    'user_defined'  => 0,
-));
+$installer->addAttribute(
+    'customer', $attributeCode, array(
+        'input' => 'text',
+        'type' => 'text',
+        'label' => 'Adyen Customer Reference',
+        'note' => 'Optional customer reference ID, only fill when customer reference is not the customer ID (when importing data from older systems for example).',
+        'visible' => 1,
+        'required' => 0,
+        'user_defined' => 0,
+    )
+);
 
 $attributeSortOrder = 120;
 $installer->addAttributeToGroup(
@@ -60,11 +62,13 @@ $oAttribute->setData('sort_order', $attributeSortOrder);
 $oAttribute->save();
 
 
-$connection->addColumn($this->getTable('sales/billing_agreement'), 'agreement_data', array(
-    'type' => Varien_Db_Ddl_Table::TYPE_TEXT,
-    'nullable' => true,
-    'comment' => 'Agreement Data'
-));
+$connection->addColumn(
+    $this->getTable('sales/billing_agreement'), 'agreement_data', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'nullable' => true,
+        'comment' => 'Agreement Data'
+    )
+);
 
 
 $installer->endSetup();

@@ -12,10 +12,10 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 /**
  * @category   Payment Gateway
@@ -30,14 +30,16 @@
 <fieldset class="form-list">
     <ul id="payment_form_<?php echo $_code ?>" style="display:none">
         <li>
-            <?php echo $this->__('You will be redirected to Adyen app when you place an order.') ?> 
+            <?php echo $this->__('You will be redirected to Adyen app when you place an order.') ?>
         </li>
-        <?php if($this->showRememberThisCheckoutbox()): ?>
+        <?php if ($this->showRememberThisCheckoutbox()): ?>
             <li id="adyen-remember-these-details" class="adyen_payment_input_fields">
                 <div class="input-box">
                     <div class="v-fix">
-                        <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc" value="1" checked />
-                        <label for="<?php echo $_code ?>_store_cc" class="required"><em>*</em><?php echo $this->__('Remember these details') ?></label>
+                        <input type="checkbox" name="payment[store_cc]" id="<?php echo $_code ?>_store_cc" value="1"
+                               checked/>
+                        <label for="<?php echo $_code ?>_store_cc"
+                               class="required"><em>*</em><?php echo $this->__('Remember these details') ?></label>
                     </div>
                 </div>
             </li>

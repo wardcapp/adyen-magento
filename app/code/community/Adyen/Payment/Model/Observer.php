@@ -77,8 +77,12 @@ class Adyen_Payment_Model_Observer
      * @param string $methodCode ideal,mc,etc.
      * @param array $methodData
      */
-    public function createPaymentMethodFromHpp($methodCode, $methodData = array(), Mage_Core_Model_Store $store, $sortOrder)
-    {
+    public function createPaymentMethodFromHpp(
+        $methodCode,
+        $methodData = array(),
+        Mage_Core_Model_Store $store,
+        $sortOrder
+    ) {
         $methodNewCode = 'adyen_hpp_' . $methodCode;
         if ($methodCode == 'ideal') {
             $methodNewCode = 'adyen_ideal';
@@ -93,8 +97,10 @@ class Adyen_Payment_Model_Observer
             if (is_object($value) || is_array($value)) {
                 $value = json_encode($value);
             }
+
             $store->setConfig('payment/' . $methodNewCode . '/' . $key, $value);
         }
+
         $store->setConfig('/payment/' . $methodNewCode . '/sort_order', $sortOrder);
     }
 
@@ -114,7 +120,10 @@ class Adyen_Payment_Model_Observer
         }
 
         $adyFields = array(
-            "paymentAmount" => (int)Mage::helper('adyen')->formatAmount($this->_getCurrentPaymentAmount(), $this->_getCurrentCurrencyCode()),
+            "paymentAmount" => (int)Mage::helper('adyen')->formatAmount(
+                $this->_getCurrentPaymentAmount(),
+                $this->_getCurrentCurrencyCode()
+            ),
             "currencyCode" => $this->_getCurrentCurrencyCode(),
             "merchantReference" => "Get Payment methods",
             "skinCode" => $skinCode,
@@ -253,6 +262,7 @@ class Adyen_Payment_Model_Observer
         if (($grandTotal = $this->_getQuote()->getGrandTotal()) > 0) {
             return $grandTotal;
         }
+
         return 10;
     }
 
@@ -303,9 +313,12 @@ class Adyen_Payment_Model_Observer
 
         $responseData = json_decode($results, true);
         if (!$responseData || !isset($responseData['paymentMethods'])) {
-            Mage::throwException(Mage::helper('adyen')->__(
-                'Did not receive JSON, could not retrieve payment methods, received %s request was: %s', $results, print_r($requestParams, true)
-            ));
+            Mage::throwException(
+                Mage::helper('adyen')->__(
+                    'Did not receive JSON, could not retrieve payment methods, received %s request was: %s', $results,
+                    print_r($requestParams, true)
+                )
+            );
         }
 
         // Save response to cache.
@@ -406,7 +419,10 @@ class Adyen_Payment_Model_Observer
         ksort($fields, SORT_STRING);
 
         // Generate the signing data string
-        $signData = implode(":", array_map(array($this, 'escapeString'), array_merge(array_keys($fields), array_values($fields))));
+        $signData = implode(
+            ":",
+            array_map(array($this, 'escapeString'), array_merge(array_keys($fields), array_values($fields)))
+        );
 
         $signMac = Zend_Crypt_Hmac::compute(pack("H*", $hmacKey), 'sha256', $signData);
         $fields['merchantSig'] = base64_encode(pack('H*', $signMac));
@@ -439,6 +455,7 @@ class Adyen_Payment_Model_Observer
                 $secretWord = trim($adyenHelper->getConfigData('secret_wordp', 'adyen_hpp'));
                 break;
         }
+
         return $secretWord;
     }
 
@@ -459,6 +476,7 @@ class Adyen_Payment_Model_Observer
                 unset($paymentMethod[$field]);
             }
         }
+
         return $paymentMethod;
     }
 
@@ -552,7 +570,10 @@ class Adyen_Payment_Model_Observer
                         throw new Adyen_Payment_Exception($adyenHelper->__("Could not capture the invoice"));
                     }
 
-                    $invoiceAutoMail = (bool)$adyenHelper->getConfigData('send_invoice_update_mail', 'adyen_abstract', $storeId);
+                    $invoiceAutoMail = (bool)$adyenHelper->getConfigData(
+                        'send_invoice_update_mail', 'adyen_abstract',
+                        $storeId
+                    );
                     if ($invoiceAutoMail) {
                         $invoice->sendEmail();
                     }

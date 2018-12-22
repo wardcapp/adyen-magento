@@ -13,18 +13,32 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
  * @author     Adyen
  * @property   Adyen B.V
- * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
+ * @copyright  Copyright (c) 2018 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Block_Form extends Mage_Payment_Block_Form {
-    
+class Adyen_Payment_Block_Info_PosCloud extends Mage_Payment_Block_Info
+{
+
+    protected function _construct()
+    {
+        parent::_construct();
+        $this->setTemplate('adyen/info/pos_cloud.phtml');
+    }
+
+    public function toPdf()
+    {
+        $this->setTemplate('adyen/pdf/pos_cloud.phtml');
+        return $this->toHtml();
+    }
+
 }

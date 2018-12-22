@@ -13,11 +13,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category	Adyen
- * @package	Adyen_Payment
- * @copyright	Copyright (c) 2011 Adyen (http://www.adyen.com)
- * @license	http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category    Adyen
+ * @package    Adyen_Payment
+ * @copyright    Copyright (c) 2011 Adyen (http://www.adyen.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
 /**
  * @category   Payment Gateway
  * @package    Adyen_Payment
@@ -25,7 +26,8 @@
  * @property   Adyen B.V
  * @copyright  Copyright (c) 2014 Adyen BV (http://www.adyen.com)
  */
-class Adyen_Payment_Model_Adyen_Data_Server_Notification {
+class Adyen_Payment_Model_Adyen_Data_Server_Notification
+{
 
     /**
      * @since @since 0.0.9.9r2
@@ -33,9 +35,10 @@ class Adyen_Payment_Model_Adyen_Data_Server_Notification {
      * @param array $request
      * @return string
      */
-    public function sendNotification($request) {    
+    public function sendNotification($request)
+    {
         Mage::unregister('soap-request');
-        Mage::register('soap-request', $request);         
+        Mage::register('soap-request', $request);
         return array("notificationResponse" => "[accepted]");
     }
 
