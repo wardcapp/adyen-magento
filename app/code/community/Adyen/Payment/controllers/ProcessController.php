@@ -394,20 +394,8 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
         } else {
             $session->addError($this->__('Your payment failed, Please try again later'));
         }
-
-        // if payment method is adyen_pos or adyen_cash redirect to checkout if the kiosk mode is turned off
-        if (!$this->_getConfigData(
-            'express_checkout_kiosk_mode',
-            'adyen_pos'
-        ) && ($order->getPayment()->getMethod() == "adyen_pos" || $order->getPayment()->getMethod() == "adyen_cash")) {
-            // add email to session so this can be shown
-            $session->setAdyenEmailShopper($order->getCustomerEmail());
-
-            $redirect = Mage::getUrl('checkout/cart');
-            $this->_redirectUrl($redirect);
-        } else {
-            $this->_redirectCheckoutCart();
-        }
+        
+        $this->_redirectCheckoutCart();
     }
 
     protected function _redirectCheckoutCart()

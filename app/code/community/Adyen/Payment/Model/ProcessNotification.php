@@ -909,7 +909,7 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
             'create_shipment', 'adyen_cash',
             $order->getStoreId()
         )) || ($this->_getConfigData(
-            'create_shipment', 'adyen_pos',
+            'create_shipment', 'adyen_pos_cloud',
             $order->getStoreId()
         ) && $_paymentCode == "adyen_pos")
         ) {
@@ -1185,7 +1185,6 @@ class Adyen_Payment_Model_ProcessNotification extends Mage_Core_Model_Abstract
              */
             if (strcmp($this->_paymentMethod, 'ideal') === 0 ||
                 strcmp($this->_paymentMethod, 'c_cash') === 0 ||
-                $_paymentCode == "adyen_pos" ||
                 $isBankTransfer == true ||
                 (($_paymentCode == "adyen_sepa" || ($_paymentCode == "adyen_oneclick" && strcmp(
                     $this->_paymentMethod,
