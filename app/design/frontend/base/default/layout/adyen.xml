@@ -57,13 +57,8 @@
                 <stylesheet>css/adyenstyle.css</stylesheet>
             </action>
         </reference>
-        <reference name="top.container">
-            <block type="adyen/scanProduct" name="adyen.scanProduct" template="adyen/scan_product.phtml"/>
-        </reference>
         <reference name="checkout.cart.methods">
-            <block type="adyen/posExpressCheckout" before="-" name="adyen.pos.express.checkout"
-                   template="adyen/pos_express_checkout.phtml"/>
-            <action method="append" after="adyen.pos.express.checkout"
+            <action method="append" before="-"
                     ifconfig="payment/adyen_apple_pay/show_outside_of_checkout">
                 <block>adyen.applepay.express.checkout</block>
             </action>
