@@ -1713,17 +1713,17 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </sort_order>
-                        <pos_terminal_id translate="label">
-                            <label>Unique Terminal ID for Terminal API</label>
+                        <store_code translate="label">
+                            <label>Unique Store Code</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>30</sort_order>
-                            <tooltip>Copy this from the Adyen Customer Area => Point of sale => Terminal Fleet Manager
-                                => Unique Terminal Id
+                            <tooltip>Copy this from the Adyen Customer Area => Point of sale => Stores
+                                => Store code
                             </tooltip>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </pos_terminal_id>
+                        </store_code>
                         <pos_merchant_account translate="label">
                             <label>Merchant Account for Terminal API</label>
                             <frontend_type>text</frontend_type>
