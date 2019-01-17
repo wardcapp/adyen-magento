@@ -79,6 +79,7 @@
                 } else if (response.responseText.indexOf("Stop") > -1) {
                     alert(response.responseJSON.error);
                     $("initiate").disabled = false;
+                    terminals.disabled = false;
                     $("pos-cloud-please-wait").hide();
                     return;
                 }
