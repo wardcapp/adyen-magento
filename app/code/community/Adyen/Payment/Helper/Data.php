@@ -35,6 +35,10 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     const ENDPOINT_SECURED_FIELDS_TEST = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.3.min.js";
     const ENDPOINT_SECURED_FIELDS_LIVE = "https://checkoutshopper-live.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.3.min.js";
 
+    const CHECKOUT_CONTEXT_URL_LIVE = 'https://checkoutshopper-live.adyen.com/checkoutshopper/';
+    const CHECKOUT_CONTEXT_URL_TEST = 'https://checkoutshopper-test.adyen.com/checkoutshopper/';
+    const CHECKOUT_COMPONENT_JS = 'sdk/2.0.0/adyen.js';
+
     /**
      * @return array
      */
@@ -673,5 +677,31 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
         }
 
         return self::ENDPOINT_SECURED_FIELDS_LIVE;
+    }
+
+    /**
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getCheckoutContextUrl($storeId = null)
+    {
+        if (null === $storeId) {
+            $storeId = Mage::app()->getStore()->getStoreId();
+        }
+
+        if ($this->getConfigDataDemoMode($storeId)) {
+            return self::CHECKOUT_CONTEXT_URL_TEST;
+        }
+
+        return self::CHECKOUT_CONTEXT_URL_LIVE;
+    }
+
+    /**
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getCheckoutCardComponentJs($storeId = null)
+    {
+        return $this->getCheckoutContextUrl($storeId) . self::CHECKOUT_COMPONENT_JS;
     }
 }

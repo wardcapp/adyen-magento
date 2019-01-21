@@ -56,6 +56,9 @@
             <action method="addCss">
                 <stylesheet>css/adyenstyle.css</stylesheet>
             </action>
+            <action method="addCss">
+                <stylesheet>css/adyencheckout.css</stylesheet>
+            </action>
         </reference>
         <reference name="checkout.cart.methods">
             <action method="append" before="-"
@@ -78,6 +81,9 @@
             </action>
             <action method="addCss">
                 <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyencheckout.css</stylesheet>
             </action>
         </reference>
         <reference name="after_body_start">
@@ -111,6 +117,9 @@
             <action method="addCss">
                 <stylesheet>css/adyenstyle.css</stylesheet>
             </action>
+            <action method="addCss">
+                <stylesheet>css/adyencheckout.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
             <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
@@ -141,6 +150,9 @@
             </action>
             <action method="addCss">
                 <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyencheckout.css</stylesheet>
             </action>
         </reference>
         <reference name="after_body_start">
@@ -173,6 +185,9 @@
             <action method="addCss">
                 <stylesheet>css/adyenstyle.css</stylesheet>
             </action>
+            <action method="addCss">
+                <stylesheet>css/adyencheckout.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
             <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
@@ -204,6 +219,9 @@
             <action method="addCss">
                 <stylesheet>css/adyenstyle.css</stylesheet>
             </action>
+            <action method="addCss">
+                <stylesheet>css/adyencheckout.css</stylesheet>
+            </action>
         </reference>
         <reference name="after_body_start">
             <block type="core/template" name="after_body_start_script" template="adyen/after_body_start.phtml"/>
@@ -234,6 +252,9 @@
             </action>
             <action method="addCss">
                 <stylesheet>css/adyenstyle.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/adyencheckout.css</stylesheet>
             </action>
         </reference>
     </checkout_multishipping_billing>
