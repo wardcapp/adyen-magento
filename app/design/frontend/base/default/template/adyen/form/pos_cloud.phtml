@@ -29,15 +29,11 @@
 
 <script type="text/javascript">
 
-    new Ajax.Request("<?php echo $this->getUrl('adyen/Pos/retrieveConnectedTerminals', array('_secure' => true)); ?>", {
-        parameters: {isAjax: 1, method: 'POST'},
-        onSuccess: function (response) {
-            for (var i = 0; i < response.responseJSON.uniqueTerminalIds.length; i++) {
-                document.getElementById("terminals").options[i] = new Option(response.responseJSON.uniqueTerminalIds[i], i);
-            }
-        }
-    });
     var terminals = document.getElementById("terminals");
+    <?php foreach ($this->retrieveConnectedTerminals() as $key => $terminal): ?>
+    terminals.options[<?php echo $key;?>] = new Option("<?php echo $terminal;?>", <?php echo $key;?>);
+    <?php endforeach;?>
+
 
     $("initiate").on("click", function () {
         var self = this;

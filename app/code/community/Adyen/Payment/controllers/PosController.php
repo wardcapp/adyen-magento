@@ -289,17 +289,4 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         $this->getResponse()->setBody($result);
         return $result;
     }
-
-    /**
-     * @return mixed
-     */
-    public function retrieveConnectedTerminalsAction()
-    {
-        $api = Mage::getSingleton('adyen/api');
-        $storeId = Mage::app()->getStore()->getId();
-        $response = $api->retrieveConnectedTerminals($storeId);
-        $this->getResponse()->setHeader('Content-type', 'application/json');
-        $this->getResponse()->setBody($response);
-        return $response;
-    }
 }
