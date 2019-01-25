@@ -447,7 +447,6 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         }
 
         $apiKey = $this->_helper()->getPosApiKey($storeId);
-        $timeout = $this->_helper()->getConfigData('timeout', 'adyen_pos_cloud', $storeId);
         $merchantAccount = $this->_helper()->getAdyenMerchantAccount("pos_cloud", $storeId);
         $request = array("merchantAccount" => $merchantAccount);
 
@@ -456,7 +455,7 @@ class Adyen_Payment_Model_Api extends Mage_Core_Model_Abstract
         if ($storeCode) {
             $request["store"] = $storeCode;
         }
-        $response = $this->doRequestJson($request, $requestUrl, $apiKey, $storeId, $timeout);
+        $response = $this->doRequestJson($request, $requestUrl, $apiKey, $storeId);
         return $response;
     }
 }
