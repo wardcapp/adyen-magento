@@ -416,20 +416,7 @@ class Adyen_Payment_ProcessController extends Mage_Core_Controller_Front_Action
     public function insAction()
     {
         try {
-            // if version is in the notification string show the module version
             $response = $this->getRequest()->getParams();
-            if (isset($response['version'])) {
-                $helper = Mage::helper('adyen');
-                $this->getResponse()->setBody($helper->getExtensionVersion());
-                return $this;
-            }
-
-            if (isset($response['magento_version'])) {
-                $version = Mage::getVersion();
-                $this->getResponse()->setBody($version);
-                return $this;
-            }
-
             $notificationMode = isset($response['live']) ? $response['live'] : "";
 
             if ($notificationMode !== "" && $this->_validateNotificationMode($notificationMode)) {
