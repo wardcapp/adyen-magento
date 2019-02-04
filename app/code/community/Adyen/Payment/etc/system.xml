@@ -1018,6 +1018,16 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </installments_hipercard>
+                                <installments_troy translate="label">
+                                    <label>Installments For troy</label>
+                                    <frontend_model>adyen/adminhtml_form_field_installments</frontend_model>
+                                    <backend_model>adyen/system_config_backend_installments</backend_model>
+                                    <config_path>payment/adyen_cc/installments_troy</config_path>
+                                    <sort_order>220</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </installments_troy>
                                 <disable_zero_total>
                                     <label>Disable at zero grand total</label>
                                     <tooltip>Disable this payment method in the checkout when the grand total of the
