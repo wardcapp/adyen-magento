@@ -32,9 +32,6 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
     const KLARNA = "klarna";
     const RATEPAY = "ratepay";
     const AFTERPAY = "afterpay";
-    const ENDPOINT_SECURED_FIELDS_TEST = "https://checkoutshopper-test.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.3.min.js";
-    const ENDPOINT_SECURED_FIELDS_LIVE = "https://checkoutshopper-live.adyen.com/checkoutshopper/assets/js/sdk/checkoutSecuredFields.1.3.3.min.js";
-
     const CHECKOUT_CONTEXT_URL_LIVE = 'https://checkoutshopper-live.adyen.com/checkoutshopper/';
     const CHECKOUT_CONTEXT_URL_TEST = 'https://checkoutshopper-test.adyen.com/checkoutshopper/';
     const CHECKOUT_COMPONENT_JS = 'sdk/2.0.0/adyen.js';
@@ -664,19 +661,6 @@ class Adyen_Payment_Helper_Data extends Mage_Payment_Helper_Data
 
         $formattedHtml .= "</table>";
         return $formattedHtml;
-    }
-
-    /**
-     * Returns the correct secured fields URL
-     * @return string
-     */
-    public function getSecuredFieldsURL()
-    {
-        if ($this->getConfigDataDemoMode()) {
-            return self::ENDPOINT_SECURED_FIELDS_TEST;
-        }
-
-        return self::ENDPOINT_SECURED_FIELDS_LIVE;
     }
 
     /**
