@@ -155,7 +155,7 @@ $originKey = $this->getOriginKey();
                                     if (hideCVC) {
                                         return;
                                     }
-                                    if(variant == "maestro"){
+                                    if (variant == "maestro"){
                                         if(component.state.errors.encryptedSecurityCode) {
                                             document.getElementById('encryptedSecurityCode<?php echo $_code; ?>').classList.add("required-entry");
                                         }
