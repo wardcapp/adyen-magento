@@ -108,8 +108,9 @@ $originKey = $this->getOriginKey();
                 holderNameRequired: true,
                 groupTypes: cardGroupTypes,
 
-                onChange: function (state) {
-                    if (state.isValid) {
+                onChange: function (state, component) {
+                    console.log(state, component);
+                    if (state.isValid && !component.state.errors.encryptedSecurityCode) {
                         document.getElementById('holderName').value = state.data.holderName;
                         document.getElementById('encryptedCardNumber').value = state.data.encryptedCardNumber;
                         document.getElementById('encryptedExpiryMonth').value = state.data.encryptedExpiryMonth;
