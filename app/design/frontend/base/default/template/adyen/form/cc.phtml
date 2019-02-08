@@ -109,16 +109,6 @@ $originKey = $this->getOriginKey();
                 groupTypes: cardGroupTypes,
 
                 onChange: function (state) {
-                    // Define the card type for installments
-                    var creditCardType = state.brand;
-                    if (creditCardType) {
-                        if (creditCardType == "BCMC") {
-                            creditCardType = "MI";
-                        }
-                        <?php if($this->hasInstallments()): ?>
-                        getInstallments(creditCardType);
-                        <?php endif; ?>
-                    }
                     if (state.isValid) {
                         document.getElementById('holderName').value = state.data.holderName;
                         document.getElementById('encryptedCardNumber').value = state.data.encryptedCardNumber;
@@ -130,6 +120,18 @@ $originKey = $this->getOriginKey();
                         document.getElementById("allValidcard").value = true;
                     } else {
                         resetFields();
+                    }
+                },
+                onBrand: function (state) {
+                    // Define the card type for installments
+                    var creditCardType = state.brand;
+                    if (creditCardType) {
+                        if (creditCardType == "BCMC") {
+                            creditCardType = "MI";
+                        }
+                        <?php if($this->hasInstallments()): ?>
+                        getInstallments(creditCardType);
+                        <?php endif; ?>
                     }
                 }
             });
