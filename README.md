@@ -2,7 +2,7 @@
 Use Adyen's plugin for Magento to offer frictionless payments online, in-app, and in-store.
 
 ## Integration
-The plugin integrates card component(Secured Field) using Classic integration for all card payments. Local/redirect payment methods are integrated with DirectoryLookup and HPP. For Point Of Sale (POS) payments we use Terminal API using Cloud-based communication. Boleto, MultiBanco and SEPA are a direct API integration into Adyen.
+The plugin integrates card component(Secured Fields) using Classic integration for all card payments. Local/redirect payment methods are integrated with DirectoryLookup and HPP. For Point Of Sale (POS) payments we use Terminal API using Cloud-based communication. Boleto, MultiBanco and SEPA are a direct API integration into Adyen.
 
 ## Requirements
 The plugin supports the Magento Community (version 1.8 and higher) and Enterprise edition (version 1.13 and higher). 
