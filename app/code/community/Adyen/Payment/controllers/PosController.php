@@ -132,11 +132,20 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
             $quote->getPayment()->setAdditionalInformation('receipt', $formattedReceipt);
         }
 
-        $quote->getPayment()->setAdditionalInformation(
-            'terminalResponse',
-            $response['SaleToPOIResponse']['PaymentResponse']
-        );
-        $quote->save();
+        if (!empty($response['SaleToPOIResponse']['PaymentResponse'])) {
+            $quote->getPayment()->setAdditionalInformation(
+                'terminalResponse',
+                $response['SaleToPOIResponse']['PaymentResponse']
+            );
+        }
+
+        try {
+            $quote->save();
+        } catch (Exception $e) {
+            $result = self::PAYMENT_RETRY;
+            $errorCondition = $e->getMessage();
+            Mage::logException($e);
+        }
 
         $resultArray = array(
             'result' => $result,
