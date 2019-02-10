@@ -56,6 +56,8 @@ class Adyen_Payment_PosController extends Mage_Core_Controller_Front_Action
         $timeStamper = date("Y-m-d") . "T" . date("H:i:s+00:00");
         $customerId = $quote->getCustomerId();
 
+        # Always create new order increment ID, assuring payment transaction is linked to one order only
+        $quote->unsReservedOrderId();
         $reference = $quote->reserveOrderId()->getReservedOrderId();
 
         $request = array(
